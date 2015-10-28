@@ -156,16 +156,40 @@ if($saveChanges) {
 	if($collectionDateYear && $collectionDateMonth && $collectionDateDay) {
 		$collectionDate=0;
 		$collectionDate="$collectionDateYear-$collectionDateMonth-$collectionDateDay";
+		//ensure collection date is not greater than the current date
+		if(getStandardDateDifference($datetime,$collectionDate)<0) {
+			$error.="<br /><strong>Sample Collection Date ".getFormattedDateLessDay($collectionDate)." should not be in the future.</strong><br />Kindly provide an alternative Sample Collection Date<br />";
+		}
 	}
 
 	if($treatmentInitiationDateYear && $treatmentInitiationDateMonth && $treatmentInitiationDateDay) {
 		$treatmentInitiationDate=0;
 		$treatmentInitiationDate="$treatmentInitiationDateYear-$treatmentInitiationDateMonth-$treatmentInitiationDateDay";
+		//ensure treatment initiation date is not greater than the current date
+		if(getStandardDateDifference($datetime,$treatmentInitiationDate)<0) {
+			$error.="<br /><strong>Treatment Initiation Date ".getFormattedDateLessDay($treatmentInitiationDate)." should not be in the future.</strong><br />Kindly provide an alternative Treatment Initiation Date<br />";
+		}
+		//ensure treatment initiation date is not before 01-01-1990
+		if(getStandardDateDifference($treatmentInitiationDate,"1990-01-01")<0) {
+			$error.="<br /><strong>Treatment Initiation Date ".getFormattedDateLessDay($treatmentInitiationDate)." should not be prior to 01/Jan/1990.</strong><br />Kindly provide an alternative Treatment Initiation Date<br />";
+		}
 	}
 	
 	if($receiptDateYear && $receiptDateMonth && $receiptDateDay) {
 		$receiptDate=0;
 		$receiptDate="$receiptDateYear-$receiptDateMonth-$receiptDateDay";
+		//ensure received at CPHL date is not greater than the current date
+		if(getStandardDateDifference($datetime,$receiptDate)<0) {
+			$error.="<br /><strong>Received at CPHL Date ".getFormattedDateLessDay($receiptDate)." should not be in the future.</strong><br />Kindly provide an alternative Date<br />";
+		}
+		//ensure received at CPHL date is not before 01-05-2014
+		if(getStandardDateDifference($receiptDate,"2014-05-01")<0) {
+			$error.="<br /><strong>Received at CPHL Date ".getFormattedDateLessDay($receiptDate)." should not be prior to 01/May/2014.</strong><br />Kindly provide an alternative Date<br />";
+		}
+		//ensure collection date is not greater than the received at CPHL date
+		if($collectionDateYear && $collectionDateMonth && $collectionDateDay && getStandardDateDifference($receiptDate,$collectionDate)<0) {
+			$error.="<br /><strong>Sample Collection Date ".getFormattedDateLessDay($collectionDate)." should not be greater than the Received at CPHL Date ".getFormattedDateLessDay($receiptDate).".</strong><br />Kindly provide an alternative Sample Collection Date<br />";
+		}
 	}
 
 	//input data
@@ -839,7 +863,7 @@ function selectVLTesting(theField) {
 												} else {
 													echo "<option value=\"".getFormattedDateYear($datetime)."\" selected=\"selected\">".getFormattedDateYear($datetime)."</option>"; 
 												}
-                                                for($j=(getFormattedDateYear($datetime)-1);$j>=(getCurrentYear()-10);$j--) {
+                                                for($j=getFormattedDateYear($datetime);$j>=2014;$j--) {
                                                     echo "<option value=\"$j\">$j</option>";
                                                 }
                                                 ?>
@@ -1043,7 +1067,7 @@ function selectVLTesting(theField) {
 												} else {
 													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
 												}
-												for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-50);$j--) {
+												for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=1990;$j--) {
                                                     echo "<option value=\"$j\">$j</option>";
                                                 }
                                                 ?>
