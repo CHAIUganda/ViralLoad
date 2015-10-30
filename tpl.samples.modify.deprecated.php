@@ -10,89 +10,78 @@ if(!$modify) {
 	$modify=getDetailedTableInfo2("vl_samples","formNumber='$sample' or formNumber='".($sample/1)."' or vlSampleID='$sample' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID)='$sample' limit 1","id");
 }
 
-$pg=validate($pg);
-$patientID=0;
-$patientID=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","patientID");
-
-$artNumber=validate($artNumber);
-$otherID=validate($otherID);
-$gender=validate($gender);
-$dateOfBirthDay=validate($dateOfBirthDay);
-$dateOfBirthMonth=validate($dateOfBirthMonth);
-$dateOfBirthYear=validate($dateOfBirthYear);
-$patientPhone=validate($patientPhone);
-
-$lrCategory=validate($lrCategory);
-$lrEnvelopeNumber=validate($lrEnvelopeNumber);
-if($lrEnvelopeNumber=="Envelope #") {
-	$lrEnvelopeNumber="";
-}
-$lrNumericID=validate($lrNumericID);
-
-$formNumber=validate($formNumber);
-$facilityID=validate($facilityID);
-$hubID=validate($hubID);
-$districtID=validate($districtID);
-
-$collectionDateDay=validate($collectionDateDay);
-$collectionDateMonth=validate($collectionDateMonth);
-$collectionDateYear=validate($collectionDateYear);
-$receiptDateDay=validate($receiptDateDay);
-$receiptDateMonth=validate($receiptDateMonth);
-$receiptDateYear=validate($receiptDateYear);
-$sampleTypeID=validate($sampleTypeID);
-
-$treatmentLast6Months=validate($treatmentLast6Months);
-$treatmentInitiationDateDay=validate($treatmentInitiationDateDay);
-$treatmentInitiationDateMonth=validate($treatmentInitiationDateMonth);
-$treatmentInitiationDateYear=validate($treatmentInitiationDateYear);
-$currentRegimenID=validate($currentRegimenID);
-$treatmentInitiationID=validate($treatmentInitiationID);
-$treatmentInitiationOther=validate($treatmentInitiationOther);
-$treatmentStatusID=validate($treatmentStatusID);
-$reasonForFailureID=validate($reasonForFailureID);
-$viralLoadTestingID=validate($viralLoadTestingID);
-$pregnant=validate($pregnant);
-$pregnantANCNumber=validate($pregnantANCNumber);
-$breastfeeding=validate($breastfeeding);
-$activeTBStatus=validate($activeTBStatus);
-$tbTreatmentPhaseID=validate($tbTreatmentPhaseID);
-$arvAdherenceID=validate($arvAdherenceID);
-
-if($viralLoadTestingIndication=="vlTestingRoutineMonitoring") {
-	$routineMonitoringLastVLDateDay=validate($routineMonitoringLastVLDateDay);
-	$routineMonitoringLastVLDateMonth=validate($routineMonitoringLastVLDateMonth);
-	$routineMonitoringLastVLDateYear=validate($routineMonitoringLastVLDateYear);
-	$routineMonitoringValue=validate($routineMonitoringValue);
-	$routineMonitoringSampleTypeID=validate($routineMonitoringSampleTypeID);
-	$routineMonitoringLastVLDate=0;
-	$routineMonitoringLastVLDate="$routineMonitoringLastVLDateYear-$routineMonitoringLastVLDateMonth-$routineMonitoringLastVLDateDay";
-}
-
-if($viralLoadTestingIndication=="vlTestingRepeatTesting") {
-	$repeatVLTestLastVLDateDay=validate($repeatVLTestLastVLDateDay);
-	$repeatVLTestLastVLDateMonth=validate($repeatVLTestLastVLDateMonth);
-	$repeatVLTestLastVLDateYear=validate($repeatVLTestLastVLDateYear);
-	$repeatVLTestValue=validate($repeatVLTestValue);
-	$repeatVLTestSampleTypeID=validate($repeatVLTestSampleTypeID);
-	$repeatVLTestLastVLDate=0;
-	$repeatVLTestLastVLDate="$repeatVLTestLastVLDateYear-$repeatVLTestLastVLDateMonth-$repeatVLTestLastVLDateDay";
-}
-
-if($viralLoadTestingIndication=="vlTestingSuspectedTreatmentFailure") {
-	$suspectedTreatmentFailureLastVLDateDay=validate($suspectedTreatmentFailureLastVLDateDay);
-	$suspectedTreatmentFailureLastVLDateMonth=validate($suspectedTreatmentFailureLastVLDateMonth);
-	$suspectedTreatmentFailureLastVLDateYear=validate($suspectedTreatmentFailureLastVLDateYear);
-	$suspectedTreatmentFailureValue=validate($suspectedTreatmentFailureValue);
-	$suspectedTreatmentFailureSampleTypeID=validate($suspectedTreatmentFailureSampleTypeID);
-	$suspectedTreatmentFailureLastVLDate=0;
-	$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
-}
-
 if($saveChanges) {
+	//validations
+	$lrCategory=validate($lrCategory);
+	$lrEnvelopeNumber=validate($lrEnvelopeNumber);
+	if($lrEnvelopeNumber=="Envelope #") {
+		$lrEnvelopeNumber="";
+	}
+	$lrNumericID=validate($lrNumericID);
 
+	$formNumber=validate($formNumber);
+	$facilityID=validate($facilityID);
+	$hubID=validate($hubID);
+	$districtID=validate($districtID);
+
+	$collectionDateDay=validate($collectionDateDay);
+	$collectionDateMonth=validate($collectionDateMonth);
+	$collectionDateYear=validate($collectionDateYear);
+	$receiptDateDay=validate($receiptDateDay);
+	$receiptDateMonth=validate($receiptDateMonth);
+	$receiptDateYear=validate($receiptDateYear);
+	$sampleTypeID=validate($sampleTypeID);
+
+	$treatmentLast6Months=validate($treatmentLast6Months);
+	$treatmentInitiationDateDay=validate($treatmentInitiationDateDay);
+	$treatmentInitiationDateMonth=validate($treatmentInitiationDateMonth);
+	$treatmentInitiationDateYear=validate($treatmentInitiationDateYear);
+	$currentRegimenID=validate($currentRegimenID);
+	$treatmentInitiationID=validate($treatmentInitiationID);
+	$treatmentInitiationOther=validate($treatmentInitiationOther);
+	$treatmentStatusID=validate($treatmentStatusID);
+	$reasonForFailureID=validate($reasonForFailureID);
+	$viralLoadTestingID=validate($viralLoadTestingID);
+	$pregnant=validate($pregnant);
+	$pregnantANCNumber=validate($pregnantANCNumber);
+	$breastfeeding=validate($breastfeeding);
+	$activeTBStatus=validate($activeTBStatus);
+	$tbTreatmentPhaseID=validate($tbTreatmentPhaseID);
+	$arvAdherenceID=validate($arvAdherenceID);
+
+	if($viralLoadTestingIndication=="vlTestingRoutineMonitoring") {
+		$routineMonitoringLastVLDateDay=validate($routineMonitoringLastVLDateDay);
+		$routineMonitoringLastVLDateMonth=validate($routineMonitoringLastVLDateMonth);
+		$routineMonitoringLastVLDateYear=validate($routineMonitoringLastVLDateYear);
+		$routineMonitoringValue=validate($routineMonitoringValue);
+		$routineMonitoringSampleTypeID=validate($routineMonitoringSampleTypeID);
+		$routineMonitoringLastVLDate=0;
+		$routineMonitoringLastVLDate="$routineMonitoringLastVLDateYear-$routineMonitoringLastVLDateMonth-$routineMonitoringLastVLDateDay";
+	}
+	
+	if($viralLoadTestingIndication=="vlTestingRepeatTesting") {
+		$repeatVLTestLastVLDateDay=validate($repeatVLTestLastVLDateDay);
+		$repeatVLTestLastVLDateMonth=validate($repeatVLTestLastVLDateMonth);
+		$repeatVLTestLastVLDateYear=validate($repeatVLTestLastVLDateYear);
+		$repeatVLTestValue=validate($repeatVLTestValue);
+		$repeatVLTestSampleTypeID=validate($repeatVLTestSampleTypeID);
+		$repeatVLTestLastVLDate=0;
+		$repeatVLTestLastVLDate="$repeatVLTestLastVLDateYear-$repeatVLTestLastVLDateMonth-$repeatVLTestLastVLDateDay";
+	}
+	
+	if($viralLoadTestingIndication=="vlTestingSuspectedTreatmentFailure") {
+		$suspectedTreatmentFailureLastVLDateDay=validate($suspectedTreatmentFailureLastVLDateDay);
+		$suspectedTreatmentFailureLastVLDateMonth=validate($suspectedTreatmentFailureLastVLDateMonth);
+		$suspectedTreatmentFailureLastVLDateYear=validate($suspectedTreatmentFailureLastVLDateYear);
+		$suspectedTreatmentFailureValue=validate($suspectedTreatmentFailureValue);
+		$suspectedTreatmentFailureSampleTypeID=validate($suspectedTreatmentFailureSampleTypeID);
+		$suspectedTreatmentFailureLastVLDate=0;
+		$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
+	}
+	
+	//validate data
 	$error=0;
-	$error=checkFormFields("Gender::$gender Form_Number::$formNumber Facility_Name::$facilityID Sample_Type::$sampleTypeID Current_Regimen::$currentRegimenID Treatment_Status::$treatmentStatusID Viral_Load_Testing::$viralLoadTestingID Pregnancy_Status::$pregnant Breastfeeding_Status::$breastfeeding Viral_Load_Testing::$viralLoadTestingID Whether_Patient_has_been_on_Treatment_for_last_6_months::$treatmentLast6Months");
+	$error=checkFormFields("Form_Number::$formNumber Facility_Name::$facilityID Sample_Type::$sampleTypeID Current_Regimen::$currentRegimenID Treatment_Status::$treatmentStatusID Viral_Load_Testing::$viralLoadTestingID Pregnancy_Status::$pregnant Breastfeeding_Status::$breastfeeding Viral_Load_Testing::$viralLoadTestingID Whether_Patient_has_been_on_Treatment_for_last_6_months::$treatmentLast6Months");
 	
 	//to be edited: ensure lrCategory, lrEnvelopeNumber and lrNumericID are unique if supplied
 	if($lrCategory && $lrEnvelopeNumber && $lrEnvelopeNumber!="Envelope #" && $lrNumericID) {
@@ -128,32 +117,10 @@ if($saveChanges) {
 		$error.="<br /><strong>Invalid Form Number '$formNumber'.</strong><br />The Form Number <strong>$formNumber</strong> does not exist in the list of valid Form Numbers.<br /> Kindly input this record with a valid Form Number.<br />";
 	}
 
+
 	//ensure facility is valid
 	if(!getDetailedTableInfo2("vl_facilities","id='$facilityID'","id")) {
 		$error.="<br /><strong>Incorrect Facility '$facilityID'.</strong><br />Kindly select an existing Facility from the list or Request an Administrator to first add this Facility '$facilityID' to the System's Database before Proceeding.<br />";
-	}
-
-	//is both ART and Other ID Number are missing
-	if(!$artNumber && !$otherID) {
-		$error.="<br /><strong>ART Number is Missing</strong><br />Kindly provide an ART Number<br />";
-	}
-	
-	//date of birth missing?
-	/* 7/Sept/15
-	* Request from vbigira@clintonhealthaccess.org
-	* Just got another urgent request from CPHL: They would like the VL database to have an additional entry for patients 
-	* whose date of birth or age is not given by the facility. This was initially a 'must-have' option but with massive 
-	* numbers of forms returning without this information, they would like to have the option of leaving it as a "Left blank". 
-	* This can be put after the age variable.
-	if(!$dateOfBirthDay || !$dateOfBirthMonth || !$dateOfBirthYear) {
-		$error.="<br /><strong>Date of Birth Missing</strong><br />Kindly provide the Date of Birth<br />";
-	}
-	*/
-	
-	//is both date of birth and age in years/months missing?
-	$dateOfBirth=0;
-	if($dateOfBirthYear && $dateOfBirthMonth && $dateOfBirthDay) {
-		$dateOfBirth="$dateOfBirthYear-$dateOfBirthMonth-$dateOfBirthDay";
 	}
 
 	//concatenations
@@ -196,28 +163,13 @@ if($saveChanges) {
 		}
 	}
 
-	//is gender male and pregnancy set to yes?
-	if($gender=="Male" && $pregnant=="Yes") {
-		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported as being Pregnant.<br />";
-	}
-
-	//is gender male and breastfeeding set to yes?
-	if($gender=="Male" && $breastfeeding=="Yes") {
-		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported as Breastfeeding.<br />";
-	}
-
-	//is gender male and pregnancy set to yes?
-	if($gender=="Male" && $treatmentInitiationID==getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='PMTCT/Option B+' limit 1","id")) {
-		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported with Treatment Initiation as PMTCT/Option B+.<br />";
-	}
-
 	//input data
 	if(!$error) {
 		//log changes
 		logTableChange("vl_samples","lrCategory",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","lrCategory"),$lrCategory);
 		logTableChange("vl_samples","lrEnvelopeNumber",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","lrEnvelopeNumber"),$lrEnvelopeNumber);
 		logTableChange("vl_samples","lrNumericID",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","lrNumericID"),$lrNumericID);
-
+		
 		logTableChange("vl_samples","formNumber",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","formNumber"),$formNumber);
 		logTableChange("vl_samples","districtID",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","districtID"),$districtID);
 		logTableChange("vl_samples","hubID",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","hubID"),$hubID);
@@ -258,7 +210,7 @@ if($saveChanges) {
 						lrCategory='$lrCategory',
 						lrEnvelopeNumber='$lrEnvelopeNumber',
 						lrNumericID='$lrNumericID',
-
+						
 						formNumber='$formNumber',
 						districtID='$districtID',
 						hubID='$hubID',
@@ -299,27 +251,6 @@ if($saveChanges) {
 						where 
 						id='$modify'");
 
-		//log changes
-		logTableChange("vl_patients","artNumber",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","artNumber"),$artNumber);
-		logTableChange("vl_patients","otherID",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","otherID"),$otherID);
-		logTableChange("vl_patients","gender",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","gender"),$gender);
-		logTableChange("vl_patients","dateOfBirth",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","dateOfBirth"),$dateOfBirth);
-		//update patient information
-		mysqlquery("update vl_patients set 
-						artNumber='$artNumber',
-						otherID='$otherID', 
-						gender='$gender',
-						dateOfBirth='$dateOfBirth' 
-						where 
-						id='$patientID'");
-
-		//log patient phone number, if unique
-		if($patientPhone && !getDetailedTableInfo2("vl_patients_phone","patientID='$patientID' and phone='$patientPhone' limit 1","id")) {
-			mysqlquery("insert into vl_patients_phone 
-							(patientID,phone,created,createdby) 
-							values 
-							('$patientID','$patientPhone','$datetime','$trailSessionUser')");
-		}
 		//redirect to home with updates on the tracking number
 		go("/samples/modified/");
 	}
@@ -336,7 +267,7 @@ if($saveChanges) {
 
 	$formNumber=0;
 	$formNumber=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","formNumber");
-
+	
 	$districtID=0;
 	$districtID=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","districtID");
 	
@@ -454,22 +385,6 @@ if($saveChanges) {
 	
 	$suspectedTreatmentFailureSampleTypeID=0;
 	$suspectedTreatmentFailureSampleTypeID=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","suspectedTreatmentFailureSampleTypeID");
-
-	//prepopulate patients
-	$artNumber=0;
-	$artNumber=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");
-	
-	$otherID=0;
-	$otherID=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","otherID");
-	
-	$gender=0;
-	$gender=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","gender");
-	
-	$dateOfBirth=0;
-	$dateOfBirth=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","dateOfBirth");
-
-	$patientPhone=0;
-	$patientPhone=getDetailedTableInfo2("vl_patients_phone","patientID='$patientID' order by created desc limit 1","phone");
 }
 ?>
 <script Language="JavaScript" Type="text/javascript">
@@ -511,13 +426,11 @@ function validate(samples) {
 		document.samples.gender.focus();
 		return (false);
 	}
-	/*
 	if((!document.samples.dateOfBirthDay.value || !document.samples.dateOfBirthMonth.value || !document.samples.dateOfBirthYear.value) && (!document.samples.dateOfBirthAge.value || !document.samples.dateOfBirthIn.value)) {
 		alert('Missing Mandatory Field: Date of Birth or Patient Age');
 		document.samples.dateOfBirthDay.focus();
 		return (false);
 	}
-	*/
 	if(!document.samples.collectionDateDay.value || !document.samples.collectionDateMonth.value || !document.samples.collectionDateYear.value) {
 		alert('Missing Mandatory Field: Sample Collection Date');
 		document.samples.collectionDateDay.focus();
@@ -580,14 +493,6 @@ function validate(samples) {
 		alert('Possible Error: Gender is indicated as Male, Patient should not be reported as Pregnant.');
 		return (false);
 	}
-	if(document.samples.gender.value=="Male" && document.samples.breastfeeding.value=="Yes") {
-		alert('Possible Error: Gender is indicated as Male, Patient should not be reported as Breastfeeding.');
-		return (false);
-	}
-	if(document.samples.gender.value=="Male" && document.samples.treatmentInitiationID.value=="<?=getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='PMTCT/Option B+' limit 1","id")?>") {
-		alert('Possible Error: Gender is indicated as Male, Patient should not be reported with Treatment Initiation as PMTCT/Option B+.');
-		return (false);
-	}
 	return (true);
 }
 
@@ -648,7 +553,9 @@ function selectVLTesting(theField) {
 }
 //-->
 </script>
+<? //if(!getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")) { ?>
 <form name="samples" method="post" action="/samples/find.and.edit/" onsubmit="return validate(this)">
+<? //} ?>
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>
@@ -666,8 +573,19 @@ function selectVLTesting(theField) {
             </tr>
             <? } ?>
             <tr>
-              <td class="toplinks" style="padding:0px 0px 10px 0px"><a class="toplinks" href="/dashboard/">HOME</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="toplinks" href="/verify/">VERIFY SAMPLES</a></td>
+              <td class="toplinks" style="padding:0px 0px 10px 0px"><a class="toplinks" href="/dashboard/">HOME</a>&nbsp;&nbsp;&nbsp;&nbsp;<a class="toplinks" href="/samples/">SAMPLES</a></td>
             </tr>
+            <? //if(getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")) { ?>
+            <!--
+            <tr>
+              <td class="vl_error">
+              	<div>This Sample's Status was changed to <strong><?=getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")?></strong> on <strong><?=getFormattedDate(getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","created"))?></strong> by <strong><?=getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","createdby")?></strong></div>
+                <div style="padding:3px 0px 0px 0px" class="vls_grey">This sample can therefore no longer be modified!</div>
+                <div style="padding:1px 0px 0px 0px" class="vls_grey"><a href="#" onclick="iDisplayMessage('/verify/status/<?=$modify?>/<?=getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")?>/')">Click to View <?=getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")?> Details!</a></div>
+              </td>
+            </tr>
+            -->
+            <? //} ?>
             <tr>
               <td>&nbsp;</td>
             </tr>
@@ -836,7 +754,7 @@ function selectVLTesting(theField) {
 												} else {
 													echo "<option value=\"".getFormattedDateYear($datetime)."\" selected=\"selected\">".getFormattedDateYear($datetime)."</option>"; 
 												}
-                                                for($j=(getFormattedDateYear($datetime)-1);$j>=(getCurrentYear()-10);$j--) {
+                                                for($j=(getFormattedDateYear($datetime));$j>=(getCurrentYear()-10);$j--) {
                                                     echo "<option value=\"$j\">$j</option>";
                                                 }
                                                 ?>
@@ -893,6 +811,7 @@ function selectVLTesting(theField) {
                                                 for($j=getFormattedDateYear($datetime);$j>=2014;$j--) {
                                                     echo "<option value=\"$j\">$j</option>";
                                                 }
+
                                                 ?>
                                           </select></td>
                                         </tr>
@@ -910,6 +829,7 @@ function selectVLTesting(theField) {
 									echo "<option value=\"$sampleTypeID\" selected=\"selected\">".getDetailedTableInfo2("vl_appendix_sampletype","id='$sampleTypeID' limit 1","appendix")."</option>";
 								} else {
 									echo "<option value=\"\" selected=\"selected\">Select Sample Type</option>";
+
 								}
 								if(mysqlnumrows($query)) {
 									while($q=mysqlfetcharray($query)) {
@@ -921,104 +841,6 @@ function selectVLTesting(theField) {
                               </td>
                         </tr>
                       </table>
-                        </div>
-                  </fieldset>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                  <fieldset style="width: 100%">
-            <legend><strong>PATIENT INFORMATION</strong></legend>
-                        <div style="padding:5px 0px 0px 0px">
-                          <table width="100%" border="0" class="vl">
-                            <tr>
-                              <td width="20%">ART&nbsp;Number&nbsp;<font class="vl_red">*</font></td>
-                              <td width="80%"><input type="text" name="artNumber" id="artNumber" value="<?=$artNumber?>" class="search_pre" size="25" maxlength="20" /></td>
-                            </tr>
-                            <tr>
-                              <td>Other&nbsp;ID</td>
-                              <td><input type="text" name="otherID" id="otherID" value="<?=$otherID?>" class="search_pre" size="25" maxlength="50" /></td>
-                            </tr>
-                            <tr>
-                              <td>Gender&nbsp;<font class="vl_red">*</font></td>
-                              <td>
-								<select name="gender" id="gender" class="search" onchange="checkGender(this)">
-                                	<?
-									if($gender) {
-										echo "<option value=\"$gender\" selected=\"selected\">$gender</option>";
-									} else {
-										echo "<option value=\"\" selected=\"selected\">Select Gender</option>";
-									}
-									?>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Left Blank">Left Blank</option>
-                                </select>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Date&nbsp;of&nbsp;Birth</td>
-                              <td>
-                                  <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search">
-                                          <?
-										  	if($dateOfBirth) {
-												echo "<option value=\"".getFormattedDateDay($dateOfBirth)."\" selected=\"selected\">".getFormattedDateDay($dateOfBirth)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search">
-                                          <? 
-										  	if($dateOfBirth) {
-												echo "<option value=\"".getFormattedDateMonth($dateOfBirth)."\" selected=\"selected\">".getFormattedDateMonthname($dateOfBirth)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search">
-                                          		<?
-												if($dateOfBirth) {
-													echo "<option value=\"".getFormattedDateYear($dateOfBirth)."\" selected=\"selected\">".getFormattedDateYear($dateOfBirth)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-                                                for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-100);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                        </tr>
-                                    </table>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Patient&nbsp;Phone</td>
-                              <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><input type="text" name="patientPhone" id="patientPhone" value="<?=$patientPhone?>" class="search_pre" size="15" maxlength="20" /></td>
-                                        </tr>
-                                    </table></td>
-                            </tr>
-                          </table>
                         </div>
                   </fieldset>
                 </td>
@@ -1555,15 +1377,19 @@ function selectVLTesting(theField) {
                 </fieldset>
               </td>
             </tr>
+            <? //if(!getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")) { ?>
             <tr>
               <td style="padding:10px 0px 0px 0px">
-                <input type="hidden" name="modify" id="modify" value="<?=validate($modify)?>" />
-                <input type="hidden" name="sample" id="sample" value="<?=validate($sample)?>" />
-				<input type="submit" name="saveChanges" id="saveChanges" class="button" value="  Save Changes  " />
+              	<input type="hidden" name="modify" id="modify" value="<?=validate($modify)?>" />
+              	<input type="hidden" name="sample" id="sample" value="<?=validate($sample)?>" />
+                <input type="submit" name="saveChanges" id="saveChanges" class="button" value="  Save Changes  " />
               </td>
             </tr>
+            <? //} ?>
             <tr>
-	            <td style="padding:20px 0px 0px 0px"><a href="/verify/">Return to Samples</a> :: <a href="/dashboard/">Return to Dashboard</a></td>
+	            <td style="padding:20px 0px 0px 0px"><a href="/samples/">Return to Samples</a> :: <a href="/dashboard/">Return to Dashboard</a></td>
             </tr>
           </table>
+<? //if(!getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")) { ?>
 </form>
+<? //} ?>

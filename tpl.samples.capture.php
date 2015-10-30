@@ -198,6 +198,16 @@ if($saveSample) {
 		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported as being Pregnant.<br />";
 	}
 
+	//is gender male and breastfeeding set to yes?
+	if($gender=="Male" && $breastfeeding=="Yes") {
+		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported as Breastfeeding.<br />";
+	}
+
+	//is gender male and pregnancy set to yes?
+	if($gender=="Male" && $treatmentInitiationID==getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='PMTCT/Option B+' limit 1","id")) {
+		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported with Treatment Initiation as PMTCT/Option B+.<br />";
+	}
+
 	//concatenations
 	if($collectionDateYear && $collectionDateMonth && $collectionDateDay) {
 		$collectionDate=0;
@@ -451,6 +461,14 @@ function validate(samples) {
 	//logical
 	if(document.samples.gender.value=="Male" && document.samples.pregnant.value=="Yes") {
 		alert('Possible Error: Gender is indicated as Male, Patient should not be reported as Pregnant.');
+		return (false);
+	}
+	if(document.samples.gender.value=="Male" && document.samples.breastfeeding.value=="Yes") {
+		alert('Possible Error: Gender is indicated as Male, Patient should not be reported as Breastfeeding.');
+		return (false);
+	}
+	if(document.samples.gender.value=="Male" && document.samples.treatmentInitiationID.value=="<?=getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='PMTCT/Option B+' limit 1","id")?>") {
+		alert('Possible Error: Gender is indicated as Male, Patient should not be reported with Treatment Initiation as PMTCT/Option B+.');
 		return (false);
 	}
 	return (true);
