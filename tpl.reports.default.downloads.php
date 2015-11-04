@@ -24,7 +24,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                     <div style="padding:0px 0px 5px 2px">Cumulative Number of Samples Received</div>
 					<script Language="JavaScript" Type="text/javascript">
                     <!--
-                    function checkForm(searchForm) {
+                    function checkFormMF(searchForm) {
                         if(document.pressed == '   Download Excel   ') {
                             document.modifyForm.action ="/download/samples.received.excel/";
                         } else if(document.pressed == '   Download CSV   ') {
@@ -34,7 +34,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                     }
                     //-->
                     </script>
-                    <form name="modifyForm" method="post" action="/download/samples.received.excel/" onsubmit="return checkForm(this)">
+                    <form name="modifyForm" method="post" action="/download/samples.received.excel/" onsubmit="return checkFormMF(this)">
                         <table width="100%" border="0" class="nms">
                           <tr>
                             <td width="5%">From:</td>
@@ -144,7 +144,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                     <div style="padding:0px 0px 5px 2px">ViralLoad Books Allocated to Facility</div>
 					<script Language="JavaScript" Type="text/javascript">
                     <!--
-                    function checkForm(searchForm) {
+                    function checkFormBF(searchForm) {
                         if(document.pressed == '   Download Excel   ') {
                             document.vlBooksForm.action ="/download/clinical.request.forms.excel/";
                         } else if(document.pressed == '   Download CSV   ') {
@@ -154,7 +154,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                     }
                     //-->
                     </script>
-                    <form name="vlBooksForm" method="post" action="/download/clinical.request.forms.excel/" onsubmit="return checkForm(this)">
+                    <form name="vlBooksForm" method="post" action="/download/clinical.request.forms.excel/" onsubmit="return checkFormBF(this)">
                         <table width="100%" border="0" class="nms">
                           <tr>
                             <td width="5%">From:</td>

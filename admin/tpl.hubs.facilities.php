@@ -49,6 +49,7 @@ function checkForm(rulesForm) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
   <tr>
     <td style="padding:0px 0px 5px 0px"><strong>Select Facilities Serviced by <?=getDetailedTableInfo2("vl_hubs","id='$hubID'","hub")?></strong></td>
+    <td style="padding:0px 0px 5px 0px"><strong>Select Facilities Serviced by <?=getDetailedTableInfo2("vl_hubs","id='$hubID'","hub")?></strong></td>
   </tr>
   <tr>
     <td style="padding:5px 0px 5px 0px"><div style="height: 400px; border: 1px solid #ccccff; overflow: auto">

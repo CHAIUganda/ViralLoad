@@ -303,7 +303,7 @@ if($reverseApprovalRejection) {
                                             echo "<td class=\"".($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")."\">$count</td>";
                                         }
                                         ?>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/')"><?=$q["formNumber"]?></a></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')"><?=$q["formNumber"]?></a></td>
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["lrNumericID"]?$q["lrCategory"].$q["lrEnvelopeNumber"]."/".$q["lrNumericID"]:"&nbsp;")?></td>
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["vlSampleID"]?></td>
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber")?></td>

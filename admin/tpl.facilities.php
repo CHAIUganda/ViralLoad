@@ -237,8 +237,11 @@ if(!$GLOBALS['vlDC']) {
                             $count+=1;
                         ?>
                             <tr>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="70%"><?=$q["facility"]?></td>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="30%"><a href="?act=facilities&districtID=<?=$districtID?>&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a> :: <a href="javascript:if(confirm('Are you sure?')) { document.location.href='?act=facilities&districtID=<?=$districtID?>&nav=configuration&option=remove&id=<?=$q["id"]?>'; }">delete</a></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="70%">
+									<div><?=$q["facility"]?></div>
+									<div class="vls_grey" style="padding:3px 0px 0px 0px">Samples from Facility: <?=number_format((float)getDetailedTableInfo2("vl_samples","facilityID='$q[id]'","count(id)","num"))?></div>
+                                </td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="30%"><a href="?act=facilities&districtID=<?=$districtID?>&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a> :: <a href="<? if(getDetailedTableInfo2("vl_samples","facilityID='$q[id]'","count(id)","num")) { echo "?act=facilitiesmigratesamples&districtID=$districtID&facilityID=$q[id]&nav=configuration"; } else { echo "javascript:if(confirm('Are you sure?')) { document.location.href='?act=facilities&districtID=$districtID&nav=configuration&option=remove&id=$q[id]'; }"; } ?>">delete</a></td>
                             </tr>
                         <? } ?>
                     </table>

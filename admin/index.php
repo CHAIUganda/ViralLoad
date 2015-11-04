@@ -170,6 +170,9 @@ switch($act) {
 	case hubs:
 		include "tpl.hubs.php"; 
 	break;
+	case facilitiesmigratesamples:
+		include "tpl.facilities.migratesamples.php"; 
+	break;
 	case facilities:
 		include "tpl.facilities.php"; 
 	break;

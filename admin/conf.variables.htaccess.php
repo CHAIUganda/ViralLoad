@@ -92,6 +92,9 @@ $error=getVariable("error");
 $export=0;
 $export=getVariable("export");
 
+$facilityID=0;
+$facilityID=getVariable("facilityID");
+
 $generalManagerName=0;
 $generalManagerName=getVariable("generalManagerName");
 
@@ -133,6 +136,9 @@ $names=getVariable("names");
 
 $nav=0;
 $nav=getVariable("nav");
+
+$newFacilityID=0;
+$newFacilityID=getVariable("newFacilityID");
 
 $nms_name=0;
 $nms_name=getVariable("nms_name");
