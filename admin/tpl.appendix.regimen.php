@@ -29,6 +29,9 @@ if(!$GLOBALS['vlDC']) {
 				//position
 				if(!$position)
 					$error.="<br>No Position provided";
+				//treatment line/status
+				if(!$treatmentLineStatusID)
+					$error.="<br>No Treatment Line/Status selected";
 
 				//process
 				if(!$error) {
@@ -36,9 +39,9 @@ if(!$GLOBALS['vlDC']) {
 					if(!isQuery("select * from vl_appendix_regimen where appendix='$appendix'")) {
 						//insert into vl_appendix_regimen
 						mysqlquery("insert into vl_appendix_regimen 
-								(appendix,position,created,createdby) 
+								(appendix,position,treatmentStatusID,created,createdby) 
 								values 
-								('$appendix','$position','$datetime','$_SESSION[VLADMIN]')");
+								('$appendix','$position','$treatmentLineStatusID','$datetime','$_SESSION[VLADMIN]')");
 						//flag
 						$added=1;
 					} else {
@@ -50,8 +53,9 @@ if(!$GLOBALS['vlDC']) {
 				//log table change
 				logTableChange("vl_appendix_regimen","appendix",$id,getDetailedTableInfo2("vl_appendix_regimen","id='$id'","appendix"),$appendix);
 				logTableChange("vl_appendix_regimen","position",$id,getDetailedTableInfo2("vl_appendix_regimen","id='$id'","position"),$position);
+				logTableChange("vl_appendix_regimen","treatmentStatusID",$id,getDetailedTableInfo2("vl_appendix_regimen","id='$id'","treatmentStatusID"),$treatmentLineStatusID);
 				//update vl_appendix_regimen
-				mysqlquery("update vl_appendix_regimen set appendix='$appendix',position='$position' where id='$id'");
+				mysqlquery("update vl_appendix_regimen set appendix='$appendix',position='$position',treatmentStatusID='$treatmentLineStatusID' where id='$id'");
 				//flag
 				$modified=1;
             break;
@@ -89,6 +93,12 @@ if(!$GLOBALS['vlDC']) {
 			if(!document.appendicesForm.position.value) {
 				alert('Missing Mandatory Field: Position');
 				document.appendicesForm.position.focus();
+				return (false);
+			}
+			//missing treatmentLineStatusID
+			if(!document.appendicesForm.treatmentLineStatusID.value || document.appendicesForm.treatmentLineStatusID.value=='0') {
+				alert('Missing Mandatory Field: Treatment Line/Status');
+				document.appendicesForm.treatmentLineStatusID.focus();
 				return (false);
 			}
             return (true);
@@ -161,6 +171,27 @@ if(!$GLOBALS['vlDC']) {
                         ?>
                         </select></td>
                 </tr>
+                <tr>
+                  <td>Treatment Line/Status</td>
+                  <td><select name="treatmentLineStatusID" id="treatmentLineStatusID" class="search">
+						<?
+						$query=0;
+						$query=mysqlquery("select * from vl_appendix_treatmentstatus order by position");
+						
+						if($id) {
+							echo "<option value=\"".getDetailedTableInfo2("vl_appendix_regimen","id='$id'","treatmentStatusID")."\" selected=\"selected\">".getDetailedTableInfo2("vl_appendix_treatmentstatus","id='".getDetailedTableInfo2("vl_appendix_regimen","id='$id'","treatmentStatusID")."'","appendix")."</option>";
+						} else {
+							echo "<option value=\"$treatmentLineStatusID\" selected=\"selected\">".getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$treatmentLineStatusID'","appendix")."</option>";
+						}
+						
+						if(mysqlnumrows($query)) {
+							while($q=mysqlfetcharray($query)) {
+								echo "<option value=\"$q[id]\">$q[appendix]</option>";
+							}
+                        }
+                        ?>
+                        </select></td>
+                </tr>
               </table></td>
             </tr>
             <tr> 
@@ -186,29 +217,31 @@ if(!$GLOBALS['vlDC']) {
         ?>
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
             <tr>
-                <td>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td class="vl_tdsub" style="padding-left:16px" width="1%"><strong>#</strong></td>
-                          <td class="vl_tdsub" style="padding-left:16px" width="99%"><strong>Appendix</strong></td>
-                        </tr>
-					</table>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding:5px 0px 5px 0px" align="center">
+                <td style="padding:5px 0px" align="center">
                 	<div style="height: 200px; border: 1px solid #ccccff; overflow: auto">
-					<table width="95%" border="0" cellspacing="0" cellpadding="0" class="vl">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                        <tr>
+                          <td class="vl_tdsub" width="1%"><strong>#</strong></td>
+                          <td class="vl_tdsub" width="60%"><strong>Appendix</strong></td>
+                          <td class="vl_tdsub" width="10%"><strong>Samples</strong></td>
+                          <td class="vl_tdsub" width="29%">&nbsp;</td>
+                        </tr>
                     	<?
                         $count=0;
                         $q=array();
                         while($q=mysqlfetcharray($query)) {
                             $count+=1;
+							$numberSamples=0;
+							$numberSamples=getDetailedTableInfo3("vl_samples","currentRegimenID='$q[id]'","count(id)","num");
                         ?>
                             <tr>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="1%"><?=$q["position"]?></td>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="70%"><?=$q["appendix"]?></td>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="29%"><a href="?act=aregimen&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a> :: <a href="javascript:if(confirm('Are you sure?')) { document.location.href='?act=aregimen&nav=configuration&option=remove&id=<?=$q["id"]?>'; }">delete</a></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["position"]?></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>">
+									<div><?=$q["appendix"]?></div>
+                                    <div class="vls_grey" style="padding:3px 0px 0px 0px"><strong>Treatment Line/Status:</strong> <?=getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$q[treatmentStatusID]'","appendix")?></div>
+                                </td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" align="center"><?=number_format((float)$numberSamples)?></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><a href="?act=aregimen&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a><? if(!$numberSamples) { ?>&nbsp;::&nbsp;<a href="javascript:if(confirm('Are you sure?')) { document.location.href='?act=aregimen&nav=configuration&option=remove&id=<?=$q["id"]?>'; }">delete</a><? } ?></td>
                             </tr>
                         <? } ?>
                     </table>

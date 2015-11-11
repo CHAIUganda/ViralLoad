@@ -186,29 +186,28 @@ if(!$GLOBALS['vlDC']) {
         ?>
         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
             <tr>
-                <td>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td class="vl_tdsub" style="padding-left:16px" width="1%"><strong>#</strong></td>
-                          <td class="vl_tdsub" style="padding-left:16px" width="99%"><strong>Appendix</strong></td>
-                        </tr>
-					</table>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding:5px 0px 5px 0px" align="center">
+                <td style="padding:5px 0px" align="center">
                 	<div style="height: 200px; border: 1px solid #ccccff; overflow: auto">
-					<table width="95%" border="0" cellspacing="0" cellpadding="0" class="vl">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                        <tr>
+                          <td class="vl_tdsub" width="1%"><strong>#</strong></td>
+                          <td class="vl_tdsub" width="60%"><strong>Appendix</strong></td>
+                          <td class="vl_tdsub" width="10%"><strong>Samples</strong></td>
+                          <td class="vl_tdsub" width="29%">&nbsp;</td>
+                        </tr>
                     	<?
                         $count=0;
                         $q=array();
                         while($q=mysqlfetcharray($query)) {
                             $count+=1;
+							$numberSamples=0;
+							$numberSamples=getDetailedTableInfo3("vl_samples","arvAdherenceID='$q[id]'","count(id)","num");
                         ?>
                             <tr>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="1%"><?=$q["position"]?></td>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="70%"><?=$q["appendix"]?></td>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="29%"><a href="?act=aarvadherence&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a> :: <a href="javascript:if(confirm('Are you sure?')) { document.location.href='?act=aarvadherence&nav=configuration&option=remove&id=<?=$q["id"]?>'; }">delete</a></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["position"]?></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["appendix"]?></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" align="center"><?=number_format((float)$numberSamples)?></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><a href="?act=aarvadherence&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a><? if(!$numberSamples) { ?>&nbsp;::&nbsp;<a href="javascript:if(confirm('Are you sure?')) { document.location.href='?act=aarvadherence&nav=configuration&option=remove&id=<?=$q["id"]?>'; }">delete</a><? } ?></td>
                             </tr>
                         <? } ?>
                     </table>

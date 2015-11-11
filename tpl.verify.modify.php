@@ -642,6 +642,30 @@ function selectVLTesting(theField) {
 		document.getElementById("vlTestingSuspectedTreatmentFailure").checked = false;
 	}
 }
+
+function matchRegimenTreatmentLine(theField) {
+	switch(theField.value) {
+		<?
+		$query=0;
+		$query=mysqlquery("select * from vl_appendix_regimen order by position");
+		if(mysqlnumrows($query)) {
+			while($q=mysqlfetcharray($query)) {
+				$varTreatmentStatus=0;
+				$varTreatmentStatus=getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$q[treatmentStatusID]' limit 1","appendix");
+				if(!$varTreatmentStatus) {
+					$varTreatmentStatus="No Patient Treatment Line Available";
+				}
+				echo "
+				case \"$q[id]\":
+					document.getElementById(\"treatmentStatusTextID\").innerHTML=\"$varTreatmentStatus\";
+					document.samples.treatmentStatusID.value=\"$q[treatmentStatusID]\";
+				break;
+				";
+			}
+		}
+		?>
+	}
+}
 //-->
 </script>
 <form name="samples" method="post" action="/verify/find.and.edit/<?=$modify?>/<?=$pg?>/" onsubmit="return validate(this)">
@@ -1102,7 +1126,7 @@ function selectVLTesting(theField) {
                             <tr>
                               <td>Current&nbsp;Regimen&nbsp;<font class="vl_red">*</font></td>
                               <td>
-								<select name="currentRegimenID" id="currentRegimenID" class="search">
+								<select name="currentRegimenID" id="currentRegimenID" class="search" onchange="matchRegimenTreatmentLine(this)">
                                 <?
 								$query=0;
 								$query=mysqlquery("select * from vl_appendix_regimen order by position");
@@ -1147,8 +1171,9 @@ function selectVLTesting(theField) {
                             </tr>
                             <tr>
                               <td>Patient&nbsp;Treatment&nbsp;Line&nbsp;<font class="vl_red">*</font></td>
-                              <td>
-								<select name="treatmentStatusID" id="treatmentStatusID" class="search">
+                              <td><div class="vls_grey" style="padding:0px 0px 4px 0px" id="treatmentStatusTextID"><?=($treatmentStatusID?getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$treatmentStatusID' limit 1","appendix"):"Select Current Regimen First")?></div><input type="hidden" name="treatmentStatusID" id="treatmentStatusID" value="<?=($treatmentStatusID?$treatmentStatusID:"")?>" />
+								<!--
+                                <select name="treatmentStatusID" id="treatmentStatusID" class="search">
                                 <?
 								$query=0;
 								$query=mysqlquery("select * from vl_appendix_treatmentstatus order by position");
@@ -1164,6 +1189,7 @@ function selectVLTesting(theField) {
 								}
 								?>
                                 </select>
+                                -->
                               </td>
                             </tr>
                             <tr>
