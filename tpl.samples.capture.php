@@ -594,6 +594,11 @@ function matchRegimenTreatmentLine(theField) {
 		?>
 	}
 }
+
+function loadArtHistory(artObject,facilityID) {
+	//load history
+	vlDC_XloadArtHistory(artObject.value,facilityID);
+}
 //-->
 </script>
 <form name="samples" method="post" action="/samples/capture/" onsubmit="return validate(this)">
@@ -663,7 +668,7 @@ function matchRegimenTreatmentLine(theField) {
                               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                   <tr>
                                     <td width="20%">
-                                        <select name="facilityID" id="facilityID" class="search" onchange="checkForHubDistrict()">
+                                        <select name="facilityID" id="facilityID" class="search" onchange="checkForHubDistrict(), loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)">
                                             <?
                                             $query=0;
                                             $query=mysqlquery("select * from vl_facilities where facility!='' order by facility");
@@ -881,20 +886,21 @@ function matchRegimenTreatmentLine(theField) {
                   <fieldset style="width: 100%">
             <legend><strong>PATIENT INFORMATION</strong></legend>
                         <div style="padding:5px 0px 0px 0px">
-                          <table width="100%" border="0" class="vl">
+                          <table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
                             <tr>
-                              <td width="20%">ART&nbsp;Number&nbsp;<font class="vl_red">*</font></td>
-                              <td width="80%"><input type="text" name="artNumber" id="artNumber" value="<?=$artNumber?>" class="search_pre" size="25" maxlength="20" /></td>
-                            </tr>
-                            <tr>
-                              <td>Other&nbsp;ID</td>
-                              <td><input type="text" name="otherID" id="otherID" value="<?=$otherID?>" class="search_pre" size="25" maxlength="50" /></td>
-                            </tr>
-                            <tr>
-                              <td>Gender&nbsp;<font class="vl_red">*</font></td>
-                              <td>
-								<select name="gender" id="gender" class="search" onchange="checkGender(this)">
-                                	<?
+                              <td width="100%"><table width="100%" border="0" class="vl">
+                                <tr>
+                                  <td width="20%">ART&nbsp;Number&nbsp;<font class="vl_red">*</font></td>
+                                  <td width="80%"><input type="text" name="artNumber" id="artNumber" value="<?=$artNumber?>" class="search_pre" size="25" maxlength="20" onkeyup="return loadArtHistory(this,document.samples.facilityID.value)" /></td>
+                                </tr>
+                                <tr>
+                                  <td>Other&nbsp;ID</td>
+                                  <td><input type="text" name="otherID" id="otherID" value="<?=$otherID?>" class="search_pre" size="25" maxlength="50" /></td>
+                                </tr>
+                                <tr>
+                                  <td>Gender&nbsp;<font class="vl_red">*</font></td>
+                                  <td><select name="gender" id="gender" class="search" onchange="checkGender(this)">
+                                    <?
 									if($gender) {
 										echo "<option value=\"$gender\" selected=\"selected\">$gender</option>";
 									} else {
@@ -904,16 +910,14 @@ function matchRegimenTreatmentLine(theField) {
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Left Blank">Left Blank</option>
-                                </select>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Date&nbsp;of&nbsp;Birth</td>
-                              <td>
-                                  <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search">
-                                          <?
+                                  </select></td>
+                                </tr>
+                                <tr>
+                                  <td>Date&nbsp;of&nbsp;Birth</td>
+                                  <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                    <tr>
+                                      <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search">
+                                        <?
 										  	if($dateOfBirth) {
 												echo "<option value=\"".getFormattedDateDay($dateOfBirth)."\" selected=\"selected\">".getFormattedDateDay($dateOfBirth)."</option>";
 											} else {
@@ -923,30 +927,30 @@ function matchRegimenTreatmentLine(theField) {
                                                 echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
                                             }
                                             ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search">
-                                          <? 
+                                      </select></td>
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search">
+                                        <? 
 										  	if($dateOfBirth) {
 												echo "<option value=\"".getFormattedDateMonth($dateOfBirth)."\" selected=\"selected\">".getFormattedDateMonthname($dateOfBirth)."</option>";
 											} else {
 	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
 											}
 										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)">
-                                          		<?
+                                        <option value="01">Jan</option>
+                                        <option value="02">Feb</option>
+                                        <option value="03">Mar</option>
+                                        <option value="04">Apr</option>
+                                        <option value="05">May</option>
+                                        <option value="06">Jun</option>
+                                        <option value="07">Jul</option>
+                                        <option value="08">Aug</option>
+                                        <option value="09">Sept</option>
+                                        <option value="10">Oct</option>
+                                        <option value="11">Nov</option>
+                                        <option value="12">Dec</option>
+                                      </select></td>
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)">
+                                        <?
 												if($dateOfBirth) {
 													echo "<option value=\"".getFormattedDateYear($dateOfBirth)."\" selected=\"selected\">".getFormattedDateYear($dateOfBirth)."</option>";
 												} else {
@@ -956,10 +960,10 @@ function matchRegimenTreatmentLine(theField) {
                                                     echo "<option value=\"$j\">$j</option>";
                                                 }
                                                 ?>
-                                          </select></td>
-                                        <td style="padding:0px 5px 0px 5px">or</td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search">
-                                          		<?
+                                      </select></td>
+                                      <td style="padding:0px 5px 0px 5px">or</td>
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search">
+                                        <?
 												if($dateOfBirthAge) {
 													echo "<option value=\"$dateOfBirthAge\" selected=\"selected\">$dateOfBirthAge</option>";
 												} else {
@@ -969,29 +973,31 @@ function matchRegimenTreatmentLine(theField) {
                                                     echo "<option value=\"$j\">$j</option>";
                                                 }
                                                 ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthIn" id="dateOfBirthIn" class="search">
-                                          		<?
+                                      </select></td>
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthIn" id="dateOfBirthIn" class="search">
+                                        <?
 													if($dateOfBirthIn) {
 														echo "<option value=\"$dateOfBirthIn\" selected=\"selected\">$dateOfBirthIn</option>";
 													} else {
 														echo "<option value=\"\" selected=\"selected\">in Years or Months</option>";
 													}
 												?>
-                                                    <option value="Years">Years</option>
-                                                    <option value="Months">Months</option>
-                                          </select></td>
-                                        </tr>
-                                    </table>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Patient&nbsp;Phone</td>
-                              <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><input type="text" name="patientPhone" id="patientPhone" value="<?=$patientPhone?>" class="search_pre" size="15" maxlength="20" /></td>
-                                        </tr>
-                                    </table></td>
+                                        <option value="Years">Years</option>
+                                        <option value="Months">Months</option>
+                                      </select></td>
+                                    </tr>
+                                  </table></td>
+                                </tr>
+                                <tr>
+                                  <td>Patient&nbsp;Phone</td>
+                                  <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                    <tr>
+                                      <td><input type="text" name="patientPhone" id="patientPhone" value="<?=$patientPhone?>" class="search_pre" size="15" maxlength="20" /></td>
+                                    </tr>
+                                  </table></td>
+                                </tr>
+                              </table></td>
+                              <td id="artNumberHistoryID" style="padding:0px 0px 0px 10px">&nbsp;</td>
                             </tr>
                           </table>
                         </div>
