@@ -162,7 +162,8 @@ function validate(worksheets) {
 }
 //-->
 </script>
-<form name="worksheets" method="post" action="/worksheets/manage/modify/<?=$modify?>/" onsubmit="return validate(this)">
+<!--<form name="worksheets" method="post" action="/worksheets/manage/modify/<?=$modify?>/" onsubmit="return validate(this)">-->
+<form name="worksheets" method="post" action="/worksheets/manage/modify/<?=$modify?>/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>

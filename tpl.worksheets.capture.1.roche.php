@@ -123,7 +123,8 @@ function validate(worksheets) {
 }
 //-->
 </script>
-<form name="worksheets" method="post" action="/worksheets/capture.1.roche/" onsubmit="return validate(this)">
+<!--<form name="worksheets" method="post" action="/worksheets/capture.1.roche/" onsubmit="return validate(this)">-->
+<form name="worksheets" method="post" action="/worksheets/capture.1.roche/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>

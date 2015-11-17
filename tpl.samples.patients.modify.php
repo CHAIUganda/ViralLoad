@@ -120,7 +120,8 @@ function validate(envelopes) {
 }
 //-->
 </script>
-<form name="samples" method="post" action="/samples/manage.patients/modify/<?=$modify?>/" onsubmit="return validate(this)">
+<!--<form name="samples" method="post" action="/samples/manage.patients/modify/<?=$modify?>/" onsubmit="return validate(this)">-->
+<form name="samples" method="post" action="/samples/manage.patients/modify/<?=$modify?>/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>
@@ -173,7 +174,7 @@ function validate(envelopes) {
 									?>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
-                                    <option value="Left Blank">Left Blank</option>
+                                    <option value="Missing Gender">Missing Gender</option>
                                 </select>
                               </td>
                             </tr>

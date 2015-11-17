@@ -72,7 +72,8 @@ if($sampleReferenceNumber) {
                             }
                             //-->
                             </script>
-                              <form name="findSample" id="findSample" method="post" action="/samples/find.and.edit/" onsubmit="return checkForm(this)">
+                              <!--<form name="findSample" id="findSample" method="post" action="/samples/find.and.edit/" onsubmit="return checkForm(this)">-->
+                              <form name="findSample" id="findSample" method="post" action="/samples/find.and.edit/">
                               <table width="40%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                 <tr>
                                   <td width="5%" style="padding:0px 5px 0px 0px"><input type="text" name="sample" id="sample" value="Search by Form Number" class="search_pre" size="20" maxlength="100" onfocus="if(value=='Search by Form Number') {value=''}" onblur="if(value=='') {value='Search by Form Number'}" /></td>

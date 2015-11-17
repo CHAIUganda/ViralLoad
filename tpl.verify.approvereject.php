@@ -76,7 +76,8 @@ function checkOutcome() {
 }
 //-->
 </script>
-<form name="samples" method="post" action="/verify/approve.reject/<?=$id?>/<?=$pg?>/" onsubmit="return validate(this)">
+<!--<form name="samples" method="post" action="/verify/approve.reject/<?=$id?>/<?=$pg?>/" onsubmit="return validate(this)">-->
+<form name="samples" method="post" action="/verify/approve.reject/<?=$id?>/<?=$pg?>/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>

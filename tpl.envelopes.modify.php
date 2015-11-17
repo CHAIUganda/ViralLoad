@@ -93,7 +93,8 @@ function validate(envelopes) {
 }
 //-->
 </script>
-<form name="envelopes" method="post" action="/envelopes/manage/modify/<?=$modify?>/" onsubmit="return validate(this)">
+<!--<form name="envelopes" method="post" action="/envelopes/manage/modify/<?=$modify?>/" onsubmit="return validate(this)">-->
+<form name="envelopes" method="post" action="/envelopes/manage/modify/<?=$modify?>/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>

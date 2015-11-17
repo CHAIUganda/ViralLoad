@@ -236,7 +236,8 @@ function validate(results) {
 }
 //-->
 </script>
-<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/" onsubmit="return validate(this)">
+<!--<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/" onsubmit="return validate(this)">-->
+<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/">
 <table width="100%" border="0" class="vl">
 			<? if(!$resultsRoche && !$resultsAbbott) { ?>
             <tr>

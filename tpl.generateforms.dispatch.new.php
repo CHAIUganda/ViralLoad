@@ -83,7 +83,8 @@ function validate(envelopes) {
 }
 //-->
 </script>
-<form name="envelopes" method="post" action="/generateforms/dispatch/new/" onsubmit="return validate(this)">
+<!--<form name="envelopes" method="post" action="/generateforms/dispatch/new/" onsubmit="return validate(this)">-->
+<form name="envelopes" method="post" action="/generateforms/dispatch/new/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>

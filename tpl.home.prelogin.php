@@ -78,7 +78,8 @@ if($login && $email && $pass) {
                 }
                 //-->
 				</script>
-                      <form action="/dashboard/" method="post" name="login" id="login" onsubmit="return check(this)">
+                      <!--<form action="/dashboard/" method="post" name="login" id="login" onsubmit="return check(this)">-->
+                      <form action="/dashboard/" method="post" name="login" id="login">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td style="padding:20px 20px 40px 20px"><table width="100%" border="0" cellspacing="0" cellpadding="0">

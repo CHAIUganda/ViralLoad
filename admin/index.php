@@ -148,6 +148,10 @@ switch($act) {
 	break;
 	//END APPENDICES
 	
+	//DATA MANAGEMENT
+	case uploaddata:
+		include "tpl.datamanagement.uploaddata.php"; 
+	break;
 	//START CONFIGURATION
 	case linkPatient:
 		include "tpl.samples.linkpatient.php"; 

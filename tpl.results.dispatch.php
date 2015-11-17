@@ -135,7 +135,8 @@ function validate(dispatchForm) {
 }
 //-->
 </script>
-<form name="dispatchForm" method="post" action="/results/dispatch/<?=($sampleID && $worksheetUniqueID?"$sampleID/$worksheetUniqueID/":"")?>" onsubmit="return validate(this)">
+<!--<form name="dispatchForm" method="post" action="/results/dispatch/<?=($sampleID && $worksheetUniqueID?"$sampleID/$worksheetUniqueID/":"")?>" onsubmit="return validate(this)">-->
+<form name="dispatchForm" method="post" action="/results/dispatch/<?=($sampleID && $worksheetUniqueID?"$sampleID/$worksheetUniqueID/":"")?>">
 <table width="100%" border="0" class="vl">
 			<? if($error) { ?>
             <tr>

@@ -171,7 +171,8 @@ if($reverseApprovalRejection) {
         }
         //-->
         </script>
-        <form name="results" method="post" action="/verify/reverse/" onsubmit="return validate(this)">
+        <!--<form name="results" method="post" action="/verify/reverse/" onsubmit="return validate(this)">-->
+        <form name="results" method="post" action="/verify/reverse/">
         <? } ?>
             <table width="100%" border="0" cellpadding="0" cellspacing="0" class="vl">
                 <?

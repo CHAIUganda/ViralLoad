@@ -34,7 +34,8 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                     }
                     //-->
                     </script>
-                    <form name="modifyForm" method="post" action="/download/samples.received.excel/" onsubmit="return checkFormMF(this)">
+                    <!--<form name="modifyForm" method="post" action="/download/samples.received.excel/" onsubmit="return checkFormMF(this)">-->
+                    <form name="modifyForm" method="post" action="/download/samples.received.excel/">
                         <table width="100%" border="0" class="nms">
                           <tr>
                             <td width="5%">From:</td>

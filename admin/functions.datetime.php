@@ -438,4 +438,14 @@ function excelDate2mysqlDate($excelDate) {
 	//return
 	return date('Ymd',$timestamp);
 }
+
+/**
+* function to take a given date in the form of mm/dd/yyyy from the excel template and return it as yyyymmdd
+* @param: $date
+*/
+function getFormattedDateCRBExcel($date) {
+	$datearray=array();
+	$datearray=explode("/",$date);
+	return "$datearray[2]-$datearray[1]-$datearray[0]";
+}
 ?>

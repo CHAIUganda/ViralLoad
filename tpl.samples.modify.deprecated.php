@@ -554,7 +554,8 @@ function selectVLTesting(theField) {
 //-->
 </script>
 <? //if(!getDetailedTableInfo2("vl_samples_verify","sampleID='$modify'","outcome")) { ?>
-<form name="samples" method="post" action="/samples/find.and.edit/" onsubmit="return validate(this)">
+<!--<form name="samples" method="post" action="/samples/find.and.edit/" onsubmit="return validate(this)">-->
+<form name="samples" method="post" action="/samples/find.and.edit/">
 <? //} ?>
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>

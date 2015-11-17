@@ -49,7 +49,6 @@ function checkForm(rulesForm) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
   <tr>
     <td style="padding:0px 0px 5px 0px"><strong>Select Facilities Serviced by <?=getDetailedTableInfo2("vl_hubs","id='$hubID'","hub")?></strong></td>
-    <td style="padding:0px 0px 5px 0px"><strong>Select Facilities Serviced by <?=getDetailedTableInfo2("vl_hubs","id='$hubID'","hub")?></strong></td>
   </tr>
   <tr>
     <td style="padding:5px 0px 5px 0px"><div style="height: 400px; border: 1px solid #ccccff; overflow: auto">
@@ -82,7 +81,7 @@ function checkForm(rulesForm) {
 			$count+=1;
 		?>
         <tr>
-          <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><input name="commitRecord[]" type="checkbox" id="commitRecord[]" value="<?="$q[id]"?>" <?=($fcsNumber?"checked=\"checked\"":"")?>></td>
+          <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><input name="commitRecord[]" type="checkbox" id="commitRecord[]" value="<?="$q[id]"?>" <?=($q["hubID"]==$hubID?"checked=\"checked\"":"")?>></td>
           <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>">
 		  <div><?=$q["facility"]?></div>
           <? if($q["hubID"]) { ?><div class="vls_grey" style="padding:3px 0px">Currently Serviced by: <?=getDetailedTableInfo2("vl_hubs","id='$q[hubID]'","hub")?></div><? } ?>

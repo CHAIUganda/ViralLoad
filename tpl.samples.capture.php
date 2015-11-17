@@ -417,7 +417,7 @@ function validate(samples) {
 		return (false);
 	}
 	if(!document.samples.treatmentStatusID.value) {
-		alert('Missing Mandatory Field: Treatment Status');
+		alert('Missing Mandatory Field: Patient Treatment Line');
 		document.samples.treatmentStatusID.focus();
 		return (false);
 	}
@@ -601,7 +601,8 @@ function loadArtHistory(artObject,facilityID) {
 }
 //-->
 </script>
-<form name="samples" method="post" action="/samples/capture/" onsubmit="return validate(this)">
+<!--<form name="samples" method="post" action="/samples/capture/" onsubmit="return validate(this)">-->
+<form name="samples" method="post" action="/samples/capture/">
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>
@@ -909,7 +910,7 @@ function loadArtHistory(artObject,facilityID) {
 									?>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
-                                    <option value="Left Blank">Left Blank</option>
+                                    <option value="Missing Gender">Missing Gender</option>
                                   </select></td>
                                 </tr>
                                 <tr>
