@@ -510,9 +510,9 @@ function checkForHubDistrict(){
 	
 	document.getElementById("checkHubDistrictID").innerHTML="loading hub and district ...";
 	//get hub
-	vlDC_XloadHub('samples','checkHubDistrictID','hubID',theFacilityID);
+	vlDC_XloadHub('samples','checkHubDistrictID','hubID','hubTextID',theFacilityID);
 	//get district
-	vlDC_XloadDistrict('samples','checkHubDistrictID','districtID',theFacilityID);
+	vlDC_XloadDistrict('samples','checkHubDistrictID','districtID','districtTextID',theFacilityID);
 }
 
 function checkMonthDay(theField) {
@@ -697,7 +697,8 @@ function loadArtHistory(artObject,facilityID) {
                         </tr>
                         <tr>
                           <td>Hub</td>
-                          <td>
+                          <td><div class="vls_grey" style="padding:5px 0px" id="hubTextID"><?=($hubID?getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub"):"Select Facility First")?></div><input type="hidden" name="hubID" id="hubID" value="<?=($hubID?$hubID:"")?>" />
+                          <!--
                           <select name="hubID" id="hubID" class="search">
                                 <?
 								$query=0;
@@ -714,11 +715,13 @@ function loadArtHistory(artObject,facilityID) {
 								}
 								?>
                                 </select>
+                          -->
                           </td>
                         </tr>
                         <tr>
                           <td>District</td>
-                          <td>
+                          <td><div class="vls_grey" style="padding:5px 0px" id="districtTextID"><?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Select Facility First")?></div><input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />
+                          <!--
                           <select name="districtID" id="districtID" class="search">
                                 <?
 								$query=0;
@@ -735,6 +738,7 @@ function loadArtHistory(artObject,facilityID) {
 								}
 								?>
                                 </select>
+                           -->
                           </td>
                         </tr>
                       </table>

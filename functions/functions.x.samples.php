@@ -11,14 +11,19 @@ if(!$GLOBALS['vlDC']) {
 /**
 * update application number
 */
-function XloadHub($formname,$updateFieldID,$hubFieldID,$facilityID) {
+function XloadHub($formname,$updateFieldID,$hubFieldID,$hubTextID,$facilityID) {
 	$facilityID=validate($facilityID);
 	$objResponse = new vlDCResponse();
 	$hubID=0;
 	$hubID=getDetailedTableInfo2("vl_facilities","id='$facilityID'","hubID");
 	if($hubID) {
+		//hub name
+		$hubName=0;
+		$hubName=getDetailedTableInfo2("vl_hubs","id='$hubID'","hub");
+
 		$objResponse->addAssign("$updateFieldID","innerHTML","");
 		$objResponse->addScript("document.$formname.$hubFieldID.value='$hubID'");
+		$objResponse->addAssign("$hubTextID","innerHTML",$hubName);
 	} else {
 		$objResponse->addAssign("$updateFieldID","innerHTML","");
 	}
@@ -28,14 +33,19 @@ function XloadHub($formname,$updateFieldID,$hubFieldID,$facilityID) {
 /**
 * update employer
 */
-function XloadDistrict($formname,$updateFieldID,$districtFieldID,$facilityID) {
+function XloadDistrict($formname,$updateFieldID,$districtFieldID,$districtTextID,$facilityID) {
 	$facilityID=validate($facilityID);
 	$objResponse = new vlDCResponse();
 	$districtID=0;
 	$districtID=getDetailedTableInfo2("vl_facilities","id='$facilityID'","districtID");
 	if($districtID) {
+		//district name
+		$districtName=0;
+		$districtName=getDetailedTableInfo2("vl_districts","id='$districtID'","district");
+
 		$objResponse->addAssign("$updateFieldID","innerHTML","");
 		$objResponse->addScript("document.$formname.$districtFieldID.value='$districtID'");
+		$objResponse->addAssign("$districtTextID","innerHTML",$districtName);
 	} else {
 		$objResponse->addAssign("$updateFieldID","innerHTML","");
 	}

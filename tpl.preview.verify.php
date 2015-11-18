@@ -329,7 +329,7 @@ $createdby=getDetailedTableInfo2("vl_samples","id='$id' limit 1","createdby");
                               <td style="padding:4px 0px">Value: <?=$routineMonitoringValue?></td>
                             </tr>
                             <tr>
-                              <td style="padding:4px 0px">Sample&nbsp;Type: <?=getDetailedTableInfo2("vl_appendix_sampletype","id='$sampleTypeID' limit 1","appendix")?></td>
+                              <td style="padding:4px 0px">Sample&nbsp;Type: <?=getDetailedTableInfo2("vl_appendix_sampletype","id='$routineMonitoringSampleTypeID' limit 1","appendix")?></td>
                             </tr>
                             <? } ?>
                         	<? if($vlTestingRepeatTesting) { ?>
@@ -357,7 +357,7 @@ $createdby=getDetailedTableInfo2("vl_samples","id='$id' limit 1","createdby");
                               <td style="padding:4px 0px">Value: <?=$suspectedTreatmentFailureLastVLDate?></td>
                             </tr>
                             <tr>
-                              <td style="padding:4px 0px">Sample&nbsp;Type: <?=getDetailedTableInfo2("vl_appendix_sampletype","id='$sampleTypeID' limit 1","appendix")?></td>
+                              <td style="padding:4px 0px">Sample&nbsp;Type: <?=getDetailedTableInfo2("vl_appendix_sampletype","id='$suspectedTreatmentFailureSampleTypeID' limit 1","appendix")?></td>
                             </tr>
                             <? } ?>
 						</table>

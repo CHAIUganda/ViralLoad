@@ -168,6 +168,12 @@ switch($act) {
 	case worksheetSamples:
 		include "tpl.worksheets.samples.php"; 
 	break;
+	case ipsfacilities:
+		include "tpl.ips.facilities.php"; 
+	break;
+	case ips:
+		include "tpl.ips.php"; 
+	break;
 	case hubsfacilities:
 		include "tpl.hubs.facilities.php"; 
 	break;

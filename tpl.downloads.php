@@ -40,34 +40,32 @@ switch($options) {
 			//insert the headers
 			mysqlquery("insert into vl_output_samplescsv 
 							(FormNumber,LocationID,SampleID,Facility,
-								District,Hub,DateofCollection,SampleType,
-								PatientART,PatientOtherID,Gender,Age,
-								PhoneNumber,HasPatientBeenontreatment,DateofTreatmentInitiation,CurrentRegimen,
-								IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,IsPatientPregnant,
-								ANCNumber,IsPatientBreastfeeding,PatienthasActiveTB,IfYesaretheyon,
-								ARVAdherence,RoutineMonitoring,LastViralLoadDate1,LastViralLoadValue1,
-								SampleType1,RepeatViralLoadTest,LastViralLoadDate2,LastViralLoadValue2,
-								SampleType2,SuspectedTreatmentFailure,LastViralLoadDate3,LastViralLoadValue3,
-								SampleType3,Tested,LastWorksheet,MachineType,
-								VLResult,DateTimeApproved,DateTimeRejected,
-								RejectionReason,DateTimeAddedtoWorksheet,
-								DateTimeLatestResultsUploaded,DateTimeResultsPrinted,
+								District,Hub,IP,DateofCollection,
+								SampleType,PatientART,PatientOtherID,Gender,
+								Age,PhoneNumber,HasPatientBeenontreatment,DateofTreatmentInitiation,
+								CurrentRegimen,IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,
+								IsPatientPregnant,ANCNumber,IsPatientBreastfeeding,PatienthasActiveTB,
+								IfYesaretheyon,ARVAdherence,RoutineMonitoring,LastViralLoadDate1,
+								LastViralLoadValue1,SampleType1,RepeatViralLoadTest,LastViralLoadDate2,
+								LastViralLoadValue2,SampleType2,SuspectedTreatmentFailure,LastViralLoadDate3,
+								LastViralLoadValue3,SampleType3,Tested,LastWorksheet,
+								MachineType,VLResult,DateTimeApproved,DateTimeRejected,
+								RejectionReason,DateTimeAddedtoWorksheet,DateTimeLatestResultsUploaded,DateTimeResultsPrinted,
 								DateReceivedatCPHL,DateTimeFirstPrinted,DateTimeSamplewasCaptured) 
 							values 
 							('Form Number','Location ID','Sample ID','Facility',
-								'District','Hub','Date of Collection','Sample Type',
-								'Patient ART','Patient OtherID','Gender','Age (Years)',
-								'Phone Number','Has Patient Been on treatment for at least 6 months','Date of Treatment Initiation','Current Regimen',
-								'Indication for Treatment Initiation','Which Treatment Line is Patient on','Reason for Failure','Is Patient Pregnant',
-								'ANC Number','Is Patient Breastfeeding','Patient has Active TB','If Yes are they on',
-								'ARV Adherence','Routine Monitoring','Last Viral Load Date','Value',
-								'Sample Type','Repeat Viral Load Test after Suspected Treatment Failure adherence counseling','Last Viral Load Date','Value',
-								'Sample Type','Suspected Treatment Failure','Last Viral Load Date','Value',
-								'Sample Type','Tested','Last Worksheet','Machine Type',
-								'Result','Date/Time Approved','Date/Time Rejected',
-								'Rejection Reason','Date/Time Added to Worksheet',
-								'Date/Time Latest Results Uploaded','Date/Time Results Printed',
-								'Date Received at CPHL','Date/Time First Printed','Date/Time Sample was Captured')");
+								'District','Hub','Implementing Partner','Date of Collection',
+								'Sample Type','Patient ART','Patient OtherID','Gender',
+								'Age (Years)','Phone Number','Has Patient Been on treatment for at least 6 months','Date of Treatment Initiation',
+								'Current Regimen','Indication for Treatment Initiation','Which Treatment Line is Patient on','Reason for Failure',
+								'Is Patient Pregnant','ANC Number','Is Patient Breastfeeding','Patient has Active TB',
+								'If Yes are they on','ARV Adherence','Routine Monitoring','Last Viral Load Date',
+								'Value','Sample Type','Repeat Viral Load Test after Suspected Treatment Failure adherence counseling','Last Viral Load Date',
+								'Value','Sample Type','Suspected Treatment Failure','Last Viral Load Date',
+								'Value','Sample Type','Tested','Last Worksheet',
+								'Machine Type','Result','Date/Time Approved',
+								'Date/Time Rejected','Rejection Reason','Date/Time Added to Worksheet','Date/Time Latest Results Uploaded',
+								'Date/Time Results Printed','Date Received at CPHL','Date/Time First Printed','Date/Time Sample was Captured')");
 			//iterations
 			while($q=mysqlfetcharray($query)) {
 				//sample tested?
@@ -136,31 +134,30 @@ switch($options) {
 				//insert the data
 				mysqlquery("insert into vl_output_samplescsv 
 								(FormNumber,LocationID,SampleID,Facility,
-									District,Hub,DateofCollection,SampleType,
-									PatientART,PatientOtherID,Gender,Age,
-									PhoneNumber,HasPatientBeenontreatment,DateofTreatmentInitiation,CurrentRegimen,
-									IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,IsPatientPregnant,
-									ANCNumber,IsPatientBreastfeeding,PatienthasActiveTB,IfYesaretheyon,
-									ARVAdherence,RoutineMonitoring,LastViralLoadDate1,LastViralLoadValue1,
-									SampleType1,RepeatViralLoadTest,LastViralLoadDate2,LastViralLoadValue2,
-									SampleType2,SuspectedTreatmentFailure,LastViralLoadDate3,LastViralLoadValue3,
-									SampleType3,Tested,LastWorksheet,MachineType,
-									VLResult,DateTimeApproved,DateTimeRejected,
-									RejectionReason,DateTimeAddedtoWorksheet,
-									DateTimeLatestResultsUploaded,DateTimeResultsPrinted,
+									District,Hub,IP,DateofCollection,
+									SampleType,PatientART,PatientOtherID,Gender,
+									Age,PhoneNumber,HasPatientBeenontreatment,DateofTreatmentInitiation,
+									CurrentRegimen,IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,
+									IsPatientPregnant,ANCNumber,IsPatientBreastfeeding,PatienthasActiveTB,
+									IfYesaretheyon,ARVAdherence,RoutineMonitoring,LastViralLoadDate1,
+									LastViralLoadValue1,SampleType1,RepeatViralLoadTest,LastViralLoadDate2,
+									LastViralLoadValue2,SampleType2,SuspectedTreatmentFailure,LastViralLoadDate3,
+									LastViralLoadValue3,SampleType3,Tested,LastWorksheet,
+									MachineType,VLResult,DateTimeApproved,DateTimeRejected,
+									RejectionReason,DateTimeAddedtoWorksheet,DateTimeLatestResultsUploaded,DateTimeResultsPrinted,
 									DateReceivedatCPHL,DateTimeFirstPrinted,DateTimeSamplewasCaptured) 
 								values 
 								('$q[formNumber]','$q[lrCategory]$q[lrEnvelopeNumber]/$q[lrNumericID]','$q[vlSampleID]','".preg_replace("/,/s","",getDetailedTableInfo2("vl_facilities","id='$q[facilityID]' limit 1","facility"))."',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_districts","id='$q[districtID]' limit 1","district"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_hubs","id='$q[hubID]' limit 1","hub"))."','".getRawFormattedDateLessDay($q["collectionDate"])."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[sampleTypeID]' limit 1","appendix"))."',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","artNumber"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","otherID"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","gender"))."','".ceil(getDateDifference(getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","dateOfBirth"),$datetime)/365)."',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients_phone","patientID='$q[patientID]' order by created desc limit 1","phone"))."','$q[treatmentLast6Months]','".getRawFormattedDateLessDay($q["treatmentInitiationDate"])."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_regimen","id='$q[currentRegimenID]' limit 1","appendix"))."',
-									'".preg_replace("/,/s","",($q["treatmentInitiationID"]?getDetailedTableInfo2("vl_appendix_treatmentinitiation","id='$q[treatmentInitiationID]' limit 1","appendix"):$q["treatmentInitiationOther"]))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$q[treatmentStatusID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_failurereason","id='$q[reasonForFailureID]' limit 1","appendix"))."','$q[pregnant]',
-									'$q[pregnantANCNumber]','$q[breastfeeding]','$q[activeTBStatus]','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_tbtreatmentphase","id='$q[tbTreatmentPhaseID]' limit 1","appendix"))."',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_arvadherence","id='$q[arvAdherenceID]' limit 1","appendix"))."','".($q["vlTestingRoutineMonitoring"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["routineMonitoringLastVLDate"])."','$q[routineMonitoringValue]',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[routineMonitoringSampleTypeID]' limit 1","appendix"))."','".($q["vlTestingRepeatTesting"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["repeatVLTestLastVLDate"])."','$q[repeatVLTestValue]',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[repeatVLTestSampleTypeID]' limit 1","appendix"))."','".($q["vlTestingSuspectedTreatmentFailure"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["suspectedTreatmentFailureLastVLDate"])."','$q[suspectedTreatmentFailureValue]',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[suspectedTreatmentFailureSampleTypeID]' limit 1","appendix"))."','$sampleTested','".preg_replace("/,/s","",$lastWorksheetName)."','$machineType',
-									'".preg_replace("/,/s","",preg_replace("/&lt;/is","<",$result))."','".(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' and created!='' limit 1","id")?getRawFormattedDateLessDay(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' limit 1","created")):"")." ".(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' and created!='' limit 1","id")?getFormattedTimeLessS(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' limit 1","created")):"")."',
+									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_districts","id='$q[districtID]' limit 1","district"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_hubs","id='$q[hubID]' limit 1","hub"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_ips","id='".getDetailedTableInfo2("vl_facilities","id='$q[facilityID]' limit 1","ipID")."' limit 1","ip"))."','".getRawFormattedDateLessDay($q["collectionDate"])."',
+									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[sampleTypeID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","artNumber"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","otherID"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","gender"))."',
+									'".ceil(getDateDifference(getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","dateOfBirth"),$datetime)/365)."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients_phone","patientID='$q[patientID]' order by created desc limit 1","phone"))."','$q[treatmentLast6Months]','".getRawFormattedDateLessDay($q["treatmentInitiationDate"])."',
+									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_regimen","id='$q[currentRegimenID]' limit 1","appendix"))."','".preg_replace("/,/s","",($q["treatmentInitiationID"]?getDetailedTableInfo2("vl_appendix_treatmentinitiation","id='$q[treatmentInitiationID]' limit 1","appendix"):$q["treatmentInitiationOther"]))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$q[treatmentStatusID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_failurereason","id='$q[reasonForFailureID]' limit 1","appendix"))."',
+									'$q[pregnant]','$q[pregnantANCNumber]','$q[breastfeeding]','$q[activeTBStatus]',
+									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_tbtreatmentphase","id='$q[tbTreatmentPhaseID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_arvadherence","id='$q[arvAdherenceID]' limit 1","appendix"))."','".($q["vlTestingRoutineMonitoring"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["routineMonitoringLastVLDate"])."',
+									'$q[routineMonitoringValue]','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[routineMonitoringSampleTypeID]' limit 1","appendix"))."','".($q["vlTestingRepeatTesting"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["repeatVLTestLastVLDate"])."',
+									'$q[repeatVLTestValue]','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[repeatVLTestSampleTypeID]' limit 1","appendix"))."','".($q["vlTestingSuspectedTreatmentFailure"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["suspectedTreatmentFailureLastVLDate"])."',
+									'$q[suspectedTreatmentFailureValue]','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[suspectedTreatmentFailureSampleTypeID]' limit 1","appendix"))."','$sampleTested','".preg_replace("/,/s","",$lastWorksheetName)."',
+									'$machineType','".preg_replace("/,/s","",preg_replace("/&lt;/is","<",$result))."','".(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' and created!='' limit 1","id")?getRawFormattedDateLessDay(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' limit 1","created")):"")." ".(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' and created!='' limit 1","id")?getFormattedTimeLessS(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Accepted' limit 1","created")):"")."',
 									'".(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Rejected' and created!='' limit 1","id")?getRawFormattedDateLessDay(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Rejected' limit 1","created")):"")." ".(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Rejected' and created!='' limit 1","id")?getFormattedTimeLessS(getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Rejected' limit 1","created")):"")."',
 									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_samplerejectionreason","id='".getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]' and outcome='Rejected' limit 1","outcomeReasonsID")."' limit 1","appendix"))."','".(getDetailedTableInfo2("vl_samples_worksheet","sampleID='$q[id]' and created!='' limit 1","id")?getRawFormattedDateLessDay(getDetailedTableInfo2("vl_samples_worksheet","sampleID='$q[id]' order by created desc limit 1","created")):"")." ".(getDetailedTableInfo2("vl_samples_worksheet","sampleID='$q[id]' and created!='' limit 1","id")?getFormattedTimeLessS(getDetailedTableInfo2("vl_samples_worksheet","sampleID='$q[id]' order by created desc limit 1","created")):"")."',
 									'".($dateLatestResultsUploaded?getRawFormattedDateLessDay($dateLatestResultsUploaded):"")." ".($dateLatestResultsUploaded?getFormattedTimeLessS($dateLatestResultsUploaded):"")."','".($dateLatestResultsPrinted?getRawFormattedDateLessDay($dateLatestResultsPrinted):"")." ".($dateLatestResultsPrinted?getFormattedTimeLessS($dateLatestResultsPrinted):"")."',
@@ -206,6 +203,7 @@ switch($options) {
 			$header[]="Facility";
 			$header[]="District";
 			$header[]="Hub";
+			$header[]="Implementing Partner";
 			$header[]="Date of Collection";
 			$header[]="Sample Type";
 			$header[]="Patient ART";
@@ -330,6 +328,8 @@ switch($options) {
 				$row[]=getDetailedTableInfo2("vl_districts","id='$q[districtID]' limit 1","district");
 				//Hub
 				$row[]=getDetailedTableInfo2("vl_hubs","id='$q[hubID]' limit 1","hub");
+				//Implementing Partner
+				$row[]=getDetailedTableInfo2("vl_ips","id='".getDetailedTableInfo2("vl_facilities","id='$q[facilityID]' limit 1","ipID")."' limit 1","ip");
 				//Date of Collection
 				$row[]=getRawFormattedDateLessDay($q["collectionDate"]);
 				//Sample Type
