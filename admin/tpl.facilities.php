@@ -3,6 +3,9 @@
 if(!$GLOBALS['vlDC']) {
 	die("<font face=arial size=2>Job 38:11</font>");
 }
+
+//clean
+$facilityName=validate($facilityName);
 ?>
   <table width="100%" border="0">
     <tr>
@@ -34,11 +37,11 @@ if(!$GLOBALS['vlDC']) {
 						//insert into vl_facilities
 						mysqlquery("insert into vl_facilities 
 								(facility,districtID,phone,email,
-									contactPerson,physicalAddress,returnAddress,
+									contactPerson,physicalAddress,returnAddress,active,
 									created,createdby) 
 								values 
 								('$facility','$districtID','$phone','$email',
-									'$contactPerson','$physicalAddress','$returnAddress',
+									'$contactPerson','$physicalAddress','$returnAddress','$active',
 									'$datetime','$_SESSION[VLADMIN]')");
 						//flag
 						$added=1;
@@ -56,6 +59,7 @@ if(!$GLOBALS['vlDC']) {
 				logTableChange("vl_facilities","contactPerson",$id,getDetailedTableInfo2("vl_facilities","id='$id'","contactPerson"),$contactPerson);
 				logTableChange("vl_facilities","physicalAddress",$id,getDetailedTableInfo2("vl_facilities","id='$id'","physicalAddress"),$physicalAddress);
 				logTableChange("vl_facilities","returnAddress",$id,getDetailedTableInfo2("vl_facilities","id='$id'","returnAddress"),$returnAddress);
+				logTableChange("vl_facilities","active",$id,getDetailedTableInfo2("vl_facilities","id='$id'","active"),$active);
 				//update vl_facilities
 				mysqlquery("update vl_facilities set 
 									facility='$facility',
@@ -64,7 +68,8 @@ if(!$GLOBALS['vlDC']) {
 									contactPerson='$contactPerson',
 									physicalAddress='$physicalAddress',
 									returnAddress='$returnAddress',
-									districtID='$districtID' 
+									districtID='$districtID', 
+									active='$active'
 									where 
 									id='$id'");
 				//flag
@@ -90,6 +95,8 @@ if(!$GLOBALS['vlDC']) {
 		if(!$task) {
 			$task="add";
 		}
+		
+		if(!$facilityName) {
 ?>
         <script Language="JavaScript" Type="text/javascript">
 		<!--
@@ -116,7 +123,7 @@ if(!$GLOBALS['vlDC']) {
             </tr>
 		<? } else if($modified) { ?>
             <tr>
-              <td class="vl_success"><?=number_format((float)$modified)?> facility<?=($modified!=1?"s":"x")?> modified!</td>
+              <td class="vl_success"><?=number_format((float)$modified)?> facilit<?=($modified!=1?"ies":"y")?> modified!</td>
             </tr>
             <tr>
               <td>&nbsp;</td>
@@ -192,6 +199,20 @@ if(!$GLOBALS['vlDC']) {
                         ?>
                         </select></td>
                 </tr>
+                <tr>
+                  <td>Active</td>
+                  <td><select name="active" id="active" class="search">
+						<?
+						if($id) {
+							echo "<option value=\"".(getDetailedTableInfo2("vl_facilities","id='$id'","active")?1:0)."\" selected=\"selected\">".(getDetailedTableInfo2("vl_facilities","id='$id'","active")?"Active":"Inactive")."</option>";
+						} else {
+							echo "<option value=\"\" selected=\"selected\">Select State</option>";
+						}
+						echo "<option value=\"1\">Active</option>";
+						echo "<option value=\"0\">Inactive</option>";
+                        ?>
+                        </select></td>
+                </tr>
               </table></td>
             </tr>
             <tr> 
@@ -208,10 +229,15 @@ if(!$GLOBALS['vlDC']) {
             </tr>
           </table>
         </form>
-
 		<?
+		}
+		
         $query=0;
-        $query=mysqlquery("select * from vl_facilities where districtID='$districtID' order by facility");
+		if($facilityName) {
+	        $query=mysqlquery("select * from vl_facilities where facility like '%$facilityName%' order by facility");
+		} else {
+	        $query=mysqlquery("select * from vl_facilities where districtID='$districtID' order by facility");
+		}
 		$num=0;
 		$num=mysqlnumrows($query);
         if($num) {
@@ -221,7 +247,7 @@ if(!$GLOBALS['vlDC']) {
                 <td>
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td class="vl_tdsub" style="padding-left:20px"><strong>Facilities in <?=getDetailedTableInfo2("vl_districts","id='$districtID'","district")?> District</strong></td>
+                          <td class="vl_tdsub" style="padding-left:20px"><? if($facilityName) { echo number_format((float)$num)." facilit".($num==1?"y":"ies")." matching the search phrase <strong>$facilityName</strong>"; } else { ?><strong>Facilities in <?=getDetailedTableInfo2("vl_districts","id='$districtID'","district")?> District</strong><? } ?></td>
                         </tr>
 					</table>
                 </td>
@@ -239,9 +265,9 @@ if(!$GLOBALS['vlDC']) {
                             <tr>
                                 <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="70%">
 									<div><?=$q["facility"]?></div>
-									<div class="vls_grey" style="padding:3px 0px 0px 0px">Samples from Facility: <?=number_format((float)getDetailedTableInfo2("vl_samples","facilityID='$q[id]'","count(id)","num"))?></div>
+									<div class="vls_grey" style="padding:3px 0px 0px 0px">Samples from Facility: <?=number_format((float)getDetailedTableInfo2("vl_samples","facilityID='$q[id]'","count(id)","num"))?>, <?=($q["active"]?"<font color=\"#009900\">Active</font>":"<font color=\"#FF0000\">Inactive</font>")?></div>
                                 </td>
-                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="30%"><a href="?act=facilities&districtID=<?=$districtID?>&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a> :: <a href="<? if(getDetailedTableInfo2("vl_samples","facilityID='$q[id]'","count(id)","num")) { echo "?act=facilitiesmigratesamples&districtID=$districtID&facilityID=$q[id]&nav=configuration"; } else { echo "javascript:if(confirm('Are you sure?')) { document.location.href='?act=facilities&districtID=$districtID&nav=configuration&option=remove&id=$q[id]'; }"; } ?>">delete</a></td>
+                                <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" width="30%"><a href="?act=facilities&districtID=<?=$q["districtID"]?>&nav=configuration&modify=modify&id=<?=$q["id"]?>">edit</a> :: <a href="<? if(getDetailedTableInfo2("vl_samples","facilityID='$q[id]'","count(id)","num")) { echo "?act=facilitiesmigratesamples&districtID=$districtID&facilityID=$q[id]&nav=configuration"; } else { echo "javascript:if(confirm('Are you sure?')) { document.location.href='?act=facilities&districtID=$districtID&nav=configuration&option=remove&id=$q[id]'; }"; } ?>">delete</a></td>
                             </tr>
                         <? } ?>
                     </table>
@@ -249,27 +275,70 @@ if(!$GLOBALS['vlDC']) {
                 </td>
             </tr>
             <tr>
-                <td style="padding:5px 0px"><a href="?act=regions&nav=configuration">Return to List of Regions</a> :: <a href="?act=districts&regionID=<?=getDetailedTableInfo2("vl_districts","id='$districtID'","regionID")?>&nav=configuration">Return to List of Districts in <?=getDetailedTableInfo2("vl_regions","id='".getDetailedTableInfo2("vl_districts","id='$districtID'","regionID")."'","region")?> Region</a></td>
+                <td style="padding:5px 0px"><? if($facilityName) { echo "<a href=\"?act=facilities&districtID=$districtID&nav=configuration\">Return to previous page</a> :: "; } ?><a href="?act=regions&nav=configuration">Return to List of Regions</a> :: <a href="?act=districts&regionID=<?=getDetailedTableInfo2("vl_districts","id='$districtID'","regionID")?>&nav=configuration">Return to List of Districts in <?=getDetailedTableInfo2("vl_regions","id='".getDetailedTableInfo2("vl_districts","id='$districtID'","regionID")."'","region")?> Region</a></td>
             </tr>
         </table>
+		<? } else { ?>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td class="vl_error">No results found matching the search phrase <strong><?=$facilityName?></strong><br /><a href="?act=facilities&districtID=<?=$districtID?>&nav=configuration">Return to previous page</a></td>
+                </tr>
+            </table>
 		<? } ?>
       </td>
       <td width="35%" valign="top" style="padding:3px 0px 0px 12px">
-        <table border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #d5d5d5" width="100%">
-          <tr>
-            <td style="padding:10px"><table width="100%" border="0" class="vl">
+        <div>
+            <table border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #d5d5d5" width="100%">
               <tr>
-                <td><strong>MANAGE FACILITIES IN <?=getDetailedTableInfo2("vl_districts","id='$districtID'","district")?> DISTRICT</strong></td>
+                <td style="padding:10px"><table width="100%" border="0" class="vl">
+                  <tr>
+                    <td><strong>MANAGE FACILITIES IN <?=getDetailedTableInfo2("vl_districts","id='$districtID'","district")?> DISTRICT</strong></td>
+                  </tr>
+                  <tr>
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="#d5d5d5" style="padding:10px">Create, Delete or Manage Facilities</td>
+                  </tr>
+                </table></td>
               </tr>
-              <tr>
-                <td>&nbsp;</td>
-              </tr>
-              <tr>
-                <td bgcolor="#d5d5d5" style="padding:10px">Create, Delete or Manage Facilities</td>
-              </tr>
-            </table></td>
-          </tr>
-        </table>
+            </table>
+        </div>
+        <div style="padding:10px 0px 0px 0px">
+			<script Language="JavaScript" Type="text/javascript">
+            <!--
+            function checkFacilityFilterForm(filterPatients) {
+                if(!document.findFacility.facilityName.value) {
+                    alert('Missing Mandatory Field: Facility Name');
+                    document.findFacility.facilityName.focus();
+                    return (false);
+                }
+                return (true);
+            }
+            //-->
+            </script>
+            
+            <form name="findFacility" method="post" action="?act=facilities&nav=configuration" onsubmit="return checkFacilityFilterForm(this)">
+                <table border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #d5d5d5" width="100%">
+                  <tr>
+                    <td style="padding:10px"><table width="100%" border="0" class="vl">
+                      <tr>
+                        <td><strong>SEARCH FACILITIES</strong></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 0px"><input type="text" name="facilityName" id="facilityName" value="Enter Facility Name" class="searchLarge" size="20" maxlength="50" onfocus="if(value=='Enter Facility Name') {value=''}" onblur="if(value=='') {value='Enter Facility Name'}" /></td>
+                      </tr>
+                      <tr>
+                        <td>
+                        	<input type="submit" name="button" id="button" value="   Find Facility   " />
+                            <input name="districtID" type="hidden" id="districtID" value="<?=$districtID?>">
+                        </td>
+                      </tr>
+                    </table></td>
+                  </tr>
+                </table>
+            </form>
+        </div>
       </td>
     </tr>
   </table>

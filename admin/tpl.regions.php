@@ -207,6 +207,7 @@ if(!$GLOBALS['vlDC']) {
 		<? } ?>
       </td>
       <td width="35%" valign="top" style="padding:3px 0px 0px 12px">
+      <div>
         <table border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #d5d5d5" width="100%">
           <tr>
             <td style="padding:10px"><table width="100%" border="0" class="vl">
@@ -222,6 +223,42 @@ if(!$GLOBALS['vlDC']) {
             </table></td>
           </tr>
         </table>
+        </div>
+        <div style="padding:10px 0px 0px 0px">
+			<script Language="JavaScript" Type="text/javascript">
+            <!--
+            function checkFacilityFilterForm(filterPatients) {
+                if(!document.findFacility.facilityName.value) {
+                    alert('Missing Mandatory Field: Facility Name');
+                    document.findFacility.facilityName.focus();
+                    return (false);
+                }
+                return (true);
+            }
+            //-->
+            </script>
+            
+            <form name="findFacility" method="post" action="?act=facilities&nav=configuration" onsubmit="return checkFacilityFilterForm(this)">
+                <table border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #d5d5d5" width="100%">
+                  <tr>
+                    <td style="padding:10px"><table width="100%" border="0" class="vl">
+                      <tr>
+                        <td><strong>SEARCH FACILITIES</strong></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 0px"><input type="text" name="facilityName" id="facilityName" value="Enter Facility Name" class="searchLarge" size="20" maxlength="50" onfocus="if(value=='Enter Facility Name') {value=''}" onblur="if(value=='') {value='Enter Facility Name'}" /></td>
+                      </tr>
+                      <tr>
+                        <td>
+                        	<input type="submit" name="button" id="button" value="   Find Facility   " />
+                            <input name="districtID" type="hidden" id="districtID" value="<?=$districtID?>">
+                        </td>
+                      </tr>
+                    </table></td>
+                  </tr>
+                </table>
+            </form>
+        </div>
       </td>
     </tr>
   </table>

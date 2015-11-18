@@ -207,6 +207,11 @@ if($saveChanges) {
 		$error.="<br /><strong>Possible Error</strong><br /> Gender has been supplied as Male however Patient has also been reported with Treatment Initiation as PMTCT/Option B+.<br />";
 	}
 
+	//ensure facility is active
+	if(!getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","active")) {
+		$error.="<br /><strong>Facility '".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."' is not active.</strong><br />Please select an alternative active facility or contact your administrator about activating this facility.<br />";
+	}
+
 	//input data
 	if(!$error) {
 		//log changes

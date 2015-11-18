@@ -248,6 +248,11 @@ if($saveSample) {
 		}
 	}
 
+	//ensure facility is active
+	if(!getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","active")) {
+		$error.="<br /><strong>Facility '".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."' is not active.</strong><br />Please select an alternative active facility or contact your administrator about activating this facility.<br />";
+	}
+
 	//input data
 	if(!$error) {
 		//concatenations
