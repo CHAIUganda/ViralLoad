@@ -88,6 +88,7 @@ $default_envelopeNumber=0;
 $default_envelopeNumber=getFormattedDateYearShort($datetime).getFormattedDateMonth($datetime)."-";
 
 //if the user has been idle for a certain period ($default_systemIdleWait mins), require them to login afresh.
+/*
 if($_SESSION["VLEMAIL"] && !$directlogin) {
 	//get time since last activity hh:mm:ss 00:00:00
 	$time=0;
@@ -107,4 +108,5 @@ if($_SESSION["VLEMAIL"] && !$directlogin) {
 		}
 	}
 }
+*/
 ?>
