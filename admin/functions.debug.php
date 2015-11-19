@@ -361,7 +361,7 @@ function updatePatientData($patientID,$field,$data,$collectionDate) {
 		//special provisions for date of birth
 		if($field=="dateOfBirth") {
 			$dateOfBirth=0;
-			$dateOfBirth=getFormattedDateYear(subtractFromDate(($collectionDate?$collectionDate:$datetime),($data*12*30.5)));
+			$dateOfBirth=getFormattedDateYear(subtractFromDate(($collectionDate?$collectionDate:$datetime),($data*12*30.5)))."-01-01";
 			//replace data with dateOfBirth
 			$data=$dateOfBirth;
 		}

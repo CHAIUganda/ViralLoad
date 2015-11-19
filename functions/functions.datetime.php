@@ -9,21 +9,41 @@ if(!$GLOBALS['vlDC']) {
 */
 
 /**
+* function to take a given date and establish its authenticity
+* @param: $datetime
+*/
+function isDateAuthentic($datetime) {
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($datetime);
+	//return the new date
+	$finalDate=0;
+	$finalDate=date('Y-m-d', $currentTimestamp);
+	//check if this date is valid
+	$d = DateTime::createFromFormat('Y-m-d', $finalDate);
+	if($d && 
+		$d->format('Y-m-d') == $finalDate && 
+			$finalDate!="0000-00-00" && 
+				$finalDate!="1970-01-01" && 
+					$finalDate!="NULL" && 
+						$finalDate!="" && 
+							$finalDate!="0") {
+		return $datetime;
+	}
+}
+
+/**
 * function to take a given date and increment it based on the supplied duration
 * @param: $date
 * @param: $duration - in days, otherwise provide "interval $duration day week etc"
 */
 function addToDate($date,$duration) {
-	/*
-	//convert to timestamps
-	$currentTimestamp=0;
-	$currentTimestamp=strtotime($date);
-	$futureTimestamp=0;
-	$futureTimestamp=$currentTimestamp + (60*60*24*$duration);
-	//return the new date
-	return date('Y-m-d', $futureTimestamp);
-	*/
-	return getDualInfoWithAlias("date_add(".($date?"'$date'":"now()").",interval ".(is_numeric($duration)?"$duration day":$duration).")","newdate");
+	//return getDualInfoWithAlias("date_add(".($date?"'$date'":"now()").",interval ".(is_numeric($duration)?"$duration day":$duration).")","newdate");
+	$finalDate=0;
+	$finalDate=getDualInfoWithAlias("date_add(".($date?"'$date'":"now()").",interval ".(is_numeric($duration)?"$duration day":$duration).")","newdate");
+	if(isDateAuthentic($finalDate)) {
+		return $finalDate;
+	}
 }
 
 /**
@@ -38,7 +58,11 @@ function subtractFromDate($date,$duration) {
 	$futureTimestamp=0;
 	$futureTimestamp=$currentTimestamp - (60*60*24*$duration);
 	//return the new date
-	return date('Y-m-d', $futureTimestamp);
+	$finalDate=0;
+	$finalDate=date('Y-m-d', $futureTimestamp);
+	if(isDateAuthentic($finalDate)) {
+		return $finalDate;
+	}
 }
 
 /**
@@ -78,17 +102,6 @@ function addToTimeLessMicro($time,$duration) {
 * @param: $date2
 */
 function getDateDifference($date1,$date2) {
-	/*
-	//date1Timestamp
-	$date1Timestamp=0;
-	$date1Timestamp=strtotime("$date1");
-	$date2Timestamp=0;
-	$date2Timestamp=strtotime("$date2");
-	//duration
-	$duration=0;
-	$duration=(strftime('%j', $date2Timestamp)>strftime('%j', $date1Timestamp)?strftime('%j', $date2Timestamp)-strftime('%j', $date1Timestamp):strftime('%j', $date1Timestamp)-strftime('%j', $date2Timestamp));
-	*/
-	
 	//duration
 	$duration=0;
 	$duration=getDualInfoWithAlias("datediff('$date1','$date2')","duration");
@@ -106,16 +119,6 @@ function getDateDifference($date1,$date2) {
 * @param: $date2
 */
 function getStandardDateDifference($date1,$date2) {
-	/*
-	//date1Timestamp
-	$date1Timestamp=0;
-	$date1Timestamp=strtotime("$date1");
-	$date2Timestamp=0;
-	$date2Timestamp=strtotime("$date2");
-	//duration
-	$duration=0;
-	$duration=strftime('%j', $date1Timestamp)-strftime('%j', $date2Timestamp);
-	*/
 	return getDualInfoWithAlias("datediff('$date1','$date2')","duration");
 }
 
@@ -195,14 +198,11 @@ function isDate1GreaterDate2($date1,$date2) {
 * @param: $date
 */
 function getFormattedDate($date) {
-	if($date=="0000-00-00 00:00:00" || $date=="NULL" || $date=="0" || $date=="") {
-		//return "No date";
-		return "";
-	} else {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
 		return date('D, d-M-Y', $currentTimestamp);
 	}
 }
@@ -212,14 +212,11 @@ function getFormattedDate($date) {
 * @param: $date
 */
 function getFormattedDateCRB($date) {
-	if($date=="0000-00-00 00:00:00" || $date=="NULL") {
-		//return "No date";
-		return "";
-	} else {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
 		return date('Ymd', $currentTimestamp);
 	}
 }
@@ -229,14 +226,11 @@ function getFormattedDateCRB($date) {
 * @param: $date
 */
 function getFormattedDateLessDay($date) {
-	if($date=="0000-00-00 00:00:00" || $date=="NULL") {
-		//return "No date";
-		return "";
-	} else {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
 		return date('d-M-Y', $currentTimestamp);
 	}
 }
@@ -246,14 +240,11 @@ function getFormattedDateLessDay($date) {
 * @param: $date
 */
 function getFormattedDateLessDaySlash($date) {
-	if($date=="0000-00-00 00:00:00" || $date=="NULL") {
-		//return "No date";
-		return "";
-	} else {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
 		return date('d/M/Y', $currentTimestamp);
 	}
 }
@@ -263,16 +254,12 @@ function getFormattedDateLessDaySlash($date) {
 * @param: $date
 */
 function getRawFormattedDateLessDay($date) {
-	if($date) {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
-		$finalDate=0;
-		$finalDate=date('Y-m-d', $currentTimestamp);
-		if($finalDate!="1970-01-01") {
-			return $finalDate;
-		}
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+		return date('Y-m-d', $currentTimestamp);
 	}
 }
 
@@ -341,11 +328,11 @@ function getFormattedSeconds($date) {
 * @param: $date
 */
 function getFormattedDateYear($date) {
-	if($date) {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
 		return date('Y', $currentTimestamp);
 	}
 }
@@ -355,11 +342,11 @@ function getFormattedDateYear($date) {
 * @param: $date
 */
 function getFormattedDateYearShort($date) {
-	if($date) {
-		//convert to timestamps
-		$currentTimestamp=0;
-		$currentTimestamp=strtotime($date);
-		//return the new date
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
 		return date('y', $currentTimestamp);
 	}
 }
@@ -373,7 +360,9 @@ function getFormattedDateDay($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('d', $currentTimestamp);
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+		return date('d', $currentTimestamp);
+	}
 }
 
 /**
@@ -385,7 +374,9 @@ function getFormattedDateDayname($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('D', $currentTimestamp);
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+		return date('D', $currentTimestamp);
+	}
 }
 
 /**
@@ -397,7 +388,9 @@ function getFormattedDateMonth($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('m', $currentTimestamp);
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+		return date('m', $currentTimestamp);
+	}
 }
 
 /**
@@ -409,7 +402,9 @@ function getFormattedDateMonthname($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('M', $currentTimestamp);
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+		return date('M', $currentTimestamp);
+	}
 }
 
 /**
@@ -421,7 +416,9 @@ function getFormattedDateWeekofyear($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('W', $currentTimestamp);
+	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+		return date('W', $currentTimestamp);
+	}
 }
 
 /**
@@ -484,7 +481,9 @@ function excelDate2mysqlDate($excelDate) {
 		return 0;
 	}
 	
-	//return
-	return date('Ymd',$timestamp);
+	//return the new date
+	if(isDateAuthentic(date('Y-m-d', $timestamp))) {
+		return date('Ymd',$timestamp);
+	}
 }
 ?>
