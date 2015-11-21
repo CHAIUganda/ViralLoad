@@ -7,7 +7,6 @@ if(!$GLOBALS['vlDC']) {
 /**
 * DATE/TIME RELATED FUNCTIONS
 */
-
 /**
 * function to take a given date and establish its authenticity
 * @param: $datetime
@@ -16,19 +15,23 @@ function isDateAuthentic($datetime) {
 	//convert to timestamps
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($datetime);
-	//return the new date
-	$finalDate=0;
-	$finalDate=date('Y-m-d', $currentTimestamp);
-	//check if this date is valid
-	$d = DateTime::createFromFormat('Y-m-d', $finalDate);
-	if($d && 
-		$d->format('Y-m-d') == $finalDate && 
-			$finalDate!="0000-00-00" && 
-				$finalDate!="1970-01-01" && 
-					$finalDate!="NULL" && 
-						$finalDate!="" && 
-							$finalDate!="0") {
-		return $datetime;
+	//if $datetime==0000-00-00, then $currentTimestamp is empty however date('Y-m-d', $currentTimestamp) will resolve as 1970-01-01
+	if($currentTimestamp) {
+		//return the new date
+		$finalDate=0;
+		$finalDate=date('Y-m-d', $currentTimestamp);
+		//check if this date is valid
+		$d = DateTime::createFromFormat('Y-m-d', $finalDate);
+		if($d && 
+			$d->format('Y-m-d') == $finalDate && 
+				$datetime!="0000-00-00" && 
+					$datetime!="0000-00-00 00:00" && 
+						$datetime!="0000-00-00 00:00:00" && 
+							$finalDate!="NULL" && 
+								$finalDate!="" && 
+									$finalDate!="0") {
+			return $datetime;
+		}
 	}
 }
 
@@ -60,7 +63,7 @@ function subtractFromDate($date,$duration) {
 	//return the new date
 	$finalDate=0;
 	$finalDate=date('Y-m-d', $futureTimestamp);
-	if(isDateAuthentic($finalDate)) {
+	if(isDateAuthentic($date)) {
 		return $finalDate;
 	}
 }
@@ -77,7 +80,9 @@ function addToTime($time,$duration) {
 	$futureTimestamp=0;
 	$futureTimestamp=$currentTimestamp + (60*$duration);
 	//return the new date
-	return date('H:i:s', $futureTimestamp);
+	if($currentTimestamp) {
+		return date('H:i:s', $futureTimestamp);
+	}
 }
 
 /**
@@ -93,7 +98,9 @@ function addToTimeLessMicro($time,$duration) {
 	$futureTimestamp=0;
 	$futureTimestamp=$currentTimestamp + (60*$duration);
 	//return the new date
-	return date('H:i', $futureTimestamp);
+	if($currentTimestamp) {
+		return date('H:i', $futureTimestamp);
+	}
 }
 
 /**
@@ -105,11 +112,7 @@ function getDateDifference($date1,$date2) {
 	//duration
 	$duration=0;
 	$duration=getDualInfoWithAlias("datediff('$date1','$date2')","duration");
-	if($duration<0) {
-		return (getDualInfoWithAlias("datediff('$date1','$date2')","duration")*-1);
-	} else {
-		return getDualInfoWithAlias("datediff('$date1','$date2')","duration");
-	}
+	return abs(getDualInfoWithAlias("datediff('$date1','$date2')","duration"));
 }
 
 /**
@@ -141,10 +144,8 @@ function getDetailedDateDifference($date1,$time1,$date2,$time2) {
 		$timeStamp2=strtotime("$date2 $time2");
 		$timeDuration=0;
 		$timeDuration=(strftime('%H',$timeStamp1)>strftime('%H',$timeStamp2)?strftime('%H',$timeStamp1)-strftime('%H',$timeStamp2):strftime('%H',$timeStamp2)-strftime('%H',$timeStamp1));
-		if($timeDuration<0) {
-			$timeDuration*=-1;
-		}
-		if($timeDuration) {
+		$timeDuration=abs($timeDuration);
+		if($timeDuration && $timeStamp1 && $timeStamp2) {
 			return ($timeDuration==1?"$timeDuration hour":"$timeDuration hours");
 		}
 	}
@@ -168,7 +169,9 @@ function getStandardDetailedDateDifference($date1,$time1,$date2,$time2) {
 		$timeStamp2=strtotime("$date2 $time2");
 		$timeDuration=0;
 		$timeDuration=strftime('%H',$timeStamp1)-strftime('%H',$timeStamp2);
-		return $timeDuration;
+		if($timeStamp1 && $timeStamp2) {
+			return $timeDuration;
+		}
 	} else {
 		return $duration;
 	}
@@ -202,7 +205,7 @@ function getFormattedDate($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('D, d-M-Y', $currentTimestamp);
 	}
 }
@@ -216,7 +219,7 @@ function getFormattedDateCRB($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('Ymd', $currentTimestamp);
 	}
 }
@@ -230,8 +233,22 @@ function getFormattedDateLessDay($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('d-M-Y', $currentTimestamp);
+	}
+}
+
+/**
+* function to take a given date in the form of yyyy-mm-dd and return it as dd-month-year
+* @param: $date
+*/
+function getFormattedDateLessDaySlash($date) {
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic($date)) {
+		return date('d/M/Y', $currentTimestamp);
 	}
 }
 
@@ -244,7 +261,7 @@ function getRawFormattedDateLessDay($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('Y-m-d', $currentTimestamp);
 	}
 }
@@ -258,7 +275,9 @@ function getFormattedTime($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('H:i:s', $currentTimestamp);
+	if($currentTimestamp) {
+		return date('H:i:s', $currentTimestamp);
+	}
 }
 
 /**
@@ -270,7 +289,9 @@ function getFormattedTimeLessS($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('H:i', $currentTimestamp);
+	if($currentTimestamp) {
+		return date('H:i', $currentTimestamp);
+	}
 }
 
 /**
@@ -282,7 +303,9 @@ function getFormattedHour($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('H', $currentTimestamp);
+	if($currentTimestamp) {
+		return date('H', $currentTimestamp);
+	}
 }
 
 /**
@@ -294,7 +317,9 @@ function getFormattedMinutes($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('i', $currentTimestamp);
+	if($currentTimestamp) {
+		return date('i', $currentTimestamp);
+	}
 }
 
 /**
@@ -306,7 +331,9 @@ function getFormattedSeconds($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	return date('s', $currentTimestamp);
+	if($currentTimestamp) {
+		return date('s', $currentTimestamp);
+	}
 }
 
 /**
@@ -318,8 +345,22 @@ function getFormattedDateYear($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('Y', $currentTimestamp);
+	}
+}
+
+/**
+* function to take a given date in the form of yyyy-mm-dd and return it as year
+* @param: $date
+*/
+function getFormattedDateYearShort($date) {
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic($date)) {
+		return date('y', $currentTimestamp);
 	}
 }
 
@@ -332,7 +373,7 @@ function getFormattedDateDay($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('d', $currentTimestamp);
 	}
 }
@@ -346,7 +387,7 @@ function getFormattedDateDayname($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('D', $currentTimestamp);
 	}
 }
@@ -360,7 +401,7 @@ function getFormattedDateMonth($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('m', $currentTimestamp);
 	}
 }
@@ -374,8 +415,22 @@ function getFormattedDateMonthname($date) {
 	$currentTimestamp=0;
 	$currentTimestamp=strtotime($date);
 	//return the new date
-	if(isDateAuthentic(date('Y-m-d', $currentTimestamp))) {
+	if(isDateAuthentic($date)) {
 		return date('M', $currentTimestamp);
+	}
+}
+
+/**
+* function to take a given date in the form of yyyy-mm-dd and return it as week
+* @param: $date
+*/
+function getFormattedDateWeekofyear($date) {
+	//convert to timestamps
+	$currentTimestamp=0;
+	$currentTimestamp=strtotime($date);
+	//return the new date
+	if(isDateAuthentic($date)) {
+		return date('W', $currentTimestamp);
 	}
 }
 
@@ -383,27 +438,27 @@ function getFormattedDateMonthname($date) {
 * function to get current day
 */
 function getCurrentDay() {
-	global $c,$default_GMTtimezone;
+	global $c,$default_GMTtimezone,$default_country;
 	//return gmdate("D");
-	return getFormattedDateDayname(getDualInfoWithAlias("convert_tz(now(),'$default_GMTtimezone:00','".getDetailedTableInfo2("vl_timezones",($c?"lower(country)='".strtolower($c)."'":"country='United Kingdom'"),"timezone")."')","datetime"));
+	return getFormattedDateDayname(getDualInfoWithAlias("now()","datetime"));
 }
 
 /**
 * function to get current year
 */
 function getCurrentYear() {
-	global $c,$default_GMTtimezone;
+	global $c,$default_GMTtimezone,$default_country;
 	//return gmdate("Y");
-	return getFormattedDateYear(getDualInfoWithAlias("convert_tz(now(),'$default_GMTtimezone:00','".getDetailedTableInfo2("vl_timezones",($c?"lower(country)='".strtolower($c)."'":"country='United Kingdom'"),"timezone")."')","datetime"));
+	return getFormattedDateYear(getDualInfoWithAlias("now()","datetime"));
 }
 
 /**
 * function to get current month
 */
 function getCurrentMonth() {
-	global $c,$default_GMTtimezone;
+	global $c,$default_GMTtimezone,$default_country;
 	//return gmdate("m");
-	return getFormattedDateMonth(getDualInfoWithAlias("convert_tz(now(),'$default_GMTtimezone:00','".getDetailedTableInfo2("vl_timezones",($c?"lower(country)='".strtolower($c)."'":"country='United Kingdom'"),"timezone")."')","datetime"));
+	return getFormattedDateMonth(getDualInfoWithAlias("now()","datetime"));
 }
 
 /**
@@ -412,7 +467,7 @@ function getCurrentMonth() {
 function getCurrentDate() {
 	global $c,$default_GMTtimezone;
 	//return gmdate("Y-m-d");
-	return getRawFormattedDateLessDay(getDualInfoWithAlias("convert_tz(now(),'$default_GMTtimezone:00','".getDetailedTableInfo2("vl_timezones",($c?"lower(country)='".strtolower($c)."'":"country='United Kingdom'"),"timezone")."')","datetime"));
+	return getRawFormattedDateLessDay(getDualInfoWithAlias("now()","datetime"));
 }
 
 /**
@@ -421,7 +476,7 @@ function getCurrentDate() {
 function getCurrentSecond() {
 	global $c,$default_GMTtimezone;
 	//return gmdate("s");
-	return getFormattedSeconds(getDualInfoWithAlias("convert_tz(now(),'$default_GMTtimezone:00','".getDetailedTableInfo2("vl_timezones",($c?"lower(country)='".strtolower($c)."'":"country='United Kingdom'"),"timezone")."')","datetime"));
+	return getFormattedSeconds(getDualInfoWithAlias("now()","datetime"));
 }
 
 //excel to timestamp

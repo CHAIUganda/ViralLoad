@@ -308,13 +308,13 @@ if($saveChanges) {
 		logTableChange("vl_patients","artNumber",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","artNumber"),$artNumber);
 		logTableChange("vl_patients","otherID",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","otherID"),$otherID);
 		logTableChange("vl_patients","gender",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","gender"),$gender);
-		logTableChange("vl_patients","dateOfBirth",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","dateOfBirth"),$dateOfBirth);
+		if(!$noDateOfBirthSupplied) { logTableChange("vl_patients","dateOfBirth",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","dateOfBirth"),$dateOfBirth); }
 		//update patient information
 		mysqlquery("update vl_patients set 
 						artNumber='$artNumber',
 						otherID='$otherID', 
-						gender='$gender',
-						dateOfBirth='$dateOfBirth' 
+						".(!$noDateOfBirthSupplied?"dateOfBirth='$dateOfBirth', ":"dateOfBirth='', ")."
+						gender='$gender' 
 						where 
 						id='$patientID'");
 
@@ -472,6 +472,11 @@ if($saveChanges) {
 	
 	$dateOfBirth=0;
 	$dateOfBirth=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","dateOfBirth");
+	if(!isDateAuthentic($dateOfBirth)) {
+		$noDateOfBirthSupplied=1;
+	} else {
+		$noDateOfBirthSupplied=0;
+	}
 
 	$patientPhone=0;
 	$patientPhone=getDetailedTableInfo2("vl_patients_phone","patientID='$patientID' order by created desc limit 1","phone");
@@ -679,6 +684,28 @@ function matchRegimenTreatmentLine(theField) {
 function loadArtHistory(artObject,facilityID) {
 	//load history
 	vlDC_XloadArtHistory(artObject.value,facilityID);
+}
+
+function checkMonthDay(theField) {
+	if(theField.value && !document.samples.dateOfBirthMonth.value && !document.samples.dateOfBirthDay.value) {
+		//default to first day/month
+		document.samples.dateOfBirthDay.value="01";
+		document.samples.dateOfBirthMonth.value="01"
+	}
+}
+
+function disableEnableDateOfBirth(checkedObject) {
+	if(checkedObject.checked==true) {
+		//has been checked
+		document.samples.dateOfBirthYear.disabled=true;
+		document.samples.dateOfBirthMonth.disabled=true;
+		document.samples.dateOfBirthDay.disabled=true;
+	} else if(checkedObject.checked==false) {
+		//has been unchecked
+		document.samples.dateOfBirthYear.disabled=false;
+		document.samples.dateOfBirthMonth.disabled=false;
+		document.samples.dateOfBirthDay.disabled=false;
+	}
 }
 //-->
 </script>
@@ -1002,7 +1029,7 @@ function loadArtHistory(artObject,facilityID) {
                                       <td>
                                           <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                               <tr>
-                                                <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search">
+                                                <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                                   <?
                                                     if($dateOfBirth) {
                                                         echo "<option value=\"".getFormattedDateDay($dateOfBirth)."\" selected=\"selected\">".getFormattedDateDay($dateOfBirth)."</option>";
@@ -1014,7 +1041,7 @@ function loadArtHistory(artObject,facilityID) {
                                                     }
                                                     ?>
                                                   </select></td>
-                                                <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search">
+                                                <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                                   <? 
                                                     if($dateOfBirth) {
                                                         echo "<option value=\"".getFormattedDateMonth($dateOfBirth)."\" selected=\"selected\">".getFormattedDateMonthname($dateOfBirth)."</option>";
@@ -1035,7 +1062,7 @@ function loadArtHistory(artObject,facilityID) {
                                                   <option value="11">Nov</option>
                                                   <option value="12">Dec</option>
                                                   </select></td>
-                                                <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search">
+                                                <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                                         <?
                                                         if($dateOfBirth) {
                                                             echo "<option value=\"".getFormattedDateYear($dateOfBirth)."\" selected=\"selected\">".getFormattedDateYear($dateOfBirth)."</option>";
@@ -1047,6 +1074,13 @@ function loadArtHistory(artObject,facilityID) {
                                                         }
                                                         ?>
                                                   </select></td>
+                                                  <td style="padding:0px 0px 0px 5px">or</td>
+                                                  <td style="padding:0px 0px 0px 5px"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                                      <tr>
+                                                        <td width="1%"><input name="noDateOfBirthSupplied" type="checkbox" id="noDateOfBirthSupplied" value="1" onclick="disableEnableDateOfBirth(this);" <?=($noDateOfBirthSupplied?"checked=\"checked\"":"")?> /></td>
+                                                        <td width="99%" style="padding:0px 0px 0px 5px">No&nbsp;date&nbsp;of&nbsp;birth&nbsp;supplied</td>
+                                                      </tr>
+                                                    </table></td>
                                                 </tr>
                                             </table>
                                       </td>

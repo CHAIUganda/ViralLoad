@@ -265,9 +265,9 @@ if($saveSample) {
 		$patientID=0;
 		if(!getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and artNumber='$artNumber' and otherID='$otherID' limit 1","id")) {
 			mysqlquery("insert into vl_patients 
-							(uniqueID,artNumber,otherID,gender,dateOfBirth,created,createdby) 
+							(uniqueID,artNumber,otherID,gender,".(!$noDateOfBirthSupplied?"dateOfBirth,":"")."created,createdby) 
 							values 
-							('$uniqueID','$artNumber','$otherID','$gender','$dateOfBirth','$datetime','$trailSessionUser')");
+							('$uniqueID','$artNumber','$otherID','$gender',".(!$noDateOfBirthSupplied?"'$dateOfBirth',":"")."'$datetime','$trailSessionUser')");
 			if(mysqlerror())
 				die("1: ".mysqlerror());
 			$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
@@ -604,6 +604,24 @@ function loadArtHistory(artObject,facilityID) {
 	//load history
 	vlDC_XloadArtHistory(artObject.value,facilityID);
 }
+
+function disableEnableDateOfBirth(checkedObject) {
+	if(checkedObject.checked==true) {
+		//has been checked
+		document.samples.dateOfBirthIn.disabled=true;
+		document.samples.dateOfBirthAge.disabled=true;
+		document.samples.dateOfBirthYear.disabled=true;
+		document.samples.dateOfBirthMonth.disabled=true;
+		document.samples.dateOfBirthDay.disabled=true;
+	} else if(checkedObject.checked==false) {
+		//has been unchecked
+		document.samples.dateOfBirthIn.disabled=false;
+		document.samples.dateOfBirthAge.disabled=false;
+		document.samples.dateOfBirthYear.disabled=false;
+		document.samples.dateOfBirthMonth.disabled=false;
+		document.samples.dateOfBirthDay.disabled=false;
+	}
+}
 //-->
 </script>
 <!--<form name="samples" method="post" action="/samples/capture/" onsubmit="return validate(this)">-->
@@ -926,7 +944,7 @@ function loadArtHistory(artObject,facilityID) {
                                   <td>Date&nbsp;of&nbsp;Birth</td>
                                   <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                     <tr>
-                                      <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search">
+                                      <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                         <?
 										  	if($dateOfBirth) {
 												echo "<option value=\"".getFormattedDateDay($dateOfBirth)."\" selected=\"selected\">".getFormattedDateDay($dateOfBirth)."</option>";
@@ -938,7 +956,7 @@ function loadArtHistory(artObject,facilityID) {
                                             }
                                             ?>
                                       </select></td>
-                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search">
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                         <? 
 										  	if($dateOfBirth) {
 												echo "<option value=\"".getFormattedDateMonth($dateOfBirth)."\" selected=\"selected\">".getFormattedDateMonthname($dateOfBirth)."</option>";
@@ -959,7 +977,7 @@ function loadArtHistory(artObject,facilityID) {
                                         <option value="11">Nov</option>
                                         <option value="12">Dec</option>
                                       </select></td>
-                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)">
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                         <?
 												if($dateOfBirth) {
 													echo "<option value=\"".getFormattedDateYear($dateOfBirth)."\" selected=\"selected\">".getFormattedDateYear($dateOfBirth)."</option>";
@@ -972,7 +990,7 @@ function loadArtHistory(artObject,facilityID) {
                                                 ?>
                                       </select></td>
                                       <td style="padding:0px 5px 0px 5px">or</td>
-                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search">
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                         <?
 												if($dateOfBirthAge) {
 													echo "<option value=\"$dateOfBirthAge\" selected=\"selected\">$dateOfBirthAge</option>";
@@ -984,7 +1002,7 @@ function loadArtHistory(artObject,facilityID) {
                                                 }
                                                 ?>
                                       </select></td>
-                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthIn" id="dateOfBirthIn" class="search">
+                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthIn" id="dateOfBirthIn" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                         <?
 													if($dateOfBirthIn) {
 														echo "<option value=\"$dateOfBirthIn\" selected=\"selected\">$dateOfBirthIn</option>";
@@ -995,6 +1013,13 @@ function loadArtHistory(artObject,facilityID) {
                                         <option value="Years">Years</option>
                                         <option value="Months">Months</option>
                                       </select></td>
+                                      <td style="padding:0px 0px 0px 5px">or</td>
+                                      <td style="padding:0px 0px 0px 5px"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                          <tr>
+                                            <td width="1%"><input name="noDateOfBirthSupplied" type="checkbox" id="noDateOfBirthSupplied" value="1" onclick="disableEnableDateOfBirth(this);" <?=($noDateOfBirthSupplied?"checked=\"checked\"":"")?> /></td>
+                                            <td width="99%" style="padding:0px 0px 0px 5px">No&nbsp;date&nbsp;of&nbsp;birth&nbsp;supplied</td>
+                                          </tr>
+                                        </table></td>
                                     </tr>
                                   </table></td>
                                 </tr>

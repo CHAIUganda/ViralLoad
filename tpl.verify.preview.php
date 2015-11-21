@@ -157,7 +157,7 @@ $patientPhone=getDetailedTableInfo2("vl_patients_phone","patientID='$patientID' 
                                 </tr>
                                 <tr>
                                   <td style="padding:5px 0px; border-bottom: 1px solid #efefef"><strong>Date&nbsp;of&nbsp;Birth</strong></td>
-                                  <td style="padding:5px 0px; border-bottom: 1px solid #efefef"><?=($dateOfBirth?getFormattedDate($dateOfBirth):"&nbsp;")?></td>
+                                  <td style="padding:5px 0px; border-bottom: 1px solid #efefef"><?=getFormattedDate($dateOfBirth)?></td>
                                 </tr>
                                 <tr>
                                   <td style="padding:5px 0px"><strong>Patient&nbsp;Phone</strong></td>

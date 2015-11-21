@@ -227,7 +227,7 @@ $createdby=getDetailedTableInfo2("vl_samples","id='$id' limit 1","createdby");
                             </tr>
                             <tr>
                               <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6">Date&nbsp;of&nbsp;Birth</td>
-                              <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6"><?=($dateOfBirth?getFormattedDate($dateOfBirth):"&nbsp;")?></td>
+                              <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6"><?=getFormattedDate($dateOfBirth)?></td>
                             </tr>
                             <tr>
                               <td style="padding:4px 0px">Patient&nbsp;Phone</td>
