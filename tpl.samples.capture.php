@@ -622,6 +622,11 @@ function disableEnableDateOfBirth(checkedObject) {
 		document.samples.dateOfBirthDay.disabled=false;
 	}
 }
+
+function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityIDField){
+	//get hub
+	vlDC_XloadFacilityFromFormName(formNumberObject.value,formName,fieldID,facilityIDField);
+}
 //-->
 </script>
 <!--<form name="samples" method="post" action="/samples/capture/" onsubmit="return validate(this)">-->
@@ -684,14 +689,14 @@ function disableEnableDateOfBirth(checkedObject) {
                             </tr>
                             <tr>
                               <td>Form&nbsp;#&nbsp;<font class="vl_red">*</font></td>
-                              <td><input type="text" name="formNumber" id="formNumber" value="<?=$formNumber?>" class="search_pre" size="15" maxlength="50" /></td>
+                              <td><input type="text" name="formNumber" id="formNumber" value="<?=$formNumber?>" class="search_pre" size="15" maxlength="50" onkeyup="loadFacilityFromFormNumber(this,'samples','facilityID','facilityIDField')" /></td>
                             </tr>
                         <tr>
                           <td>Facility&nbsp;Name&nbsp;<font class="vl_red">*</font></td>
                           <td>
                               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                   <tr>
-                                    <td width="20%">
+                                    <td width="20%" id="facilityIDField">
                                         <select name="facilityID" id="facilityID" class="search" onchange="checkForHubDistrict(), loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)">
                                             <?
                                             $query=0;

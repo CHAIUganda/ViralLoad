@@ -103,4 +103,41 @@ function XloadArtHistory($artNumber,$facilityID) {
 	}
 	return $objResponse->getXML();
 }
+
+/**
+* update application number
+*/
+function XloadFacilityFromFormName($formnumber,$formName,$fieldID,$facilityIDField) {
+	//validate
+	$formnumber=validate($formnumber);
+	$formName=validate($formName);
+	$fieldID=validate($fieldID);
+	$facilityIDField=validate($facilityIDField);
+	$objResponse = new vlDCResponse();
+	//reference number
+	$refNumber=0;
+	$refNumber=getDetailedTableInfo2("vl_forms_clinicalrequest","formNumber='$formnumber' limit 1","refNumber");
+	//facility ID
+	$facilityID=0;
+	$facilityID=getDetailedTableInfo2("vl_forms_clinicalrequest_dispatch","refNumber='$refNumber' limit 1","facilityID");
+	if($facilityID) {
+		//load facilities
+		$facilities=0;
+		$facilities="<select name=\"$fieldID\" id=\"$fieldID\" class=\"search\" onchange=\"checkForHubDistrict(), loadArtHistory(document.$formName.artNumber,document.$formName.$facilityID.value)\">";
+		$query=0;
+		$query=mysqlquery("select * from vl_facilities where facility!='' order by facility");
+		$facilities.="<option value=\"$facilityID\" selected=\"selected\">".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."</option>";
+		if(mysqlnumrows($query)) {
+			while($q=mysqlfetcharray($query)) {
+				$facilities.="<option value=\"$q[id]\">$q[facility]</option>";
+			}
+		}
+		$facilities.="</select>";
+		//load responses
+		$objResponse->addAssign("$facilityIDField","innerHTML",$facilities);
+		$objResponse->addScript("document.$formName.$fieldID.value=checkForHubDistrict()");
+		$objResponse->addScript("document.$formName.$fieldID.value=loadArtHistory(document.$formName.artNumber,'$facilityID')");
+	}
+	return $objResponse->getXML();
+}
 ?>

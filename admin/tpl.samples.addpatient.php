@@ -59,10 +59,17 @@ if($searchQuery) {
 					$error.="<br /><strong>ART Number is Missing</strong><br />Kindly provide an ART Number<br />";
 				}
 				
+				/* 7/Sept/15
+				* Request from vbigira@clintonhealthaccess.org
+				* Just got another urgent request from CPHL: They would like the VL database to have an additional entry for patients 
+				* whose date of birth or age is not given by the facility. This was initially a 'must-have' option but with massive 
+				* numbers of forms returning without this information, they would like to have the option of leaving it as a "Left blank". 
+				* This can be put after the age variable.
 				//date of birth missing?
 				if((!$dateOfBirthDay || !$dateOfBirthMonth || !$dateOfBirthYear) && (!$dateOfBirthAge || !$dateOfBirthIn)) {
 					$error.="<br /><strong>Date of Birth Missing</strong><br />Kindly provide the Date of Birth<br />";
 				}
+				*/
 				
 				//is both date of birth and age in years/months missing?
 				$dateOfBirth=0;
@@ -84,7 +91,14 @@ if($searchQuery) {
 						*/
 						$dateOfBirth=getFormattedDateYear($dateOfBirth)."-01-01";
 					} else {
+						/* 7/Sept/15
+						* Request from vbigira@clintonhealthaccess.org
+						* Just got another urgent request from CPHL: They would like the VL database to have an additional entry for patients 
+						* whose date of birth or age is not given by the facility. This was initially a 'must-have' option but with massive 
+						* numbers of forms returning without this information, they would like to have the option of leaving it as a "Left blank". 
+						* This can be put after the age variable.
 						$error.="<br /><strong>Date of Birth is Missing</strong><br />Kindly provide the Date of Birth or Age in Months/Years<br />";
+						*/
 					}
 				}
 
@@ -100,9 +114,9 @@ if($searchQuery) {
 					$patientID=0;
 					if(!getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and artNumber='$artNumber' and otherID='$otherID' limit 1","id")) {
 						mysqlquery("insert into vl_patients 
-										(uniqueID,artNumber,otherID,gender,dateOfBirth,created,createdby) 
+										(uniqueID,artNumber,otherID,gender,".(!$noDateOfBirthSupplied?"dateOfBirth,":"")."created,createdby) 
 										values 
-										('$uniqueID','$artNumber','$otherID','$gender','$dateOfBirth','$datetime','$_SESSION[VLADMIN]')");
+										('$uniqueID','$artNumber','$otherID','$gender',".(!$noDateOfBirthSupplied?"'$dateOfBirth',":"")."'$datetime','$_SESSION[VLADMIN]')");
 
 						//patient ID
 						$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
@@ -128,17 +142,23 @@ if($searchQuery) {
 				}
             break;
             case modify:
+				//prepare date of birth
+				$dateOfBirth=0;
+				if($dateOfBirthYear && $dateOfBirthMonth && $dateOfBirthDay) {
+					$dateOfBirth="$dateOfBirthYear-$dateOfBirthMonth-$dateOfBirthDay";
+				}
+
 				//log table change
 				logTableChange("vl_patients","artNumber",$id,getDetailedTableInfo2("vl_patients","id='$id'","artNumber"),$artNumber);
 				logTableChange("vl_patients","otherID",$id,getDetailedTableInfo2("vl_patients","id='$id'","otherID"),$otherID);
 				logTableChange("vl_patients","gender",$id,getDetailedTableInfo2("vl_patients","id='$id'","gender"),$gender);
-				logTableChange("vl_patients","dateOfBirth",$id,getDetailedTableInfo2("vl_patients","id='$id'","dateOfBirth"),$dateOfBirth);
+				if(!$noDateOfBirthSupplied) { logTableChange("vl_patients","dateOfBirth",$id,getDetailedTableInfo2("vl_patients","id='$id'","dateOfBirth"),$dateOfBirth); }
 				//update vl_patients
 				mysqlquery("update vl_patients set 
 										artNumber='$artNumber',
 										otherID='$otherID',
-										gender='$gender',
-										dateOfBirth='$dateOfBirth' 
+										".(!$noDateOfBirthSupplied?"dateOfBirth='$dateOfBirth', ":"dateOfBirth='', ")."
+										gender='$gender' 
 										where id='$id'");
 				//log patient phone number, if unique
 				if($patientPhone && !getDetailedTableInfo2("vl_patients_phone","patientID='$id' and phone='$patientPhone' limit 1","id")) {
@@ -177,6 +197,15 @@ if($searchQuery) {
 		if(!$task) {
 			$task="add";
 		}
+		
+		//if $id and date of birth
+		if($id) {
+			if(!isDateAuthentic(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))) {
+				$noDateOfBirthSupplied=1;
+			} else {
+				$noDateOfBirthSupplied=0;
+			}
+		}
 ?>
         <script Language="JavaScript" Type="text/javascript">
 		<!--
@@ -198,13 +227,45 @@ if($searchQuery) {
 				document.adminsForm.gender.focus();
 				return (false);
 			}
+			/*
 			if((!document.adminsForm.dateOfBirthDay.value || !document.adminsForm.dateOfBirthMonth.value || !document.adminsForm.dateOfBirthYear.value) && (!document.adminsForm.dateOfBirthAge.value || !document.adminsForm.dateOfBirthIn.value)) {
 				alert('Missing Mandatory Field: Date of Birth or Patient Age');
 				document.adminsForm.dateOfBirthDay.focus();
 				return (false);
 			}
+			*/
             return (true);
         }
+
+		function checkMonthDay(theField) {
+			if(theField.value && !document.adminsForm.dateOfBirthMonth.value && !document.adminsForm.dateOfBirthDay.value) {
+				//default to first day/month
+				document.adminsForm.dateOfBirthDay.value="01";
+				document.adminsForm.dateOfBirthMonth.value="01"
+			}
+		}
+		
+		function disableEnableDateOfBirth(checkedObject) {
+			if(checkedObject.checked==true) {
+				//has been checked
+				<? if(!$id) { ?>
+				document.adminsForm.dateOfBirthIn.disabled=true;
+				document.adminsForm.dateOfBirthAge.disabled=true;
+				<? } ?>
+				document.adminsForm.dateOfBirthYear.disabled=true;
+				document.adminsForm.dateOfBirthMonth.disabled=true;
+				document.adminsForm.dateOfBirthDay.disabled=true;
+			} else if(checkedObject.checked==false) {
+				//has been unchecked
+				<? if(!$id) { ?>
+				document.adminsForm.dateOfBirthIn.disabled=false;
+				document.adminsForm.dateOfBirthAge.disabled=false;
+				<? } ?>
+				document.adminsForm.dateOfBirthYear.disabled=false;
+				document.adminsForm.dateOfBirthMonth.disabled=false;
+				document.adminsForm.dateOfBirthDay.disabled=false;
+			}
+		}
         //-->
         </script>
         
@@ -245,7 +306,7 @@ if($searchQuery) {
 			if($queryResults) {
 		?>
             <tr>
-              <td class="vl_error"><?=$queryResults?> result<?=($queryResults==1?"":"s")?> found while searching for <strong><?=$searchQuery?></strong></td>
+              <td class="vl_success"><?=$queryResults?> result<?=($queryResults==1?"":"s")?> found while searching for <strong><?=$searchQuery?></strong></td>
             </tr>
             <tr>
               <td>&nbsp;</td>
@@ -327,11 +388,11 @@ if($searchQuery) {
                               </td>
                             </tr>
                             <tr>
-                              <td>Date&nbsp;of&nbsp;Birth&nbsp;<font class="vl_red">*</font></td>
+                              <td>Date&nbsp;of&nbsp;Birth</td>
                               <td>
                                   <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                       <tr>
-                                        <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search">
+                                        <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                           <?
 										  	if($id) {
 												echo "<option value=\"".getFormattedDateDay(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))."\" selected=\"selected\">".getFormattedDateDay(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))."</option>";
@@ -345,7 +406,7 @@ if($searchQuery) {
                                             }
                                             ?>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                           <? 
 										  	if($id) {
 												echo "<option value=\"".getFormattedDateMonth(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))."\" selected=\"selected\">".getFormattedDateMonthname(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))."</option>";
@@ -368,7 +429,7 @@ if($searchQuery) {
                                           <option value="11">Nov</option>
                                           <option value="12">Dec</option>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)">
+                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                           		<?
 												if($id) {
 													echo "<option value=\"".getFormattedDateYear(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))."\" selected=\"selected\">".getFormattedDateYear(getDetailedTableInfo2("vl_patients","id='$id' limit 1","dateOfBirth"))."</option>";
@@ -392,7 +453,7 @@ if($searchQuery) {
                               <td>
                                   <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                       <tr>
-                                        <td style="padding:0px 0px 0px 0px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search">
+                                        <td style="padding:0px 0px 0px 0px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                           		<?
 												if($dateOfBirthAge) {
 													echo "<option value=\"$dateOfBirthAge\" selected=\"selected\">$dateOfBirthAge</option>";
@@ -404,7 +465,7 @@ if($searchQuery) {
                                                 }
                                                 ?>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthIn" id="dateOfBirthIn" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthIn" id="dateOfBirthIn" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                           		<?
 													if($dateOfBirthIn) {
 														echo "<option value=\"$dateOfBirthIn\" selected=\"selected\">$dateOfBirthIn</option>";
@@ -420,6 +481,15 @@ if($searchQuery) {
                               </td>
                             </tr>
                             <? } ?>
+                            <tr>
+							  <td>or</td>
+                              <td><table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                  <tr>
+                                    <td width="1%"><input name="noDateOfBirthSupplied" type="checkbox" id="noDateOfBirthSupplied" value="1" onclick="disableEnableDateOfBirth(this);" <?=($noDateOfBirthSupplied?"checked=\"checked\"":"")?> /></td>
+                                    <td width="99%" style="padding:0px 0px 0px 5px">No&nbsp;date&nbsp;of&nbsp;birth&nbsp;supplied</td>
+                                  </tr>
+                                </table></td>
+                            </tr>
                             <tr>
                               <td>Patient&nbsp;Phone</td>
                               <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">

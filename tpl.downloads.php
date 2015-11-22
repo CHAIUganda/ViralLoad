@@ -500,6 +500,8 @@ switch($options) {
 			$header[]="Reference Number";
 			$header[]="Destination Facility";
 			$header[]="Date Dispatched";
+			$header[]="Received from Facility";
+			$header[]="Date Received";
 			$header[]="Date Created";
 			$xls->addHeader($header);
 			//iterations
@@ -515,6 +517,12 @@ switch($options) {
 				$facility=($facilityID?getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility"):"N/A");
 				$dateDispatched=0;
 				$dateDispatched=($facilityID?getRawFormattedDateLessDay(getDetailedTableInfo2("vl_forms_clinicalrequest_dispatch","refNumber='$q[refNumber]' limit 1","dispatchDate")):"N/A");
+				$receivedFacilityID=0;
+				$receivedFacilityID=getDetailedTableInfo2("vl_samples","formNumber='$formNumber' limit 1","facilityID");
+				$receivedFacility=0;
+				$receivedFacility=($receivedFacilityID?getDetailedTableInfo2("vl_facilities","id='$receivedFacilityID' limit 1","facility"):"N/A");
+				$dateReceived=0;
+				$dateReceived=($receivedFacilityID?getRawFormattedDateLessDay(getDetailedTableInfo2("vl_samples","formNumber='$formNumber' limit 1","receiptDate")):"N/A");
 				$dateCreated=0;
 				$dateCreated=getRawFormattedDateLessDay($q["created"]);
 				
@@ -528,6 +536,10 @@ switch($options) {
 				$row[]=$facility;
 				//date dispatched
 				$row[]=$dateDispatched;
+				//Received from Facility
+				$row[]=$receivedFacility;
+				//Date Received
+				$row[]=$dateReceived;
 				//date created
 				$row[]=$dateCreated;
 				//append

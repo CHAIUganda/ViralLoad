@@ -7,6 +7,7 @@ if(!$GLOBALS['vlDC']) {
 /**
 * DATE/TIME RELATED FUNCTIONS
 */
+
 /**
 * function to take a given date and establish its authenticity
 * @param: $datetime
@@ -112,7 +113,9 @@ function getDateDifference($date1,$date2) {
 	//duration
 	$duration=0;
 	$duration=getDualInfoWithAlias("datediff('$date1','$date2')","duration");
-	return abs(getDualInfoWithAlias("datediff('$date1','$date2')","duration"));
+	if(isDateAuthentic($date1) && isDateAuthentic($date2)) {
+		return abs(getDualInfoWithAlias("datediff('$date1','$date2')","duration"));
+	}
 }
 
 /**
@@ -122,7 +125,9 @@ function getDateDifference($date1,$date2) {
 * @param: $date2
 */
 function getStandardDateDifference($date1,$date2) {
-	return getDualInfoWithAlias("datediff('$date1','$date2')","duration");
+	if(isDateAuthentic($date1) && isDateAuthentic($date2)) {
+		return getDualInfoWithAlias("datediff('$date1','$date2')","duration");
+	}
 }
 
 /**
@@ -131,22 +136,24 @@ function getStandardDateDifference($date1,$date2) {
 * @param: $date2, $time2
 */
 function getDetailedDateDifference($date1,$time1,$date2,$time2) {
-	//duration
-	$duration=0;
-	$duration=getDateDifference($date1,$date2);
-	if($duration) {
-		return ($duration==1?"$duration day":"$duration days");
-	} else {
-		//get the hourly difference
-		$timeStamp1=0;
-		$timeStamp1=strtotime("$date1 $time1");
-		$timeStamp2=0;
-		$timeStamp2=strtotime("$date2 $time2");
-		$timeDuration=0;
-		$timeDuration=(strftime('%H',$timeStamp1)>strftime('%H',$timeStamp2)?strftime('%H',$timeStamp1)-strftime('%H',$timeStamp2):strftime('%H',$timeStamp2)-strftime('%H',$timeStamp1));
-		$timeDuration=abs($timeDuration);
-		if($timeDuration && $timeStamp1 && $timeStamp2) {
-			return ($timeDuration==1?"$timeDuration hour":"$timeDuration hours");
+	if(isDateAuthentic($date1) && isDateAuthentic($date2)) {
+		//duration
+		$duration=0;
+		$duration=getDateDifference($date1,$date2);
+		if($duration) {
+			return ($duration==1?"$duration day":"$duration days");
+		} else {
+			//get the hourly difference
+			$timeStamp1=0;
+			$timeStamp1=strtotime("$date1 $time1");
+			$timeStamp2=0;
+			$timeStamp2=strtotime("$date2 $time2");
+			$timeDuration=0;
+			$timeDuration=(strftime('%H',$timeStamp1)>strftime('%H',$timeStamp2)?strftime('%H',$timeStamp1)-strftime('%H',$timeStamp2):strftime('%H',$timeStamp2)-strftime('%H',$timeStamp1));
+			$timeDuration=abs($timeDuration);
+			if($timeDuration && $timeStamp1 && $timeStamp2) {
+				return ($timeDuration==1?"$timeDuration hour":"$timeDuration hours");
+			}
 		}
 	}
 }
@@ -158,22 +165,24 @@ function getDetailedDateDifference($date1,$time1,$date2,$time2) {
 * @param: $date2, $time2
 */
 function getStandardDetailedDateDifference($date1,$time1,$date2,$time2) {
-	//duration
-	$duration=0;
-	$duration=getStandardDateDifference($date1,$date2);
-	if($duration==0) {
-		//get the hourly difference
-		$timeStamp1=0;
-		$timeStamp1=strtotime("$date1 $time1");
-		$timeStamp2=0;
-		$timeStamp2=strtotime("$date2 $time2");
-		$timeDuration=0;
-		$timeDuration=strftime('%H',$timeStamp1)-strftime('%H',$timeStamp2);
-		if($timeStamp1 && $timeStamp2) {
-			return $timeDuration;
+	if(isDateAuthentic($date1) && isDateAuthentic($date2)) {
+		//duration
+		$duration=0;
+		$duration=getStandardDateDifference($date1,$date2);
+		if($duration==0) {
+			//get the hourly difference
+			$timeStamp1=0;
+			$timeStamp1=strtotime("$date1 $time1");
+			$timeStamp2=0;
+			$timeStamp2=strtotime("$date2 $time2");
+			$timeDuration=0;
+			$timeDuration=strftime('%H',$timeStamp1)-strftime('%H',$timeStamp2);
+			if($timeStamp1 && $timeStamp2) {
+				return $timeDuration;
+			}
+		} else {
+			return $duration;
 		}
-	} else {
-		return $duration;
 	}
 }
 
@@ -185,15 +194,17 @@ function getStandardDetailedDateDifference($date1,$time1,$date2,$time2) {
 * else returns 0
 */
 function isDate1GreaterDate2($date1,$date2) {
-	//date1Timestamp
-	$date1Timestamp=0;
-	$date1Timestamp=strtotime("$date1");
-	$date2Timestamp=0;
-	$date2Timestamp=strtotime("$date2");
-	//duration
-	$diff=0;
-	$diff=$date1Timestamp-$date2Timestamp;
-	return ($diff>1?1:0);
+	if(isDateAuthentic($date1) && isDateAuthentic($date2)) {
+		//date1Timestamp
+		$date1Timestamp=0;
+		$date1Timestamp=strtotime("$date1");
+		$date2Timestamp=0;
+		$date2Timestamp=strtotime("$date2");
+		//duration
+		$diff=0;
+		$diff=$date1Timestamp-$date2Timestamp;
+		return ($diff>1?1:0);
+	}
 }
 
 /**

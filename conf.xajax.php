@@ -15,5 +15,6 @@ if(!$GLOBALS['vlDC']) {
 $vlDC->registerFunction("XloadHub");
 $vlDC->registerFunction("XloadDistrict");
 $vlDC->registerFunction("XloadArtHistory");
+$vlDC->registerFunction("XloadFacilityFromFormName");
 $vlDC->processRequests();
 ?>

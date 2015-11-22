@@ -233,6 +233,22 @@ if(!$GLOBALS['vlDC']) {
                             $count+=1;
 							$numberSamples=0;
 							$numberSamples=getDetailedTableInfo3("vl_samples","currentRegimenID='$q[id]'","count(id)","num");
+							//samples
+							/*
+							$samples="";
+							$squery=0;
+							$squery=mysqlquery("select * from vl_samples where currentRegimenID='$q[id]' order by created");
+							$snum=0;
+							$snum=mysqlnumrows($squery);
+							if($snum) {
+								$scount=0;
+								$sq=array();
+								while($sq=mysqlfetcharray($squery)) {
+									$scount+=1;
+									$samples.="$sq[lrCategory]$sq[lrEnvelopeNumber]/$sq[lrNumericID]".($scount<$snum?",":"");
+								}
+							}
+							*/
                         ?>
                             <tr>
                                 <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["position"]?></td>
