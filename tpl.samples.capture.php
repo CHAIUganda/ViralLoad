@@ -4,7 +4,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 	die("<font face=arial size=2>You must be logged in to view this page.</font>");
 }
 
-if($saveSample) {
+if($saveSample || $proceedWithWarning) {
 	//validations
 	$lrCategory=validate($lrCategory);
 	$lrEnvelopeNumber=validate($lrEnvelopeNumber);
@@ -84,6 +84,9 @@ if($saveSample) {
 	}
 	
 	//validate data
+	$warnings=0;
+	$warnings="";
+
 	$error=0;
 	$error=checkFormFields("Form_Number::$formNumber Facility_Name::$facilityID Gender::$gender Sample_Type::$sampleTypeID Current_Regimen::$currentRegimenID Treatment_Status::$treatmentStatusID Viral_Load_Testing::$viralLoadTestingID Pregnancy_Status::$pregnant Breastfeeding_Status::$breastfeeding Viral_Load_Testing::$viralLoadTestingID Whether_Patient_has_been_on_Treatment_for_last_6_months::$treatmentLast6Months");
 
@@ -253,8 +256,30 @@ if($saveSample) {
 		$error.="<br /><strong>Facility '".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."' is not active.</strong><br />Please select an alternative active facility or contact your administrator about activating this facility.<br />";
 	}
 
+	//possible contradicting gender
+	$uniqueID=0;
+	if($artNumber || $otherID) {
+		$uniqueID=$facilityID."-".($artNumber?"A-$artNumber":"O-$otherID");
+	}
+
+	$mostRecentGender=0;
+	$mostRecentGender=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') order by created desc limit 1","gender");
+	$mostRecentGenderCreated=0;
+	$mostRecentGenderCreated=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') order by created desc limit 1","created");
+	$mostRecentGenderCreatedBy=0;
+	$mostRecentGenderCreatedBy=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') order by created desc limit 1","createdby");
+	if($mostRecentGender && 
+		(($mostRecentGender=="Female" && $gender=="Male") || 
+			($mostRecentGender=="Male" && $gender=="Female")) && 
+				!$proceedWithWarning) {
+		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible Data Contradiction!</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The patient with ".($artNumber?"ART <strong>$artNumber</strong>":"").($artNumber && $otherID?", ":"").($otherID?"Other ID <strong>$otherID</strong>":"")." created on <strong>".getFormattedDate($mostRecentGenderCreated)."</strong> by <strong>$mostRecentGenderCreatedBy</strong> was last created with the gender <strong>$mostRecentGender</strong>.</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">You are however currently submitting this patient with the gender <strong>$gender</strong>. If the gender you have supplied is accurate, click \"Proceed Anyway\" otherwise, change the gender to <strong>$mostRecentGender</strong> then click \"Save Samples\" to proceed.</div>
+					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarning\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
+	}
+
 	//input data
-	if(!$error) {
+	if(!$error && !$warnings) {
 		//concatenations
 		$uniqueID=0;
 		if($artNumber || $otherID) {
@@ -273,6 +298,41 @@ if($saveSample) {
 			$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
 		} else {
 			$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
+			//log changes to the patient's gender
+			if($proceedWithWarning) {
+				//log updates
+				logTableChange("vl_patients","gender",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","gender"),$gender);
+				$genderChangeLogID=0;
+				$genderChangeLogID=getDetailedTableInfo2("vl_logs_tables","createdby='$trailSessionUser' order by id desc limit 1","id");
+				if(!$noDateOfBirthSupplied) { 
+					logTableChange("vl_patients","dateOfBirth",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","dateOfBirth"),$dateOfBirth); 
+					$dateOfBirthChangeLogID=0;
+					$dateOfBirthChangeLogID=getDetailedTableInfo2("vl_logs_tables","createdby='$trailSessionUser' order by id desc limit 1","id");
+				}
+
+				//update patients database
+				mysqlquery("update vl_patients set 
+								".(!$noDateOfBirthSupplied?"dateOfBirth='$dateOfBirth', ":"dateOfBirth='', ")."
+								gender='$gender' 
+								where 
+								id='$patientID'");
+
+				//log the change of gender warning
+				mysqlquery("insert into vl_logs_warnings 
+							(logCategory,logDetails,logTableID,created,createdby) 
+							values 
+							('changedPatientsGender','Gender changed from $mostRecentGender to $gender for Patient with ".($artNumber?"ART $artNumber":"").($artNumber && $otherID?", ":"").($otherID?"Other ID $otherID":"")." from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility").".','$genderChangeLogID','$datetime','$trailSessionUser')");
+
+				//log the change of date of birth warning
+				/*
+				if(!$noDateOfBirthSupplied) { 
+					mysqlquery("insert into vl_logs_warnings 
+								(logCategory,logDetails,logTableID,created,createdby) 
+								values 
+								('changedPatientsDateOfBirth','Date of Birth changed from ".getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') order by created desc limit 1","dateOfBirth")." to $dateOfBirth for Patient with ".($artNumber?"ART $artNumber":"").($artNumber && $otherID?", ":"").($otherID?"Other ID $otherID":"")." from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility").".','$dateOfBirthChangeLogID','$datetime','$trailSessionUser')");
+				}
+				*/
+			}
 		}
 
 		//log patient phone number, if unique
@@ -642,6 +702,13 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 			<? } elseif($error) { ?>
             <tr>
                 <td class="vl_error"><?=$error?></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <? } elseif($warnings) { ?>
+            <tr>
+                <td class="vl_warning"><?=$warnings?></td>
             </tr>
             <tr>
                 <td>&nbsp;</td>

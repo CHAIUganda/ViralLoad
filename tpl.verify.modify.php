@@ -85,7 +85,7 @@ if($viralLoadTestingIndication=="vlTestingSuspectedTreatmentFailure") {
 	$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
 }
 
-if($saveChanges) {
+if($saveChanges || $proceedWithWarning) {
 
 	$error=0;
 	$error=checkFormFields("Gender::$gender Form_Number::$formNumber Facility_Name::$facilityID Sample_Type::$sampleTypeID Current_Regimen::$currentRegimenID Treatment_Status::$treatmentStatusID Viral_Load_Testing::$viralLoadTestingID Pregnancy_Status::$pregnant Breastfeeding_Status::$breastfeeding Viral_Load_Testing::$viralLoadTestingID Whether_Patient_has_been_on_Treatment_for_last_6_months::$treatmentLast6Months");
@@ -212,8 +212,25 @@ if($saveChanges) {
 		$error.="<br /><strong>Facility '".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."' is not active.</strong><br />Please select an alternative active facility or contact your administrator about activating this facility.<br />";
 	}
 
+	//possible contradicting gender
+	$mostRecentGender=0;
+	$mostRecentGender=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","gender");
+	$mostRecentGenderCreated=0;
+	$mostRecentGenderCreated=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","created");
+	$mostRecentGenderCreatedBy=0;
+	$mostRecentGenderCreatedBy=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","createdby");
+	if($mostRecentGender && 
+		(($mostRecentGender=="Female" && $gender=="Male") || 
+			($mostRecentGender=="Male" && $gender=="Female")) && 
+				!$proceedWithWarning) {
+		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible Data Contradiction!</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The patient with ".($artNumber?"ART <strong>$artNumber</strong>":"").($artNumber && $otherID?", ":"").($otherID?"Other ID <strong>$otherID</strong>":"")." created on <strong>".getFormattedDate($mostRecentGenderCreated)."</strong> by <strong>$mostRecentGenderCreatedBy</strong> was last created with the gender <strong>$mostRecentGender</strong>.</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">You are however currently submitting this patient with the gender <strong>$gender</strong>. If the gender you have supplied is accurate, click \"Proceed Anyway\" otherwise, change the gender to <strong>$mostRecentGender</strong> then click \"Save Samples\" to proceed.</div>
+					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarning\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
+	}
+
 	//input data
-	if(!$error) {
+	if(!$error && !$warnings) {
 		//log changes
 		logTableChange("vl_samples","lrCategory",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","lrCategory"),$lrCategory);
 		logTableChange("vl_samples","lrEnvelopeNumber",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","lrEnvelopeNumber"),$lrEnvelopeNumber);
@@ -304,6 +321,8 @@ if($saveChanges) {
 		logTableChange("vl_patients","artNumber",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","artNumber"),$artNumber);
 		logTableChange("vl_patients","otherID",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","otherID"),$otherID);
 		logTableChange("vl_patients","gender",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","gender"),$gender);
+		$genderChangeLogID=0;
+		$genderChangeLogID=getDetailedTableInfo2("vl_logs_tables","createdby='$trailSessionUser' order by id desc limit 1","id");
 		if(!$noDateOfBirthSupplied) { logTableChange("vl_patients","dateOfBirth",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","dateOfBirth"),$dateOfBirth); }
 		//update patient information
 		mysqlquery("update vl_patients set 
@@ -313,6 +332,16 @@ if($saveChanges) {
 						gender='$gender' 
 						where 
 						id='$patientID'");
+		
+		//log the change of gender warning
+		if($mostRecentGender && 
+			(($mostRecentGender=="Female" && $gender=="Male") || 
+				($mostRecentGender=="Male" && $gender=="Female"))) {
+			mysqlquery("insert into vl_logs_warnings 
+						(logCategory,logDetails,logTableID,created,createdby) 
+						values 
+						('changedPatientsGender','Gender changed from $mostRecentGender to $gender for Patient with ".($artNumber?"ART $artNumber":"").($artNumber && $otherID?", ":"").($otherID?"Other ID $otherID":"")." from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility").".','$genderChangeLogID','$datetime','$trailSessionUser')");
+		}
 
 		//log patient phone number, if unique
 		if($patientPhone && !getDetailedTableInfo2("vl_patients_phone","patientID='$patientID' and phone='$patientPhone' limit 1","id")) {
@@ -723,6 +752,13 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 			<? } elseif($error) { ?>
             <tr>
                 <td class="vl_error"><?=$error?></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <? } elseif($warnings) { ?>
+            <tr>
+                <td class="vl_warning"><?=$warnings?></td>
             </tr>
             <tr>
                 <td>&nbsp;</td>
