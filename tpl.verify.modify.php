@@ -85,7 +85,7 @@ if($viralLoadTestingIndication=="vlTestingSuspectedTreatmentFailure") {
 	$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
 }
 
-if($saveChanges || $proceedWithWarning) {
+if($saveChanges || $proceedWithWarningGender) {
 
 	$error=0;
 	$error=checkFormFields("Gender::$gender Form_Number::$formNumber Facility_Name::$facilityID Sample_Type::$sampleTypeID Current_Regimen::$currentRegimenID Treatment_Status::$treatmentStatusID Viral_Load_Testing::$viralLoadTestingID Pregnancy_Status::$pregnant Breastfeeding_Status::$breastfeeding Viral_Load_Testing::$viralLoadTestingID Whether_Patient_has_been_on_Treatment_for_last_6_months::$treatmentLast6Months");
@@ -222,11 +222,11 @@ if($saveChanges || $proceedWithWarning) {
 	if($mostRecentGender && 
 		(($mostRecentGender=="Female" && $gender=="Male") || 
 			($mostRecentGender=="Male" && $gender=="Female")) && 
-				!$proceedWithWarning) {
+				!$proceedWithWarningGender) {
 		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible Data Contradiction!</div>
 					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The patient with ".($artNumber?"ART <strong>$artNumber</strong>":"").($artNumber && $otherID?", ":"").($otherID?"Other ID <strong>$otherID</strong>":"")." created on <strong>".getFormattedDate($mostRecentGenderCreated)."</strong> by <strong>$mostRecentGenderCreatedBy</strong> was last created with the gender <strong>$mostRecentGender</strong>.</div>
 					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">You are however currently submitting this patient with the gender <strong>$gender</strong>. If the gender you have supplied is accurate, click \"Proceed Anyway\" otherwise, change the gender to <strong>$mostRecentGender</strong> then click \"Save Samples\" to proceed.</div>
-					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarning\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
+					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarningGender\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
 	}
 
 	//input data
@@ -756,7 +756,11 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
             <tr>
                 <td>&nbsp;</td>
             </tr>
-            <? } elseif($warnings) { ?>
+            <? 
+			} 
+			
+			if($warnings) { 
+			?>
             <tr>
                 <td class="vl_warning"><?=$warnings?></td>
             </tr>

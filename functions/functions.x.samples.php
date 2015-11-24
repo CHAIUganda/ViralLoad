@@ -125,7 +125,7 @@ function XloadFacilityFromFormName($formnumber,$formName,$fieldID,$facilityIDFie
 	if($facilityID) {
 		//load facilities
 		$facilities=0;
-		$facilities="<select name=\"$fieldID\" id=\"$fieldID\" class=\"search\" onchange=\"checkForHubDistrict(), loadArtHistory(document.$formName.artNumber,document.$formName.$facilityID.value)\">";
+		$facilities="<select name=\"$fieldID\" id=\"$fieldID\" class=\"search\" onchange=\"checkForHubDistrict(), loadArtHistory(document.$formName.artNumber,document.$formName.$facilityIDField.value)\">";
 		$query=0;
 		$query=mysqlquery("select * from vl_facilities where facility!='' order by facility");
 		$facilities.="<option value=\"$facilityID\" selected=\"selected\">".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."</option>";

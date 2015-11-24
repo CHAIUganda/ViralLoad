@@ -4,7 +4,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 	die("<font face=arial size=2>You must be logged in to view this page.</font>");
 }
 
-if($saveSample || $proceedWithWarning) {
+if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesting) {
 	//validations
 	$lrCategory=validate($lrCategory);
 	$lrEnvelopeNumber=validate($lrEnvelopeNumber);
@@ -52,7 +52,7 @@ if($saveSample || $proceedWithWarning) {
 	$activeTBStatus=validate($activeTBStatus);
 	$tbTreatmentPhaseID=validate($tbTreatmentPhaseID);
 	$arvAdherenceID=validate($arvAdherenceID);
-
+	
 	if($viralLoadTestingIndication=="vlTestingRoutineMonitoring") {
 		$routineMonitoringLastVLDateDay=validate($routineMonitoringLastVLDateDay);
 		$routineMonitoringLastVLDateMonth=validate($routineMonitoringLastVLDateMonth);
@@ -271,11 +271,31 @@ if($saveSample || $proceedWithWarning) {
 	if($mostRecentGender && 
 		(($mostRecentGender=="Female" && $gender=="Male") || 
 			($mostRecentGender=="Male" && $gender=="Female")) && 
-				!$proceedWithWarning) {
+				!$proceedWithWarningGender) {
 		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible Data Contradiction!</div>
 					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The patient with ".($artNumber?"ART <strong>$artNumber</strong>":"").($artNumber && $otherID?", ":"").($otherID?"Other ID <strong>$otherID</strong>":"")." created on <strong>".getFormattedDate($mostRecentGenderCreated)."</strong> by <strong>$mostRecentGenderCreatedBy</strong> was last created with the gender <strong>$mostRecentGender</strong>.</div>
 					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">You are however currently submitting this patient with the gender <strong>$gender</strong>. If the gender you have supplied is accurate, click \"Proceed Anyway\" otherwise, change the gender to <strong>$mostRecentGender</strong> then click \"Save Samples\" to proceed.</div>
-					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarning\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
+					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarningGender\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
+	}
+
+	//If the same ART or Other ID # has been received from the same facility, but with different form numbers and within 5 months of each other, raise a warning
+	$mostRecentPatientID=0;
+	$mostRecentPatientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') order by created desc limit 1","id");
+	$mostRecentPatientSampleID=0;
+	$mostRecentPatientSampleID=getDetailedTableInfo2("vl_samples","patientID='$mostRecentPatientID' and (vlSampleID in (select sampleID from vl_results_abbott) or vlSampleID in (select SampleID from vl_results_roche)) order by created desc limit 1","vlSampleID");
+	$mostRecentPatientIDTested=0;
+	$mostRecentPatientIDTested=getDetailedTableInfo2("vl_results_abbott","sampleID='$mostRecentPatientSampleID' order by created desc limit 1","created");
+	if(!$mostRecentPatientIDTested) {
+		$mostRecentPatientIDTested=getDetailedTableInfo2("vl_results_roche","SampleID='$mostRecentPatientSampleID' order by created desc limit 1","created");
+	}
+	if($mostRecentPatientSampleID && 
+		$mostRecentPatientIDTested && 
+			getStandardDateDifference($datetime,$mostRecentPatientIDTested)<($default_viralLoadRepeatTestWindow*30.5) && 
+				!$proceedWithWarningVLRepeatTesting) {
+		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible Repeat Viral Load Test occuring within $default_viralLoadRepeatTestWindow months!</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The patient with ".($artNumber?"ART <strong>$artNumber</strong>":"").($artNumber && $otherID?", ":"").($otherID?"Other ID <strong>$otherID</strong>":"")." was last tested on <strong>".getFormattedDate($mostRecentPatientIDTested)."</strong> i.e ".round(getStandardDateDifference($datetime,$mostRecentPatientIDTested)/30.5)." month(s) back (less than $default_viralLoadRepeatTestWindow months ago).</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">Repeat Viral Load tests are carried out at intervals of $default_viralLoadRepeatTestWindow months or more. If this is an authentic repeat Viral Load test, then click \"Proceed Anyway\" otherwise, input a different patient then click \"Save Samples\" to proceed.</div>
+					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarningVLRepeatTesting\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
 	}
 
 	//input data
@@ -299,7 +319,7 @@ if($saveSample || $proceedWithWarning) {
 		} else {
 			$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
 			//log changes to the patient's gender
-			if($proceedWithWarning) {
+			if($proceedWithWarningGender) {
 				//log updates
 				logTableChange("vl_patients","gender",$patientID,getDetailedTableInfo2("vl_patients","id='$patientID'","gender"),$gender);
 				$genderChangeLogID=0;
@@ -333,6 +353,15 @@ if($saveSample || $proceedWithWarning) {
 				}
 				*/
 			}
+		}
+
+		//log the repeated viral load test
+		if($proceedWithWarningVLRepeatTesting) {
+			//log the change of gender warning
+			mysqlquery("insert into vl_logs_warnings 
+						(logCategory,logDetails,logTableID,created,createdby) 
+						values 
+						('capturedRepeatVLTest','Captured a repeat VL Test after ".round(getStandardDateDifference($datetime,$mostRecentPatientIDTested)/30.5)." month(s) or ".getStandardDateDifference($datetime,$mostRecentPatientIDTested)." day(s) instead of the recommended $default_viralLoadRepeatTestWindow month(s) for Patient with ".($artNumber?"ART $artNumber":"").($artNumber && $otherID?", ":"").($otherID?"Other ID $otherID":"")." from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility").".','','$datetime','$trailSessionUser')");
 		}
 
 		//log patient phone number, if unique
@@ -706,7 +735,11 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
             <tr>
                 <td>&nbsp;</td>
             </tr>
-            <? } elseif($warnings) { ?>
+            <? 
+			} 
+			
+			if($warnings) { 
+			?>
             <tr>
                 <td class="vl_warning"><?=$warnings?></td>
             </tr>

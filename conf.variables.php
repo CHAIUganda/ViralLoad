@@ -124,6 +124,8 @@ $default_numberCalibratorsRoche=8;
 $default_numberWorksheets=50;
 //number of forms per book
 $default_formsPerBook=50;
+//viral load repeat test window (in months)
+$default_viralLoadRepeatTestWindow=5;
 
 //$ipAddress = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 $serverAddress = $_SERVER['REMOTE_ADDR'];
