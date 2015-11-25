@@ -136,7 +136,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
             </table></td>
       </tr>
       <tr>
-        <td valign="top" style="padding:10px 0px">
+        <td valign="top" style="padding:10px 0px<?=(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reportsQC' limit 1","id")?"; border-bottom: 1px dashed #CCC":"")?>">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td class="vl_tdnoborder" width="5%"><img src="/images/download.excel.gif" width="55" height="55" alt="downloads" border="0" /></td>
@@ -243,5 +243,19 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
             </table>
         </td>
       </tr>
+      <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reportsQC' limit 1","id")) { ?>
+      <tr>
+        <td valign="top" style="padding:10px 0px">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="vl_tdnoborder" width="5%"><img src="/images/download.excel.gif" width="55" height="55" alt="downloads" border="0" /></td>
+                <td class="vl_tdnoborder" width="95%">
+                    <div style="padding:0px 0px 2px 2px">Patients with multiple, and different results</div>
+                    <div style="padding:3px 0px 5px 2px"><a href="/download/patients.multiple.results.excel/">Download list of patients with multiple, and different results</a></div>
+                </td>
+              </tr>
+            </table></td>
+      </tr>
+      <? } ?>
     </table>
   </div>

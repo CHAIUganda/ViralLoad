@@ -45,6 +45,7 @@ if(!$GLOBALS['vlDC']) {
 				if($generateForms) { mysqlquery("insert into vl_users_permissions (userID,permission,created,createdby) values ('$id','generateForms','$datetime','$_SESSION[VLADMIN]')"); $added+=1; }
 				if($results) { mysqlquery("insert into vl_users_permissions (userID,permission,created,createdby) values ('$id','results','$datetime','$_SESSION[VLADMIN]')"); $added+=1; }
 				if($reports) { mysqlquery("insert into vl_users_permissions (userID,permission,created,createdby) values ('$id','reports','$datetime','$_SESSION[VLADMIN]')"); $added+=1; }
+				if($reportsQC) { mysqlquery("insert into vl_users_permissions (userID,permission,created,createdby) values ('$id','reportsQC','$datetime','$_SESSION[VLADMIN]')"); $added+=1; }
             break;
             default:
                 if($modify) {
@@ -90,35 +91,39 @@ if(!$GLOBALS['vlDC']) {
                   <table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
                     <tr>
                       <td width="1%" class="vl_tdsub"><input type="checkbox" name="checkall" onClick="checkUncheckAll(this);"></td>
-                      <td width="99%" class="vl_tdsub">Role</td>
+                      <td width="99%" class="vl_tdsub"><strong>Role</strong></td>
                     </tr>
                     <tr>
                       <td class="vl_tdstandard"><input name="samples" type="checkbox" id="samples" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='samples'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdstandard"><strong>Input/Manage Samples</strong></td>
+                      <td class="vl_tdstandard">Input/Manage Samples</td>
                     </tr>
                     <tr>
                       <td class="vl_tdstandard"><input name="verifySamples" type="checkbox" id="verifySamples" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='verifySamples'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdstandard"><strong>Verify Samples</strong></td>
+                      <td class="vl_tdstandard">Verify Samples</td>
                     </tr>
                     <tr>
                       <td class="vl_tdstandard"><input name="unVerifySamples" type="checkbox" id="unVerifySamples" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='unVerifySamples'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdstandard"><strong>Reverse Approval of Samples</strong></td>
+                      <td class="vl_tdstandard">Reverse Approval of Samples</td>
                     </tr>
                     <tr>
                       <td class="vl_tdstandard"><input name="worksheets" type="checkbox" id="worksheets" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='worksheets'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdstandard"><strong>Generate Worksheets</strong></td>
+                      <td class="vl_tdstandard">Generate Worksheets</td>
                     </tr>
                     <tr>
                       <td class="vl_tdstandard"><input name="generateForms" type="checkbox" id="generateForms" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='generateForms'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdstandard"><strong>Generate Clinical Request Forms</strong></td>
+                      <td class="vl_tdstandard">Generate Clinical Request Forms</td>
                     </tr>
                     <tr>
                       <td class="vl_tdstandard"><input name="results" type="checkbox" id="results" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='results'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdstandard"><strong>View Results</strong></td>
+                      <td class="vl_tdstandard">View Results</td>
                     </tr>
                     <tr>
-                      <td class="vl_tdnoborder"><input name="reports" type="checkbox" id="reports" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='reports'","id")?"checked=\"checked\"":"")?> value="1" /></td>
-                      <td class="vl_tdnoborder"><strong>View Reports</strong></td>
+                      <td class="vl_tdstandard"><input name="reports" type="checkbox" id="reports" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='reports'","id")?"checked=\"checked\"":"")?> value="1" /></td>
+                      <td class="vl_tdstandard">View Reports</td>
+                    </tr>
+                    <tr>
+                      <td class="vl_tdnoborder"><input name="reportsQC" type="checkbox" id="reportsQC" <?=(getDetailedTableInfo2("vl_users_permissions","userID='$id' and permission='reportsQC'","id")?"checked=\"checked\"":"")?> value="1" /></td>
+                      <td class="vl_tdnoborder">View Reports (Quality Control)</td>
                     </tr>
                   </table>
                   </div>

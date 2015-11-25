@@ -472,6 +472,123 @@ switch($options) {
 			$xls->sendFile();
 		}
 	break;
+	case "multipleresultsexcel":
+		//filename of the excel file to be downloaded
+		$filename=0;
+		$filename="excel.patientsmultipleresults.".getFormattedDateCRB($datetime).".xlsx";
+		header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
+		header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		header('Content-Transfer-Encoding: binary');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		
+		//abbottResults
+		$query=0;
+		$query=mysqlquery("select patientID,facilityID,count(vlSampleID) num from vl_samples where vlSampleID in (select sampleID from vl_results_abbott) group by patientID having num>1 order by num desc");
+		//header
+		$headerAbbottResults = array(
+			'Patient ART'=>'string',
+			'Patient Other ID'=>'string',
+			'Facility'=>'string',
+			'Number of Results'=>'string',
+			'Results'=>'string');
+		//iterations
+		$dataAbbottResults=array();
+		if(mysqlnumrows($query)) {
+			while($q=mysqlfetcharray($query)) {
+				//patients from abbott
+				$patientART=0;
+				$patientART=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber");
+				$patientOtherID=0;
+				$patientOtherID=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","otherID");
+				$facility=0;
+				$facility=getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","facility");
+				$numberResults=0;
+				$numberResults=number_format((float)$q["num"]);
+				//results from abbott
+				$results="";
+				$rquery=0;
+				$rquery=mysqlquery("select * from vl_samples where patientID='$q[patientID]'");
+				$rcount=0;
+				$rnum=0;
+				$rnum=mysqlnumrows($rquery);
+				if($rnum) {
+					while($rq=mysqlfetcharray($rquery)) {
+						//key variables
+						$rcount+=1;
+						$worksheetID=0;
+						$worksheetID=getDetailedTableInfo2("vl_results_abbott","sampleID='$rq[vlSampleID]' order by created desc limit 1","worksheetID");
+						$factor=0;
+						$factor=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$worksheetID' limit 1","factor");
+						if(!$factor) {
+							$factor=1;
+						}
+						//results
+						$results.=getVLResult("abbott",$worksheetID,$rq["vlSampleID"],$factor).($rcount<$rnum?", ":"");
+					}
+				}
+				//xls
+				$dataAbbottResults[]=array($patientART,$patientOtherID,$facility,$numberResults,$results);
+			}
+		}
+		
+		//rocheResults
+		$query=0;
+		$query=mysqlquery("select patientID,facilityID,count(vlSampleID) num from vl_samples where vlSampleID in (select SampleID from vl_results_roche) group by patientID having num>1 order by num desc");
+		//header
+		$headerRocheResults = array(
+			'Patient ART'=>'string',
+			'Patient Other ID'=>'string',
+			'Facility'=>'string',
+			'Number of Results'=>'string',
+			'Results'=>'string');
+		//iterations
+		$dataRocheResults=array();
+		if(mysqlnumrows($query)) {
+			while($q=mysqlfetcharray($query)) {
+				//patients from roche
+				$patientART=0;
+				$patientART=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber");
+				$patientOtherID=0;
+				$patientOtherID=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","otherID");
+				$facility=0;
+				$facility=getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","facility");
+				$numberResults=0;
+				$numberResults=number_format((float)$q["num"]);
+				//results from roche
+				$results="";
+				$rquery=0;
+				$rquery=mysqlquery("select * from vl_samples where patientID='$q[patientID]'");
+				$rcount=0;
+				$rnum=0;
+				$rnum=mysqlnumrows($rquery);
+				if($rnum) {
+					while($rq=mysqlfetcharray($rquery)) {
+						//key variables
+						$rcount+=1;
+						$worksheetID=0;
+						$worksheetID=getDetailedTableInfo2("vl_results_roche","SampleID='$rq[vlSampleID]' order by created desc limit 1","worksheetID");
+						$factor=0;
+						$factor=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$worksheetID' limit 1","factor");
+						if(!$factor) {
+							$factor=1;
+						}
+						//results
+						$results.=getVLResult("roche",$worksheetID,$rq["vlSampleID"],$factor).($rcount<$rnum?", ":"");
+					}
+				}
+				//xls
+				$dataRocheResults[]=array($patientART,$patientOtherID,$facility,$numberResults,$results);
+			}
+		}
+
+		//output to xlsx
+		$writer = new XLSXWriter();
+		$writer->setAuthor($default_institutionName);
+		$writer->writeSheet($dataAbbottResults,"abbott",$headerAbbottResults);
+		$writer->writeSheet($dataRocheResults,"roche",$headerRocheResults);
+		$writer->writeToStdOut();
+	break;
 	case "clinicalrequestformsexcel":
 		//filename of the excel file to be downloaded
 		$filename=0;
