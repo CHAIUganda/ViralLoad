@@ -35,11 +35,11 @@ include "conf.php";
 							$count+=1;
 							?>
 							<tr>
-								<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["id"]?></td>
-								<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["tableName"]?$q["tableName"]:"&nbsp;")?></td>
-								<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["fieldName"]?$q["fieldName"]:"&nbsp;");?></td>
-								<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["fieldValueOld"]?$q["fieldValueOld"]:"&nbsp;")?></td>
-								<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["fieldValueNew"]?$q["fieldValueNew"]:"&nbsp;")?></td>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["id"]?></td>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["tableName"]?$q["tableName"]:"&nbsp;")?></td>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["fieldName"]?$q["fieldName"]:"&nbsp;");?></td>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["fieldValueOld"]?$q["fieldValueOld"]:"&nbsp;")?></td>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["fieldValueNew"]?$q["fieldValueNew"]:"&nbsp;")?></td>
 							</tr>
 							<?
 						}

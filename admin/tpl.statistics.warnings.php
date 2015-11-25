@@ -9,27 +9,27 @@ if(!$GLOBALS['vlDC']) {
   <tr>
     <td width="65%" valign="top"><table width="100%" border="0" class="vl">
   <tr> 
-    <td><strong>Page Hits</strong> (user activity)</td>
+    <td><strong>Data submissions even after warnings were displayed</strong></td>
   </tr>
   <tr>
     <td><img src="images/horizontal_400.gif" width="400" height="1" vspace="3"></td>
   </tr>
 <?
 switch($soption) {
-	case days:
+	case submissionsByUser:
 	?>
 		  <tr>
-			<td><strong>User hits for the month of: <font color="#FF0000"><?=$theMonth?>, <?=$theYear?></font></strong></td>
+			<td><strong>Data Submissions for the date: <font color="#FF0000"><?=getFormattedDate($theDate)?></font></strong></td>
 		  </tr>
 		  <tr>
 			<td><table width="100%"  border="1" class="vl">
 			  <tr bgcolor="#ECECFF">
-				<td width="74%"><strong>User</strong></td>
-				<td width="26%"><strong>Hits</strong></td>
+				<td width="74%"><strong>Submissions by User</strong> (click to view)</td>
+				<td width="26%"><strong>Submissions</strong></td>
 			  </tr>
 		<?
 		$squery=0;
-		$squery=mysqlquery("select createdby, count(*) stat from vl_logs_pagehits where monthname(created)='$theMonth' and year(created)='$theYear' group by createdby order by stat desc");
+		$squery=mysqlquery("select createdby, count(*) stat from vl_logs_warnings where date(created)='$theDate' group by createdby order by stat desc");
 		if(mysqlnumrows($squery)) {
 			$sq=array();
 			$stotal=0;
@@ -42,7 +42,7 @@ switch($soption) {
 				}
 		?>
 			  <tr bgcolor="<?=$scolor?>">
-				<td><? echo $sq["createdby"]; ?></td>
+				<td><a href="#" onclick="iDisplayMessage('tpl.statistics.warnings.details.php?theDate=<?=$theDate?>&createdby=<?=$sq["createdby"]?>')"><? echo $sq["createdby"]; ?></a></td>
 				<td><?=number_format((float)$sq["stat"])?></td>
 			  </tr>
 		<? 
@@ -60,26 +60,26 @@ switch($soption) {
 				<td><?=number_format((float)$stotal)?></td>
 			  </tr>
 			  <tr>
-				<td colspan="2">&nbsp;[ <a href="../admin/?act=statistics&nav=statistics">return to statistics</a> ]</td>
+				<td colspan="2">&nbsp;[ <a href="../admin/?act=statisticswarnings&nav=statistics">return to statistics</a> ]</td>
 			  </tr>
 			</table></td>
 		  </tr>
 	<?
 	break;
-	case pagevisitors:
+	case recordsInMonth:
 	?>
 		  <tr>
-			<td><strong>Page visitors for: <font color="#FF0000"><?=$thePage?> (<?=vlDecrypt($action)?>)</font></strong></td>
+			<td><strong>Data Submissions within the Month of: <font color="#FF0000"><?=$theMonth?>, <?=$theYear?></font></strong></td>
 		  </tr>
 		  <tr>
 			<td><table width="100%"  border="1" class="vl">
 			  <tr bgcolor="#ECECFF">
-				<td width="50%"><strong>Visitor</strong></td>
-				<td width="50%"><strong>Date/Time</strong></td>
+				<td width="74%"><strong>Submissions by Day</strong> (click to view)</td>
+				<td width="26%"><strong>Submissions</strong></td>
 			  </tr>
 		<?
 		$squery=0;
-		$squery=mysqlquery("select who,at from vl_logs_pagehits where page='$thePage' and action='".vlDecrypt($action)."' order by created desc");
+		$squery=mysqlquery("select date(created) datecreated,createdby,count(*) stat from vl_logs_warnings where monthname(created)='$theMonth' and year(created)='$theYear' group by date(created) order by created");
 		if(mysqlnumrows($squery)) {
 			$sq=array();
 			$stotal=0;
@@ -92,51 +92,7 @@ switch($soption) {
 				}
 		?>
 			  <tr bgcolor="<?=$scolor?>">
-				<td><?=$sq["who"]?></td>
-				<td><?=getFormattedDate($sq["at"])." at ".getFormattedTime($sq["at"])?></td>
-			  </tr>
-		<? 
-			}
-		} else { 
-		?>
-			  <tr>
-				<td colspan="2">No statistics available for this query.</td>
-			  </tr>
-		<? } ?>
-			  <tr>
-				<td colspan="2">[ <a href="../admin/?act=statistics&nav=statistics">return to statistics</a> ]</td>
-			  </tr>
-			</table></td>
-		  </tr>
-	<?
-	break;
-	case pages:
-	?>
-		  <tr>
-			<td><strong>Activity stats for: <font color="#FF0000"><?=$thePage?></font></strong></td>
-		  </tr>
-		  <tr>
-			<td><table width="100%"  border="1" class="vl">
-			  <tr bgcolor="#ECECFF">
-				<td width="85%"><strong>User</strong></td>
-				<td width="15%"><strong>Hits</strong></td>
-			  </tr>
-		<?
-		$squery=0;
-		$squery=mysqlquery("select createdby, count(*) stat from vl_logs_pagehits where url='$thePage' group by createdby order by stat desc");
-		if(mysqlnumrows($squery)) {
-			$sq=array();
-			$stotal=0;
-			$scount=1;
-			while($sq=mysqlfetcharray($squery)) {
-				if($scount%2) {
-					$scolor="#FFFFFF";
-				} else {
-					$scolor="#F4F4F4";
-				}
-		?>
-			  <tr bgcolor="<?=$scolor?>">
-				<td><?=$sq["createdby"]?></td>
+				<td><a href="../admin/?act=statisticswarnings&nav=statistics&soption=submissionsByUser&theDate=<?=$sq["datecreated"]?>"><?=getFormattedDate($sq["datecreated"])?></a></td>
 				<td><?=number_format((float)$sq["stat"])?></td>
 			  </tr>
 		<? 
@@ -154,7 +110,7 @@ switch($soption) {
 				<td><?=number_format((float)$stotal)?></td>
 			  </tr>
 			  <tr>
-				<td colspan="2">&nbsp;[ <a href="../admin/?act=statistics&nav=statistics">return to statistics</a> ]</td>
+				<td colspan="2">&nbsp;[ <a href="../admin/?act=statisticswarnings&nav=statistics">return to statistics</a> ]</td>
 			  </tr>
 			</table></td>
 		  </tr>
@@ -163,66 +119,20 @@ switch($soption) {
 	default:
 ?>
 		  <tr>
-			<td><strong>Total user hits since May-2014: </strong></td>
+			<td><strong>Total Data Submissions since November-2015: </strong></td>
 		  </tr>
 		  <tr>
-			<td><strong>Hits per page: </strong></td>
-		  </tr>
-		  <tr>
-			<td><table width="100%"  border="1" class="vl">
-				<tr bgcolor="#ECECFF">
-				  <td width="74%"><strong>Page</strong></td>
-				  <td width="26%"><strong>Hits</strong></td>
-				</tr>
-				<?
-		$squery=0;
-		$squery=mysqlquery("select url, count(*) stat from vl_logs_pagehits group by url order by stat desc, url");
-		if(mysqlnumrows($squery)) {
-			$sq=array();
-			$stotal=0;
-			$scount=1;
-			while($sq=mysqlfetcharray($squery)) {
-				if($scount%2) {
-					$scolor="#FFFFFF";
-				} else {
-					$scolor="#F4F4F4";
-				}
-		?>
-				<tr bgcolor="<?=$scolor?>">
-				  <td><a href="../admin/?act=statistics&nav=statistics&soption=pages&thePage=<?=rawurlencode($sq["url"])?>"><?=$sq["url"]?></a></td>
-				  <td><?=number_format((float)$sq["stat"])?></td>
-				</tr>
-				<? 
-				$stotal+=$sq["stat"];
-				$scount++;
-			}
-		} else { 
-		?>
-				<tr>
-				  <td colspan="2">No statistics available for this query.</td>
-				</tr>
-				<? } ?>
-				<tr>
-				  <td align="right"><strong>Grand total</strong></td>
-				  <td><?=$stotal?></td>
-				</tr>
-			</table></td>
-		  </tr>
-		  <tr>
-			<td><img src="images/horizontal_400.gif" width="400" height="1" vspace="6"></td>
-		  </tr>
-		  <tr>
-			<td><strong>Hits per month: </strong></td>
+			<td><strong>Submissions per Month: </strong></td>
 		  </tr>
 		  <tr>
 			<td><table width="100%"  border="1" class="vl">
 				<tr bgcolor="#ECECFF">
 				  <td width="74%"><strong>Month, Year</strong></td>
-				  <td width="26%"><strong>Hits</strong></td>
+				  <td width="26%"><strong>Submissions</strong></td>
 				</tr>
 				<?
 		$squery=0;
-		$squery=mysqlquery("select monthname(created) theMonth, year(created) theYear, count(*) stat from vl_logs_pagehits group by theMonth, theYear order by created");
+		$squery=mysqlquery("select monthname(created) theMonth, year(created) theYear, count(*) stat from vl_logs_warnings group by theMonth, theYear order by created");
 		if(mysqlnumrows($squery)) {
 			$sq=array();
 			$stotal=0;
@@ -235,7 +145,7 @@ switch($soption) {
 				}
 		?>
 				<tr bgcolor="<?=$scolor?>">
-				  <td><a href="../admin/?act=statistics&nav=statistics&soption=days&theMonth=<?=$sq["theMonth"]?>&theYear=<?=$sq["theYear"]?>"><?=$sq["theMonth"]?>, <?=$sq["theYear"]?></a></td>
+				  <td><a href="../admin/?act=statisticswarnings&nav=statistics&soption=recordsInMonth&theMonth=<?=$sq["theMonth"]?>&theYear=<?=$sq["theYear"]?>"><?=$sq["theMonth"]?>, <?=$sq["theYear"]?></a></td>
 				  <td><?=number_format((float)$sq["stat"])?></td>
 				</tr>
 				<? 
@@ -250,7 +160,7 @@ switch($soption) {
 				<? } ?>
 				<tr>
 				  <td align="right"><strong>Grand total</strong></td>
-				  <td><?=$stotal?></td>
+				  <td><?=number_format((float)$stotal)?></td>
 				</tr>
 			</table></td>
 		  </tr>
@@ -262,7 +172,6 @@ switch($soption) {
 }
 ?>
 </table>
-
 
     </td>
     <td width="35%" valign="top" style="padding:3px 0px 0px 12px"><table border="0" align="center" cellpadding="0" cellspacing="0" style="border:1px solid #d5d5d5" width="100%">
@@ -279,7 +188,7 @@ switch($soption) {
           </tr>
           <tr>
             <td style="padding:5px">
-              <form name="export" method="post" action="tpl.statistics.export.php">
+              <form name="export" method="post" action="tpl.statistics.warnings.export.php">
 					<table width="100%" border="0" class="vl">
                       <tr>
                         <td>From:</td>

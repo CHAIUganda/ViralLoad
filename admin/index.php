@@ -207,6 +207,9 @@ switch($act) {
 	case statisticsremovals:
 		include "tpl.statistics.removals.php"; 
 	break;
+	case statisticswarnings:
+		include "tpl.statistics.warnings.php"; 
+	break;
 	case administrators:
 		include "tpl.administrators.php"; 
 	break;

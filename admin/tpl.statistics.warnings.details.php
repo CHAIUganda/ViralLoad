@@ -7,7 +7,7 @@ include "conf.php";
   <tr>
     <td><table border="0" cellspacing="0" cellpadding="0" class="trailanalytics">
         <tr>
-            <td class="tab_active">Removals&nbsp;by&nbsp;<?=$createdby?>&nbsp;in&nbsp;<?=getFormattedDate($theDate)?></td>
+            <td class="tab_active">Changes&nbsp;by&nbsp;<?=$createdby?>&nbsp;in&nbsp;<?=getFormattedDate($theDate)?></td>
         </tr>
     </table></td>
   </tr>
@@ -19,32 +19,35 @@ include "conf.php";
                   <div style="height: 270px; overflow: auto; padding:3px">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td class="vl_tdsub" width="90%"><strong>Query</strong></td>
-                        <td class="vl_tdsub" width="10%"><strong>Data</strong></td>
+                        <td class="vl_tdsub" width="90%"><strong>Post-Warning Submission Details</strong></td>
+                        <td class="vl_tdsub" width="10%"><strong>Time</strong></td>
                     </tr>
                     <?
 					//query
 					$query=0;
-					$query=mysqlquery("select * from vl_logs_removals where date(created)='$theDate' and createdby='$createdby' order by created desc");
+					$query=mysqlquery("select * from vl_logs_warnings where date(created)='$theDate' and createdby='$createdby' order by created desc");
 					if(mysqlnumrows($query)) {
 						$count=0;
 						while($q=mysqlfetcharray($query)) {
 							$count+=1;
-							if($q["removedData"]) {
-								?>
-								<tr>
-									<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><a href="#" onclick="iDisplayMessage('tpl.statistics.removals.details.2.php?id=<?=$q["id"]?>')"><?=$q["sqlQuery"]?></a></td>
-									<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>">Yes</td>
-								</tr>
-								<?
-							} else {
-								?>
-								<tr>
-									<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["sqlQuery"]?></td>
-									<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>">No</td>
-								</tr>
-								<?
+							$warningType=0;
+							switch($q["logCategory"]) {
+								case "changedPatientsGender":
+									$warningType="Change in patient's gender";
+								break;
+								case "capturedRepeatVLTest":
+									$warningType="Capture of a repeat VL test";
+								break;
 							}
+							?>
+							<tr>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>">
+									<div><?=$q["logDetails"]?></div>
+                                    <div class="vls_grey" style="padding:5px 0px 0px 0px"><strong>Warning Type:</strong> <?=$warningType?></div>
+                                </td>
+								<td class="<?=($count<mysqlnumrows($query)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedTimeLessS($q["created"])?></td>
+							</tr>
+							<?
 						}
 					}
 					?>
