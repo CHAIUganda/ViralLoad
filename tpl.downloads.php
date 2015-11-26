@@ -280,6 +280,7 @@ switch($options) {
 					}
 					if($sampleTested=="Yes") {
 						$machineType="roche";
+
 						$resultsTable="vl_results_roche";
 						$sampleIDField="SampleID";
 						$resultField="Result";
@@ -317,7 +318,7 @@ switch($options) {
 				//add rows
 				$row=array();
 				//Form Number
-				$row[]=$q[formNumber];
+				$row[]="$q[formNumber]";
 				//Location ID
 				$row[]="$q[lrCategory]$q[lrEnvelopeNumber]/$q[lrNumericID]";
 				//Sample ID
