@@ -4,7 +4,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 	die("<font face=arial size=2>You must be logged in to view this page.</font>");
 }
 
-if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesting) {
+if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesting || $proceedWithWarningAlternativeFacilities) {
 	//validations
 	$lrCategory=validate($lrCategory);
 	$lrEnvelopeNumber=validate($lrEnvelopeNumber);
@@ -298,6 +298,20 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarningVLRepeatTesting\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
 	}
 
+	//If the facilityID is different from that of the facility this form was dispatched to, inform the user
+	//reference number based on form number
+	$refNumberByFormNumber=0;
+	$refNumberByFormNumber=getDetailedTableInfo2("vl_forms_clinicalrequest","formNumber='$formNumber' limit 1","refNumber");
+	//facility ID based on form number
+	$facilityIDByFormNumber=0;
+	$facilityIDByFormNumber=getDetailedTableInfo2("vl_forms_clinicalrequest_dispatch","refNumber='$refNumberByFormNumber' limit 1","facilityID");
+	if($facilityIDByFormNumber && $facilityIDByFormNumber!=$facilityID && !$proceedWithWarningAlternativeFacilities) {
+		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible incorrect Facility!</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The form with number <strong>$formNumber</strong> was originally dispatched to facility <strong>".getDetailedTableInfo2("vl_facilities","id='$facilityIDByFormNumber' limit 1","facility")."</strong></div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">Your submission indicates it's being returned from another facility <strong>".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."</strong>. If this is the case, then click \"Proceed Anyway\" otherwise, input amend the facility then click \"Save Samples\" to proceed.</div>
+					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarningAlternativeFacilities\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
+	}
+
 	//input data
 	if(!$error && !$warnings) {
 		//concatenations
@@ -362,6 +376,15 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 						(logCategory,logDetails,logTableID,created,createdby) 
 						values 
 						('capturedRepeatVLTest','Captured a repeat VL Test after ".round(getStandardDateDifference($datetime,$mostRecentPatientIDTested)/30.5)." month(s) or ".getStandardDateDifference($datetime,$mostRecentPatientIDTested)." day(s) instead of the recommended $default_viralLoadRepeatTestWindow month(s) for Patient with ".($artNumber?"ART $artNumber":"").($artNumber && $otherID?", ":"").($otherID?"Other ID $otherID":"")." from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility").".','','$datetime','$trailSessionUser')");
+		}
+
+		//log the alternative facility captured
+		if($proceedWithWarningAlternativeFacilities) {
+			//log the change of gender warning
+			mysqlquery("insert into vl_logs_warnings 
+						(logCategory,logDetails,logTableID,created,createdby) 
+						values 
+						('capturedAlternativeFacilityForFormNumber','Form Number $formNumber dispatched to Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")." but received from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityIDByFormNumber' limit 1","facility").".','','$datetime','$trailSessionUser')");
 		}
 
 		//log patient phone number, if unique
@@ -825,7 +848,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                         </tr>
                         <tr>
                           <td>Hub</td>
-                          <td><div class="vls_grey" style="padding:5px 0px" id="hubTextID"><?=($hubID?getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub"):"Select Facility First")?></div><input type="hidden" name="hubID" id="hubID" value="<?=($hubID?$hubID:"")?>" />
+                          <td><div class="vls_grey" style="padding:5px 0px" id="hubTextID"><?=($hubID?getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub"):"Input Form Number or Select Facility, First")?></div><input type="hidden" name="hubID" id="hubID" value="<?=($hubID?$hubID:"")?>" />
                           <!--
                           <select name="hubID" id="hubID" class="search">
                                 <?
@@ -848,7 +871,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                         </tr>
                         <tr>
                           <td>District</td>
-                          <td><div class="vls_grey" style="padding:5px 0px" id="districtTextID"><?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Select Facility First")?></div><input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />
+                          <td><div class="vls_grey" style="padding:5px 0px" id="districtTextID"><?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?></div><input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />
                           <!--
                           <select name="districtID" id="districtID" class="search">
                                 <?
