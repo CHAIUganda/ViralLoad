@@ -14,6 +14,24 @@ include "conf.php";
 //authenticate
 if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 	switch($option) {
+		case "regions":
+			//get regions
+			$query=0;
+			$query=mysqlquery("select * from vl_regions order by region limit 50");
+			if(mysqlnumrows($query)) {
+				$array=array();
+				while($q=mysqlfetcharray($query)) {
+					$subarray=array();
+					$subarray["id"]=$q["id"];
+					$subarray["region"]=$q["region"];
+					$subarray["created"]=$q["created"];
+					$subarray["createdby"]=$q["createdby"];
+					$array[]=$subarray;
+				}
+				//prepare json string
+				echo json_encode($array);
+			}
+		break;
 		case "districts":
 			//get districts
 			$query=0;
@@ -22,6 +40,7 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 				$array=array();
 				while($q=mysqlfetcharray($query)) {
 					$subarray=array();
+					$subarray["id"]=$q["id"];
 					$subarray["district"]=$q["district"];
 					$subarray["regionID"]=$q["regionID"];
 					$subarray["created"]=$q["created"];
@@ -40,8 +59,27 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 				$array=array();
 				while($q=mysqlfetcharray($query)) {
 					$subarray=array();
+					$subarray["id"]=$q["id"];
 					$subarray["hub"]=$q["hub"];
 					$subarray["ipID"]=$q["ipID"];
+					$subarray["created"]=$q["created"];
+					$subarray["createdby"]=$q["createdby"];
+					$array[]=$subarray;
+				}
+				//prepare json string
+				echo json_encode($array);
+			}
+		break;
+		case "ips":
+			//get ips
+			$query=0;
+			$query=mysqlquery("select * from vl_ips order by ip limit 50");
+			if(mysqlnumrows($query)) {
+				$array=array();
+				while($q=mysqlfetcharray($query)) {
+					$subarray=array();
+					$subarray["id"]=$q["id"];
+					$subarray["ip"]=$q["ip"];
 					$subarray["created"]=$q["created"];
 					$subarray["createdby"]=$q["createdby"];
 					$array[]=$subarray;
@@ -58,6 +96,7 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 				$array=array();
 				while($q=mysqlfetcharray($query)) {
 					$subarray=array();
+					$subarray["id"]=$q["id"];
 					$subarray["facility"]=$q["facility"];
 					$subarray["districtID"]=$q["districtID"];
 					$subarray["hubID"]=$q["hubID"];
