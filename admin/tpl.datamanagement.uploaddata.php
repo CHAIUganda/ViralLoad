@@ -58,7 +58,7 @@ if(!$GLOBALS['vlDC']) {
 							//prcess the file
 							$excelData->read($_FILES['userfile']['tmp_name']);
 							
-							//insert into items, therapeutic groups, order type, ven, source and accounts, starting from record 2, items
+							//process data within the first sheet
 							for($i=2;$i<=$excelData->sheets[0]['numRows'];$i++) {
 								//Form Number
 								$formNumber=0;
@@ -70,7 +70,8 @@ if(!$GLOBALS['vlDC']) {
 								
 								//Facility
 								$facilityID=0;
-								$facilityID=logNewFacility(trim($excelData->sheets[0]['cells'][$i][4]),trim($excelData->sheets[0]['cells'][$i][5]));
+								//$facilityID=logNewFacility(trim($excelData->sheets[0]['cells'][$i][4]),trim($excelData->sheets[0]['cells'][$i][5]));
+								$facilityID=logUpdateFacility(trim($excelData->sheets[0]['cells'][$i][3]),trim($excelData->sheets[0]['cells'][$i][4]));
 								
 								//District
 								$districtID=0;

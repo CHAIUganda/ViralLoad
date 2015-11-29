@@ -253,12 +253,36 @@ function logNewFacility($facility,$district) {
 		mysqlquery("insert into vl_facilities 
 				(facility,districtID,created,createdby) 
 				values 
-				('$facility','$districtID','$datetime','$user')");
+				('".trim($facility)."','$districtID','$datetime','$user')");
 		//return facilityID
 		return getDetailedTableInfo2("vl_facilities","createdby='$user' order by id desc limit 1","id");
 	} else {
 		//return facilityID
 		return getDetailedTableInfo2("vl_facilities","lower(facility)='".strtolower($facility)."' and districtID='$districtID' limit 1","id");
+	}
+}
+
+/**
+* log update facility, return facilityID
+* @param: $vlSampleID - sample ID whose facility is to be updated
+* @param: $facility - new name of facility
+*/
+function logUpdateFacility($vlSampleID,$facility) {
+	global $datetime,$user;
+	
+	//get/log the districtID
+	$facilityID=0;
+	$facilityID=getDetailedTableInfo2("vl_samples","vlSampleID='$vlSampleID' limit 1","facilityID");
+	
+	//update this facilityID with the new facility name
+	if($facilityID) {
+		//log table change
+		logTableChange("vl_facilities","facility",$facilityID,getDetailedTableInfo2("vl_facilities","id='$facilityID'","facility"),$facility);
+		//update vl_facilities
+		mysqlquery("update vl_facilities set facility='$facility' where id='$facilityID'");
+		
+		//return facilityID
+		return $facilityID;
 	}
 }
 
