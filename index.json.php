@@ -1,5 +1,6 @@
 <?
 //register a globals variable for security
+header("Access-Control-Allow-Origin: *");
 $GLOBALS['vlDC']=true;
 include "conf.php";
 
