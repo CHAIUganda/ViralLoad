@@ -84,6 +84,9 @@ if(!$GLOBALS['vlDC']) {
 								//Date of Collection; deduct by 1 date for reasons I'm yet to figure out
 								$collectionDate=0;
 								$collectionDate=subtractFromDate(getFormattedDateCRBExcel(trim($excelData->sheets[0]['cells'][$i][7])),1);
+								if(!$collectionDate) {
+									$collectionDate=getRawFormattedDateLessDay(trim($excelData->sheets[0]['cells'][$i][7]));
+								}
 								
 								//Sample Type
 								$sampleTypeID=0;

@@ -225,6 +225,24 @@ function getVLNumericResult($result,$machineType,$factor) {
 	}
 }
 
+/**
+* function to retrieve only the numeric the result
+*/
+function getVLNumericResultOnly($result) {
+	//clean the result remove "Copies / mL" and "," from $result
+	$result=preg_replace("/Copies \/ mL/s","",$result);
+	$result=preg_replace("/,/s","",$result);
+	$result=preg_replace("/\</s","",$result);
+	$result=preg_replace("/\>/s","",$result);
+	$result=preg_replace("/\&gt\;/s","",$result);
+	$result=preg_replace("/\&lt\;/s","",$result);
+	$result=trim($result);
+
+	//return
+	if(is_numeric($result)) {
+		return $result;
+	}
+}
 
 /**
 * function to log whether this sample should be repeated

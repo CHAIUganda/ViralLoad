@@ -1,11 +1,10 @@
 <?php
 /**
  * @package dompdf
- * @link    http://www.dompdf.com/
+ * @link    http://dompdf.github.com/
  * @author  Benj Carson <benjcarson@digitaljunkies.ca>
- * @author  Fabien Ménager <fabien.menager@gmail.com>
+ * @author  Fabien MÃ©nager <fabien.menager@gmail.com>
  * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @version $Id$
  */
 
 /**
@@ -53,7 +52,8 @@ class Fixed_Positioner extends Positioner {
           $margin_height = $this->_frame->get_margin_height();
           if ( $margin_height !== "auto" ) {
             $y -= $margin_height;
-          } else {
+          }
+          else {
             $y -= $height;
           }
         }
@@ -70,7 +70,8 @@ class Fixed_Positioner extends Positioner {
           $margin_width = $this->_frame->get_margin_width();
           if ( $margin_width !== "auto" ) {
             $x -= $margin_width;
-          } else {
+          }
+          else {
             $x -= $width;
           }
         }
