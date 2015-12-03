@@ -11,7 +11,7 @@ include "conf.php";
 * task 3: link all facilities with no hub to "No Hub", and all facilities with no district to "No District"
 * task 4: move all samples with sample type "Whole Blood" to type "Plasma"
 * task 5: move all samples with sample type "Left Blank" to type "DBS"
-*/
+* task 6: populate vl_results_merged
 
 //task 1: update vl_samples
 $query=0;
@@ -453,6 +453,58 @@ if(mysqlnumrows($query)) {
 	while($q=mysqlfetcharray($query)) {
 		logTableChange("vl_samples","suspectedTreatmentFailureSampleTypeID",$q["id"],$q["suspectedTreatmentFailureSampleTypeID"],"1");
 		mysqlquery("update vl_samples set suspectedTreatmentFailureSampleTypeID='1' where id='$q[id]'");
+	}
+}
+*/
+
+//task 6: populate vl_results_merged, begin with abbott
+$query=0;
+$query=mysqlquery("select * from vl_results_abbott");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//factor
+		$factor=0;
+		$factor=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$q[worksheetID]' limit 1","factor");
+		if(!$factor) {
+			$factor=1;
+		}
+		//alphanumeric result
+		$resultAlphanumeric=0;
+		$resultAlphanumeric=getVLResult("abbott",$q["worksheetID"],$q["sampleID"],$factor);
+		//numeric result
+		$resultNumeric=0;
+		$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+		mysqlquery("insert ignore into vl_results_merged 
+						(machine,worksheetID,vlSampleID,resultAlphanumeric,
+							resultNumeric,created,createdby) 
+						values 
+						('abbott','$q[worksheetID]','$q[sampleID]','$resultAlphanumeric',
+							'$resultNumeric','$q[created]','$q[createdby]')");
+	}
+}
+
+$query=0;
+$query=mysqlquery("select * from vl_results_roche");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//factor
+		$factor=0;
+		$factor=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$q[worksheetID]' limit 1","factor");
+		if(!$factor) {
+			$factor=1;
+		}
+		//alphanumeric result
+		$resultAlphanumeric=0;
+		$resultAlphanumeric=getVLResult("roche",$q["worksheetID"],$q["sampleID"],$factor);
+		//numeric result
+		$resultNumeric=0;
+		$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+		mysqlquery("insert ignore into vl_results_merged 
+						(machine,worksheetID,vlSampleID,resultAlphanumeric,
+							resultNumeric,created,createdby) 
+						values 
+						('roche','$q[worksheetID]','$q[sampleID]','$resultAlphanumeric',
+							'$resultNumeric','$q[created]','$q[createdby]')");
 	}
 }
 ?>
