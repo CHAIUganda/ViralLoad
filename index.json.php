@@ -172,6 +172,8 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 																										(c.resultNumeric!='' and c.resultNumeric!='0' and c.resultNumeric<=1000))))","count(distinct a.id)","num");
 							//dbs_samples
 							$subarray["dbs_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and a.sampleTypeID='$dbsSampleTypeID'","count(distinct a.id)","num");
+							//plasma_samples
+							$subarray["plasma_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and a.sampleTypeID='$plasmaSampleTypeID'","count(distinct a.id)","num");
 							//total_results
 							$subarray["total_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and a.vlSampleID in (select vlSampleID from vl_results_merged)","count(distinct a.id)","num");
 							//sample_quality_rejections
@@ -237,6 +239,8 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 																										(c.resultNumeric!='' and c.resultNumeric!='0' and c.resultNumeric<=1000))))","count(distinct a.id)","num");
 							//dbs_samples
 							$subarray["dbs_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and a.sampleTypeID='$dbsSampleTypeID'","count(distinct a.id)","num");
+							//plasma_samples
+							$subarray["plasma_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and a.sampleTypeID='$plasmaSampleTypeID'","count(distinct a.id)","num");
 							//total_results
 							$subarray["total_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and a.vlSampleID in (select vlSampleID from vl_results_merged)","count(distinct a.id)","num");
 							//sample_quality_rejections
@@ -302,6 +306,8 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 																										(c.resultNumeric!='' and c.resultNumeric!='0' and c.resultNumeric<=1000))))","count(distinct a.id)","num");
 							//dbs_samples
 							$subarray["dbs_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and a.sampleTypeID='$dbsSampleTypeID'","count(distinct a.id)","num");
+							//plasma_samples
+							$subarray["plasma_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and a.sampleTypeID='$plasmaSampleTypeID'","count(distinct a.id)","num");
 							//total_results
 							$subarray["total_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and a.vlSampleID in (select vlSampleID from vl_results_merged)","count(distinct a.id)","num");
 							//sample_quality_rejections
@@ -367,6 +373,8 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 																										(c.resultNumeric!='' and c.resultNumeric!='0' and c.resultNumeric<=1000))))","count(distinct a.id)","num");
 							//dbs_samples
 							$subarray["dbs_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and a.sampleTypeID='$dbsSampleTypeID'","count(distinct a.id)","num");
+							//plasma_samples
+							$subarray["plasma_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and a.sampleTypeID='$plasmaSampleTypeID'","count(distinct a.id)","num");
 							//total_results
 							$subarray["total_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and a.vlSampleID in (select vlSampleID from vl_results_merged)","count(distinct a.id)","num");
 							//sample_quality_rejections
@@ -433,6 +441,8 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 																										(c.resultNumeric!='' and c.resultNumeric!='0' and c.resultNumeric<=1000))))","count(distinct a.id)","num");
 							//dbs_samples
 							$subarray["dbs_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and a.sampleTypeID='$dbsSampleTypeID'","count(distinct a.id)","num");
+							//plasma_samples
+							$subarray["plasma_samples"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and a.sampleTypeID='$plasmaSampleTypeID'","count(distinct a.id)","num");
 							//total_results
 							$subarray["total_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and a.vlSampleID in (select vlSampleID from vl_results_merged)","count(distinct a.id)","num");
 							//sample_quality_rejections
