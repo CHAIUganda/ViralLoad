@@ -12,6 +12,7 @@ include "conf.php";
 * task 4: move all samples with sample type "Whole Blood" to type "Plasma"
 * task 5: move all samples with sample type "Left Blank" to type "DBS"
 * task 6: populate vl_results_merged
+*/
 
 //task 1: update vl_samples
 $query=0;
@@ -455,7 +456,6 @@ if(mysqlnumrows($query)) {
 		mysqlquery("update vl_samples set suspectedTreatmentFailureSampleTypeID='1' where id='$q[id]'");
 	}
 }
-*/
 
 //task 6: populate vl_results_merged, begin with abbott
 $query=0;
