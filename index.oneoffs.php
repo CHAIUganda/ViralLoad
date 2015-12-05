@@ -11,7 +11,11 @@ include "conf.php";
 * task 3: link all facilities with no hub to "No Hub", and all facilities with no district to "No District"
 * task 4: move all samples with sample type "Whole Blood" to type "Plasma"
 * task 5: move all samples with sample type "Left Blank" to type "DBS"
-* task 6: populate vl_results_merged
+* task 6: remove facilities for which there are no samples
+* task 7: remove regimen which have no samples
+* task 8: remove treatment lines which have no samples or regimen
+* task 9: match the districtID and hubID within vl_samples to the facility within vl_facilities
+* task 10: remove facilities with no samples
 */
 
 //task 1: update vl_samples
@@ -457,54 +461,60 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 6: populate vl_results_merged, begin with abbott
+//task 6: remove facilities for which there are no samples
 $query=0;
-$query=mysqlquery("select * from vl_results_abbott");
+$query=mysqlquery("select * from vl_facilities where facility not in (select facility from vl_facilities_temp) and id not in (select facilityID from vl_samples)");
 if(mysqlnumrows($query)) {
 	while($q=mysqlfetcharray($query)) {
-		//factor
-		$factor=0;
-		$factor=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$q[worksheetID]' limit 1","factor");
-		if(!$factor) {
-			$factor=1;
-		}
-		//alphanumeric result
-		$resultAlphanumeric=0;
-		$resultAlphanumeric=getVLResult("abbott",$q["worksheetID"],$q["sampleID"],$factor);
-		//numeric result
-		$resultNumeric=0;
-		$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
-		mysqlquery("insert ignore into vl_results_merged 
-						(machine,worksheetID,vlSampleID,resultAlphanumeric,
-							resultNumeric,created,createdby) 
-						values 
-						('abbott','$q[worksheetID]','$q[sampleID]','$resultAlphanumeric',
-							'$resultNumeric','$q[created]','$q[createdby]')");
+		//remove
+		logDataRemoval("delete from vl_facilities where id='$q[id]'");
+		mysqlquery("delete from vl_facilities where id='$q[id]'");
 	}
 }
 
+//task 7: remove regimen which have no samples
 $query=0;
-$query=mysqlquery("select * from vl_results_roche");
+$query=mysqlquery("select * from vl_appendix_regimen where id not in (select currentRegimenID from vl_Samples)");
 if(mysqlnumrows($query)) {
 	while($q=mysqlfetcharray($query)) {
-		//factor
-		$factor=0;
-		$factor=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$q[worksheetID]' limit 1","factor");
-		if(!$factor) {
-			$factor=1;
-		}
-		//alphanumeric result
-		$resultAlphanumeric=0;
-		$resultAlphanumeric=getVLResult("roche",$q["worksheetID"],$q["sampleID"],$factor);
-		//numeric result
-		$resultNumeric=0;
-		$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
-		mysqlquery("insert ignore into vl_results_merged 
-						(machine,worksheetID,vlSampleID,resultAlphanumeric,
-							resultNumeric,created,createdby) 
-						values 
-						('roche','$q[worksheetID]','$q[sampleID]','$resultAlphanumeric',
-							'$resultNumeric','$q[created]','$q[createdby]')");
+		//remove
+		logDataRemoval("delete from vl_appendix_regimen where id='$q[id]'");
+		mysqlquery("delete from vl_appendix_regimen where id='$q[id]'");
+	}
+}
+
+//task 8: remove treatment lines which have no samples or regimen
+$query=0;
+$query=mysqlquery("select * from vl_appendix_treatmentstatus where id not in (select treatmentStatusID from vl_samples) and id not in (select treatmentStatusID from vl_appendix_regimen)");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//remove
+		logDataRemoval("delete from vl_appendix_treatmentstatus where id='$q[id]'");
+		mysqlquery("delete from vl_appendix_treatmentstatus where id='$q[id]'");
+	}
+}
+
+//task 9: match the districtID and hubID within vl_samples to the facility within vl_facilities
+$query=0;
+$query=mysqlquery("select distinct facilityID,districtID,hubID from vl_samples");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//log table change
+		logTableChange("vl_facilities","districtID",$q["facilityID"],getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","districtID"),$q["districtID"]);
+		logTableChange("vl_facilities","hubID",$q["facilityID"],getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","hubID"),$q["hubID"]);
+		//update vl_facilities
+		mysqlquery("update vl_facilities set districtID='$q[districtID]', hubID='$q[hubID]' where id='$q[facilityID]'");
+	}
+}
+
+//task 10: remove facilities with no samples
+$query=0;
+$query=mysqlquery("select * from vl_facilities where id not in (select facilityID from vl_samples)");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//remove
+		logDataRemoval("delete from vl_facilities where id='$q[id]'");
+		mysqlquery("delete from vl_facilities where id='$q[id]'");
 	}
 }
 ?>

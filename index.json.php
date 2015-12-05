@@ -127,7 +127,7 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 												WHEN round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 then 4
 												ELSE 5
 											END theAgeCategory 
-												from vl_samples a,vl_patients b where a.patientID=b.id order by a.created limit 100");
+												from vl_samples a,vl_patients b where a.patientID=b.id order by a.created");
 			if(mysqlnumrows($query)) {
 				//sample type IDs
 				$dbsSampleTypeID=0;

@@ -221,6 +221,14 @@ function logNewDistrict($district) {
 	//get/log the regionID
 	$regionID=0;
 	$regionID=logNewRegion("Region Left Blank");
+	
+	//clean up $hub
+	$hub=validate($district);
+
+	mysqlquery("insert ignore into vl_districts_temp 
+			(district) 
+			values 
+			('".trim($district)."')");
 
 	//avoid duplicates
 	if(!getDetailedTableInfo2("vl_districts","lower(district)='".strtolower($district)."' limit 1","id")) {
@@ -243,9 +251,17 @@ function logNewDistrict($district) {
 function logNewFacility($facility,$district) {
 	global $datetime,$user;
 	
+	//clean up $facility
+	$facility=validate($facility);
+	
 	//get/log the districtID
 	$districtID=0;
 	$districtID=logNewDistrict($district);
+
+	mysqlquery("insert ignore into vl_facilities_temp 
+			(facility) 
+			values 
+			('".trim($facility)."')");
 	
 	//avoid duplicates
 	if(!getDetailedTableInfo2("vl_facilities","lower(facility)='".strtolower($facility)."' and districtID='$districtID' limit 1","id")) {
@@ -254,6 +270,7 @@ function logNewFacility($facility,$district) {
 				(facility,districtID,created,createdby) 
 				values 
 				('".trim($facility)."','$districtID','$datetime','$user')");
+
 		//return facilityID
 		return getDetailedTableInfo2("vl_facilities","createdby='$user' order by id desc limit 1","id");
 	} else {
@@ -263,34 +280,19 @@ function logNewFacility($facility,$district) {
 }
 
 /**
-* log update facility, return facilityID
-* @param: $vlSampleID - sample ID whose facility is to be updated
-* @param: $facility - new name of facility
-*/
-function logUpdateFacility($vlSampleID,$facility) {
-	global $datetime,$user;
-	
-	//get/log the districtID
-	$facilityID=0;
-	$facilityID=getDetailedTableInfo2("vl_samples","vlSampleID='$vlSampleID' limit 1","facilityID");
-	
-	//update this facilityID with the new facility name
-	if($facilityID) {
-		//log table change
-		logTableChange("vl_facilities","facility",$facilityID,getDetailedTableInfo2("vl_facilities","id='$facilityID'","facility"),$facility);
-		//update vl_facilities
-		mysqlquery("update vl_facilities set facility='$facility' where id='$facilityID'");
-		
-		//return facilityID
-		return $facilityID;
-	}
-}
-
-/**
 * log new hub, return hubID
 */
 function logNewHub($hub,$facilityID) {
 	global $datetime,$user;
+	
+	//clean up $hub
+	$hub=validate($hub);
+
+	mysqlquery("insert ignore into vl_hubs_temp 
+			(hub) 
+			values 
+			('".trim($hub)."')");
+
 	//avoid duplicates
 	if(!getDetailedTableInfo2("vl_hubs","lower(hub)='".strtolower($hub)."' limit 1","id")) {
 		//insert into vl_hubs

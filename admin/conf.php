@@ -67,6 +67,8 @@ include "functions.email.php";
 include "functions.files.php";
 //misc
 include "functions.misc.php";
+//samples
+include "functions.samples.php";
 //staff
 include "functions.staff.php";
 //strings

@@ -416,6 +416,22 @@ if($uploadResults) {
 									$rocheSampleID=0;
 									$rocheSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$SampleID' limit 1","id");
 									logRepeat("roche",$rocheSampleID,$worksheetID,$Result,$Flags);
+									
+									//log into vl_results_merged
+									//alphanumeric result
+									$resultAlphanumeric=0;
+									$resultAlphanumeric=getVLResult("roche",$worksheetID,$SampleID,$factor);
+									//numeric result
+									$resultNumeric=0;
+									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+									//log into vl_results_merged
+									mysqlquery("insert ignore into vl_results_merged 
+													(machine,worksheetID,vlSampleID,resultAlphanumeric,
+														resultNumeric,created,createdby) 
+													values 
+													('roche','$worksheetID','$SampleID','$resultAlphanumeric',
+														'$resultNumeric','$datetime','$trailSessionUser')");
+									
 									//log
 									$added+=1;
 								} else {
@@ -609,6 +625,27 @@ if($uploadResults) {
 									$rocheSampleID=0;
 									$rocheSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$SampleID' limit 1","id");
 									logRepeat("roche",$rocheSampleID,$worksheetID,$Result,$Flags);
+
+									//log into vl_results_merged
+									//alphanumeric result
+									$resultAlphanumeric=0;
+									$resultAlphanumeric=getVLResult("roche",$worksheetID,$SampleID,$factor);
+									//numeric result
+									$resultNumeric=0;
+									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+									//update
+									$resultsMergedSampleID=0;
+									$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","vlSampleID='$SampleID' and worksheetID='$worksheetID' and machine='roche' limit 1","id");
+
+									logTableChange("vl_results_merged","resultAlphanumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultAlphanumeric"),$resultsMergedSampleID);
+									logTableChange("vl_results_merged","resultNumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultNumeric"),$resultsMergedSampleID);
+									//implement the changes
+									mysqlquery("update vl_results_merged set 
+													resultAlphanumeric='$resultAlphanumeric', 
+													resultNumeric='$resultNumeric' 
+													where 
+													id='$resultsMergedSampleID'");
+
 									//log
 									$modified+=1;
 								}
@@ -743,6 +780,22 @@ if($uploadResults) {
 									$abbottSampleID=0;
 									$abbottSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
 									logRepeat("abbott",$abbottSampleID,$worksheetID,$result,$flags);
+									
+									//log into vl_results_merged
+									//alphanumeric result
+									$resultAlphanumeric=0;
+									$resultAlphanumeric=getVLResult("abbott",$worksheetID,$sampleID,$factor);
+									//numeric result
+									$resultNumeric=0;
+									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+									//log into vl_results_merged
+									mysqlquery("insert ignore into vl_results_merged 
+													(machine,worksheetID,vlSampleID,resultAlphanumeric,
+														resultNumeric,created,createdby) 
+													values 
+													('abbott','$worksheetID','$sampleID','$resultAlphanumeric',
+														'$resultNumeric','$datetime','$trailSessionUser')");
+									
 									//log
 									$added+=1;
 								} else {
@@ -806,6 +859,27 @@ if($uploadResults) {
 									$abbottSampleID=0;
 									$abbottSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
 									logRepeat("abbott",$abbottSampleID,$worksheetID,$result,$flags);
+
+									//log into vl_results_merged
+									//alphanumeric result
+									$resultAlphanumeric=0;
+									$resultAlphanumeric=getVLResult("abbott",$worksheetID,$sampleID,$factor);
+									//numeric result
+									$resultNumeric=0;
+									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+									//update
+									$resultsMergedSampleID=0;
+									$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","vlSampleID='$sampleID' and worksheetID='$worksheetID' and machine='abbott' limit 1","id");
+
+									logTableChange("vl_results_merged","resultAlphanumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultAlphanumeric"),$resultsMergedSampleID);
+									logTableChange("vl_results_merged","resultNumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultNumeric"),$resultsMergedSampleID);
+									//implement the changes
+									mysqlquery("update vl_results_merged set 
+													resultAlphanumeric='$resultAlphanumeric', 
+													resultNumeric='$resultNumeric' 
+													where 
+													id='$resultsMergedSampleID'");
+
 									//log
 									$modified+=1;
 								}

@@ -50,6 +50,44 @@ if(!$GLOBALS['vlDC']) {
 									(sampleID,worksheetID,result,created,createdby) 
 									values 
 									('$sampleID','$worksheetID','$result','$datetime','$_SESSION[VLADMIN]')");
+							
+							//log into vl_results_merged
+							//machine
+							$machine=0;
+							if(getDetailedTableInfo2("vl_results_abbott","sampleID='$sampleID' and worksheetID='$worksheetID'","id")) {
+								$machine="abbott";
+							} elseif(getDetailedTableInfo2("vl_results_roche","SampleID='$sampleID' and worksheetID='$worksheetID'","id")) {
+								$machine="roche";
+							}
+							//alphanumeric result
+							$resultAlphanumeric=0;
+							$resultAlphanumeric=$result;
+							//numeric result
+							$resultNumeric=0;
+							$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+							//results merged sample ID
+							$resultsMergedSampleID=0;
+							$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","machine='$machine' and vlSampleID='$sampleID' and worksheetID='$worksheetID'","id");
+							if(!$resultsMergedSampleID) {
+								//log into vl_results_merged
+								mysqlquery("insert ignore into vl_results_merged 
+												(machine,worksheetID,vlSampleID,resultAlphanumeric,
+													resultNumeric,created,createdby) 
+												values 
+												('$machine','$worksheetID','$sampleID','$resultAlphanumeric',
+													'$resultNumeric','$datetime','$trailSessionUser')");
+							} else {
+								//update
+								logTableChange("vl_results_merged","resultAlphanumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultAlphanumeric"),$resultsMergedSampleID);
+								logTableChange("vl_results_merged","resultNumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultNumeric"),$resultsMergedSampleID);
+								//implement the changes
+								mysqlquery("update vl_results_merged set 
+												resultAlphanumeric='$resultAlphanumeric', 
+												resultNumeric='$resultNumeric' 
+												where 
+												id='$resultsMergedSampleID'");
+							}
+							
 							//added
 							$added+=1;
 						} else {
@@ -57,6 +95,44 @@ if(!$GLOBALS['vlDC']) {
 							logTableChange("vl_results_override","result",$id,getDetailedTableInfo2("vl_results_override","id='$id'","result"),$result);
 							//update vl_results_override
 							mysqlquery("update vl_results_override set result='$result' where id='$id'");
+							
+							//log into vl_results_merged
+							//machine
+							$machine=0;
+							if(getDetailedTableInfo2("vl_results_abbott","sampleID='$sampleID' and worksheetID='$worksheetID'","id")) {
+								$machine="abbott";
+							} elseif(getDetailedTableInfo2("vl_results_roche","SampleID='$sampleID' and worksheetID='$worksheetID'","id")) {
+								$machine="roche";
+							}
+							//alphanumeric result
+							$resultAlphanumeric=0;
+							$resultAlphanumeric=$result;
+							//numeric result
+							$resultNumeric=0;
+							$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+							//results merged sample ID
+							$resultsMergedSampleID=0;
+							$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","machine='$machine' and vlSampleID='$sampleID' and worksheetID='$worksheetID'","id");
+							if(!$resultsMergedSampleID) {
+								//log into vl_results_merged
+								mysqlquery("insert ignore into vl_results_merged 
+												(machine,worksheetID,vlSampleID,resultAlphanumeric,
+													resultNumeric,created,createdby) 
+												values 
+												('$machine','$worksheetID','$sampleID','$resultAlphanumeric',
+													'$resultNumeric','$datetime','$trailSessionUser')");
+							} else {
+								//update
+								logTableChange("vl_results_merged","resultAlphanumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultAlphanumeric"),$resultsMergedSampleID);
+								logTableChange("vl_results_merged","resultNumeric",$resultsMergedSampleID,getDetailedTableInfo2("vl_results_merged","id='$resultsMergedSampleID'","resultNumeric"),$resultsMergedSampleID);
+								//implement the changes
+								mysqlquery("update vl_results_merged set 
+												resultAlphanumeric='$resultAlphanumeric', 
+												resultNumeric='$resultNumeric' 
+												where 
+												id='$resultsMergedSampleID'");
+							}
+
 							//modified
 							$modified+=1;
 						}
