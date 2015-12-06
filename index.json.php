@@ -119,6 +119,7 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 		case "data":
 			//get the data
 			$query=0;
+			/*
 			$query=mysqlquery("select distinct month(a.created) theMonth,year(a.created) theYear,a.facilityID facilityID,
 											CASE 
 												WHEN round(datediff(now(),b.dateOfBirth)/365)<5 then 1
@@ -126,6 +127,16 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 												WHEN round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 then 3
 												WHEN round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 then 4
 												ELSE 5
+											END theAgeCategory 
+												from vl_samples a,vl_patients b where a.patientID=b.id order by a.created");
+			*/
+			$query=mysqlquery("select distinct month(a.created) theMonth,year(a.created) theYear,a.facilityID facilityID,
+											CASE 
+												WHEN (round(datediff(now(),b.dateOfBirth)/365)<5 or b.dateOfBirth='0000-00-00') then 1
+												WHEN round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 then 2
+												WHEN round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 then 3
+												WHEN round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 then 4
+												WHEN round(datediff(now(),b.dateOfBirth)/365)>=26 then 5
 											END theAgeCategory 
 												from vl_samples a,vl_patients b where a.patientID=b.id order by a.created");
 			if(mysqlnumrows($query)) {
@@ -147,7 +158,7 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 					switch($q["theAgeCategory"]) {
 						case 1: //age is < 5
 							//samples_received
-							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5","count(a.id)","num");
+							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and (round(datediff(now(),b.dateOfBirth)/365)<5 or b.dateOfBirth='0000-00-00')","count(a.id)","num");
 							//valid_results
 							$subarray["valid_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b,vl_results_merged c","a.patientID=b.id and a.vlSampleID=c.vlSampleID and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and 
 																				c.resultAlphanumeric!='Invalid test result. There is insufficient sample to repeat the assay.' and 
@@ -209,12 +220,14 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 							$subarray["children_under_15"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Child under 15' limit 1","id")."'","count(a.id)","num");
 							//other_treatment
 							$subarray["other_treatment"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Other' limit 1","id")."'","count(a.id)","num");
+							//tb_infection
+							$subarray["tb_infection"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='TB Infection' limit 1","id")."'","count(a.id)","num");
 							//treatment_blank_on_form
 							$subarray["treatment_blank_on_form"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)<5 and (a.treatmentInitiationID='' or a.treatmentInitiationID='0')","count(a.id)","num");
 						break;
 						case 2: //age >= 5 && age <= 9
 							//samples_received
-							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9","count(a.id)","num");
+							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and b.dateOfBirth!='0000-00-00'","count(a.id)","num");
 							//valid_results
 							$subarray["valid_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b,vl_results_merged c","a.patientID=b.id and a.vlSampleID=c.vlSampleID and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and 
 																				c.resultAlphanumeric!='Invalid test result. There is insufficient sample to repeat the assay.' and 
@@ -276,12 +289,14 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 							$subarray["children_under_15"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Child under 15' limit 1","id")."'","count(a.id)","num");
 							//other_treatment
 							$subarray["other_treatment"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Other' limit 1","id")."'","count(a.id)","num");
+							//tb_infection
+							$subarray["tb_infection"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='TB Infection' limit 1","id")."'","count(a.id)","num");
 							//treatment_blank_on_form
 							$subarray["treatment_blank_on_form"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=5 and round(datediff(now(),b.dateOfBirth)/365)<=9 and (a.treatmentInitiationID='' or a.treatmentInitiationID='0')","count(a.id)","num");
 						break;
 						case 3: //age >= 10 && age <= 18
 							//samples_received
-							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18","count(a.id)","num");
+							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and b.dateOfBirth!='0000-00-00'","count(a.id)","num");
 							//valid_results
 							$subarray["valid_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b,vl_results_merged c","a.patientID=b.id and a.vlSampleID=c.vlSampleID and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and 
 																				c.resultAlphanumeric!='Invalid test result. There is insufficient sample to repeat the assay.' and 
@@ -343,12 +358,14 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 							$subarray["children_under_15"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Child under 15' limit 1","id")."'","count(a.id)","num");
 							//other_treatment
 							$subarray["other_treatment"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Other' limit 1","id")."'","count(a.id)","num");
+							//tb_infection
+							$subarray["tb_infection"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='TB Infection' limit 1","id")."'","count(a.id)","num");
 							//treatment_blank_on_form
 							$subarray["treatment_blank_on_form"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=10 and round(datediff(now(),b.dateOfBirth)/365)<=18 and (a.treatmentInitiationID='' or a.treatmentInitiationID='0')","count(a.id)","num");
 						break;
 						case 4: //age >= 19 && age <= 25
 							//samples_received
-							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25","count(a.id)","num");
+							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and b.dateOfBirth!='0000-00-00'","count(a.id)","num");
 							//valid_results
 							$subarray["valid_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b,vl_results_merged c","a.patientID=b.id and a.vlSampleID=c.vlSampleID and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and 
 																				c.resultAlphanumeric!='Invalid test result. There is insufficient sample to repeat the assay.' and 
@@ -410,13 +427,15 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 							$subarray["children_under_15"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Child under 15' limit 1","id")."'","count(a.id)","num");
 							//other_treatment
 							$subarray["other_treatment"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Other' limit 1","id")."'","count(a.id)","num");
+							//tb_infection
+							$subarray["tb_infection"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='TB Infection' limit 1","id")."'","count(a.id)","num");
 							//treatment_blank_on_form
 							$subarray["treatment_blank_on_form"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=19 and round(datediff(now(),b.dateOfBirth)/365)<=25 and (a.treatmentInitiationID='' or a.treatmentInitiationID='0')","count(a.id)","num");
 						break;
 						case 5: //age >= 26
 						default: //age >= 26
 							//samples_received
-							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26","count(a.id)","num");
+							$subarray["samples_received"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and b.dateOfBirth!='0000-00-00'","count(a.id)","num");
 							//valid_results
 							$subarray["valid_results"]=getDetailedTableInfo3("vl_samples a,vl_patients b,vl_results_merged c","a.patientID=b.id and a.vlSampleID=c.vlSampleID and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and 
 																				c.resultAlphanumeric!='Invalid test result. There is insufficient sample to repeat the assay.' and 
@@ -478,6 +497,8 @@ if($token=="amg299281fmlasd5dc02bd238919260fg6ad261d094zafd9") {
 							$subarray["children_under_15"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Child under 15' limit 1","id")."'","count(a.id)","num");
 							//other_treatment
 							$subarray["other_treatment"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='Other' limit 1","id")."'","count(a.id)","num");
+							//tb_infection
+							$subarray["tb_infection"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and a.treatmentInitiationID='".getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix='TB Infection' limit 1","id")."'","count(a.id)","num");
 							//treatment_blank_on_form
 							$subarray["treatment_blank_on_form"]=getDetailedTableInfo3("vl_samples a,vl_patients b","a.patientID=b.id and month(a.created)='$q[theMonth]' and year(a.created)='$q[theYear]' and a.facilityID='$q[facilityID]' and round(datediff(now(),b.dateOfBirth)/365)>=26 and (a.treatmentInitiationID='' or a.treatmentInitiationID='0')","count(a.id)","num");
 						break;

@@ -7,15 +7,14 @@ include "conf.php";
 * INSTRUCTIONS
 * ran as lnx http://192.168.0.43/index.oneoffs.php
 * task 1: update the vl_samples while maintaining the logs
-* task 2: under http://vl.cphluganda.org/admin/?act=atreatmentstatus, merge all samples with "Left Blank" into "Regimen Left Blank"
-* task 3: link all facilities with no hub to "No Hub", and all facilities with no district to "No District"
-* task 4: move all samples with sample type "Whole Blood" to type "Plasma"
-* task 5: move all samples with sample type "Left Blank" to type "DBS"
-* task 6: remove facilities for which there are no samples
-* task 7: remove regimen which have no samples
-* task 8: remove treatment lines which have no samples or regimen
-* task 9: match the districtID and hubID within vl_samples to the facility within vl_facilities
-* task 10: remove facilities with no samples
+* task 2: link all facilities with no hub to "No Hub", and all facilities with no district to "No District"
+* task 3: move all samples with sample type "Whole Blood" to type "Plasma"
+* task 4: move all samples with sample type "Left Blank" to type "DBS"
+* task 5: remove facilities for which there are no samples
+* task 6: remove regimen which have no samples
+* task 7: remove treatment lines which have no samples or regimen
+* task 8: match the districtID and hubID within vl_samples to the facility within vl_facilities
+* task 9: remove facilities with no samples
 */
 
 //task 1: update vl_samples
@@ -352,17 +351,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 2: under http://vl.cphluganda.org/admin/?act=atreatmentstatus, merge all samples with "Left Blank" into "Regimen Left Blank"
-$query=0;
-$query=mysqlquery("select * from vl_samples where treatmentStatusID='4'");
-if(mysqlnumrows($query)) {
-	while($q=mysqlfetcharray($query)) {
-		logTableChange("vl_samples","treatmentStatusID",$q["id"],$q["currentRegimenID"],"5");
-		mysqlquery("update vl_samples set treatmentStatusID='5' where id='$q[id]'");
-	}
-}
-
-//task 3: link all facilities with no hub to "No Hub", and all facilities with no district to "No District"
+//task 2: link all facilities with no hub to "No Hub", and all facilities with no district to "No District"
 $noHubID=0;
 $noHubID=getDetailedTableInfo2("vl_hubs","hub like '%no hub%' limit 1","id");
 
@@ -387,7 +376,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 4: move all samples with sampleTypeID,routineMonitoringSampleTypeID,repeatVLTestSampleTypeID or suspectedTreatmentFailureSampleTypeID "Whole Blood" to type "Plasma"
+//task 3: move all samples with sampleTypeID,routineMonitoringSampleTypeID,repeatVLTestSampleTypeID or suspectedTreatmentFailureSampleTypeID "Whole Blood" to type "Plasma"
 $query=0;
 $query=mysqlquery("select * from vl_samples where sampleTypeID='3'");
 if(mysqlnumrows($query)) {
@@ -424,7 +413,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 5: move all samples with sampleTypeID,routineMonitoringSampleTypeID,repeatVLTestSampleTypeID or suspectedTreatmentFailureSampleTypeID "Left Blank" to type "DBS"
+//task 4: move all samples with sampleTypeID,routineMonitoringSampleTypeID,repeatVLTestSampleTypeID or suspectedTreatmentFailureSampleTypeID "Left Blank" to type "DBS"
 $query=0;
 $query=mysqlquery("select * from vl_samples where sampleTypeID='4'");
 if(mysqlnumrows($query)) {
@@ -461,7 +450,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 6: remove facilities for which there are no samples
+//task 5: remove facilities for which there are no samples
 $query=0;
 $query=mysqlquery("select * from vl_facilities where facility not in (select facility from vl_facilities_temp) and id not in (select facilityID from vl_samples)");
 if(mysqlnumrows($query)) {
@@ -472,7 +461,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 7: remove regimen which have no samples
+//task 6: remove regimen which have no samples
 $query=0;
 $query=mysqlquery("select * from vl_appendix_regimen where id not in (select currentRegimenID from vl_Samples)");
 if(mysqlnumrows($query)) {
@@ -483,7 +472,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 8: remove treatment lines which have no samples or regimen
+//task 7: remove treatment lines which have no samples or regimen
 $query=0;
 $query=mysqlquery("select * from vl_appendix_treatmentstatus where id not in (select treatmentStatusID from vl_samples) and id not in (select treatmentStatusID from vl_appendix_regimen)");
 if(mysqlnumrows($query)) {
@@ -494,7 +483,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 9: match the districtID and hubID within vl_samples to the facility within vl_facilities
+//task 8: match the districtID and hubID within vl_samples to the facility within vl_facilities
 $query=0;
 $query=mysqlquery("select distinct facilityID,districtID,hubID from vl_samples");
 if(mysqlnumrows($query)) {
@@ -507,7 +496,7 @@ if(mysqlnumrows($query)) {
 	}
 }
 
-//task 10: remove facilities with no samples
+//task 9: remove facilities with no samples
 $query=0;
 $query=mysqlquery("select * from vl_facilities where id not in (select facilityID from vl_samples)");
 if(mysqlnumrows($query)) {
