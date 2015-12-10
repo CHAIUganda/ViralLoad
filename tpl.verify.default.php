@@ -200,8 +200,8 @@ if($reverseApprovalRejection) {
                         $query=mysqlquery("select * from vl_samples where id not in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
                         $xquery=mysqlquery("select * from vl_samples where id not in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
                     } elseif($approvedstatus=="processed" || $approvedstatus=="reverse") {
-                        $query=mysqlquery("select * from vl_samples where id = any (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
-                        $xquery=mysqlquery("select * from vl_samples where id = any (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
+                        $query=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
+                        $xquery=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
                     }
                 }
                 //number pages
@@ -221,7 +221,7 @@ if($reverseApprovalRejection) {
                     $resultsPending=$numberOfRelevantSamples;
                     
                     $resultsProcessed=0;
-                    $resultsProcessed=getDetailedTableInfo3("vl_samples","id = any (select sampleID from vl_samples_verify)","count(id)","num");
+                    $resultsProcessed=getDetailedTableInfo3("vl_samples","id in (select sampleID from vl_samples_verify)","count(id)","num");
                     
                     $resultsSearch=0;
                     $resultsSearch=mysqlnumrows($query);

@@ -181,6 +181,61 @@ if(!$searchQuery) {
 			break;
 		}
 	}
+	
+	//rejected results
+	$resultsTable="vl_samples_verify";
+	$machineType="all";
+
+	$rawQuery="select $resultsTable.*,vl_samples.vlSampleID vlSampleID from 
+								$resultsTable,vl_samples,vl_patients 
+									where 
+										vl_samples.id=$resultsTable.sampleID and 
+											vl_patients.id=vl_samples.patientID and 
+												$resultsTable.outcome='Rejected' and 
+													(vl_samples.vlSampleID like '%$searchQuery%' or 
+														vl_samples.formNumber like '%$searchQuery%' or 
+															vl_patients.artNumber like '%$searchQuery%' or 
+																vl_patients.otherID like '%$searchQuery%') 
+																	order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID limit $offset, $rowsToDisplay";
+	$xRawQuery="select $resultsTable.*,vl_samples.vlSampleID vlSampleID from 
+								$resultsTable,vl_samples,vl_patients 
+									where 
+										vl_samples.id=$resultsTable.sampleID and 
+											vl_patients.id=vl_samples.patientID and 
+												$resultsTable.outcome='Rejected' and 
+													(vl_samples.vlSampleID like '%$searchQuery%' or 
+														vl_samples.formNumber like '%$searchQuery%' or 
+															vl_patients.artNumber like '%$searchQuery%' or 
+																vl_patients.otherID like '%$searchQuery%') 
+																	order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID";
+	$query=mysqlquery($rawQuery);
+	$xquery=mysqlquery($xRawQuery);
+	$rejectionOverride=0;
+
+	if(mysqlnumrows($query)) {
+		$q=array();
+		while($q=mysqlfetcharray($query)) {
+			$sampleIDFieldArray[]=$q["vlSampleID"];
+			//$worksheetIDArray[]=$q["worksheetID"];
+			//change rejection override flag to 1
+			$rejectionOverride=1;
+			$machineType="rejected";
+		}
+		//machine flag
+		//$roche=1;
+	}
+
+	//are these results printed or not
+	$showPrinted=0;
+	for($i=0;$i<count($sampleIDFieldArray);$i++) {
+		$printSampleID=0;
+		$printSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleIDFieldArray[$i]'","id");
+		//is this id printed
+		if(getDetailedTableInfo2("vl_logs_printedrejectedresults","sampleID='$printSampleID'","id")) {
+			$showPrinted=1;
+			break;
+		}
+	}
 }
 
 //number pages
@@ -205,6 +260,9 @@ $resultsRoche=0;
 $resultsRoche=getDetailedTableInfo3("vl_results_roche,vl_samples","vl_samples.vlSampleID=vl_results_roche.SampleID".($showPrinted?" and vl_samples.id in (select sampleID from vl_logs_printedresults)":" and vl_samples.id not in (select sampleID from vl_logs_printedresults)"),"count(vl_results_roche.SampleID)","num");
 $rejectedSamples=0;
 $rejectedSamples=getDetailedTableInfo3("vl_samples_verify","outcome='Rejected'".($showPrinted?" and sampleID in (select sampleID from vl_logs_printedrejectedresults)":" and sampleID not in (select sampleID from vl_logs_printedrejectedresults)"),"count(id)","num");
+if($rejectionOverride) {
+	$rejectedSamples=getDetailedTableInfo3("vl_samples_verify","outcome='Rejected'".($showPrinted?" and sampleID in (select sampleID from vl_logs_printedrejectedresults)":" and sampleID not in (select sampleID from vl_logs_printedrejectedresults)"),"count(id)","num");
+}
 $resultsPrinted=0;
 $resultsPrinted=getDetailedTableInfo3("vl_results_abbott,vl_samples","vl_samples.vlSampleID=vl_results_abbott.sampleID and vl_samples.id in (select sampleID from vl_logs_printedresults)","count(vl_results_abbott.sampleID)","num")+getDetailedTableInfo3("vl_results_roche,vl_samples","vl_samples.vlSampleID=vl_results_roche.SampleID and vl_samples.id in (select sampleID from vl_logs_printedresults)","count(vl_results_roche.SampleID)","num");
 $resultsNotPrinted=0;
@@ -236,8 +294,8 @@ function validate(results) {
 }
 //-->
 </script>
-<!--<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/" onsubmit="return validate(this)">-->
-<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/">
+<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/" onsubmit="return validate(this)">
+<!--<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/">-->
 <table width="100%" border="0" class="vl">
 			<? if(!$resultsRoche && !$resultsAbbott) { ?>
             <tr>
@@ -447,6 +505,15 @@ function validate(results) {
                                             //results
                                             $result=0;
                                             $result=getVLResult(($worksheetMachineType?$worksheetMachineType:$machineType),$worksheetUniqueID,$sampleIDFieldArray[$i],$factor);
+											//is there a rejected reason, as a result of searching and finding a result within rejected samples
+											if($rejectionOverride) {
+												$outcomeReasonsID=0;
+												$outcomeReasonsID=getDetailedTableInfo2("vl_samples_verify","sampleID='$sampleID' order by created desc limit 1","outcomeReasonsID");
+												$sampleTypeID=0;
+												$sampleTypeID=getDetailedTableInfo2("vl_samples","id='$sampleID' order by created desc limit 1","sampleTypeID");
+												//rejected result
+												$result=getDetailedTableInfo2("vl_appendix_samplerejectionreason","id='$outcomeReasonsID' and sampleTypeID='$sampleTypeID'","appendix");
+											}
                                             //printed
                                             $printed=0;
                                             if(getDetailedTableInfo2("vl_logs_printedresults","sampleID='$sampleID' and worksheetID='$worksheetUniqueID' limit 1","id")) {
@@ -485,7 +552,7 @@ function validate(results) {
                                                 <td class="vl_tdstandard">
                                                     <div><strong>Form&nbsp;Number:</strong>&nbsp;<a href="#" onclick="iDisplayMessage('/verify/preview/<?=$sampleID?>/<?=$pg?>/noedit/')"><?=$formNumber?></a></div>
                                                     <div class="vls_grey" style="padding:3px 0px"><strong>Sample&nbsp;Ref&nbsp;#:</strong>&nbsp;<?=$sampleReferenceNumber?></div>
-                                                    <div class="vls_grey" style="padding:0px 0px 3px 0px"><strong>Worksheet&nbsp;Ref&nbsp;#:</strong>&nbsp;<?=$worksheetReferenceNumber?></div>
+                                                    <? if(!$rejectionOverride) { ?><div class="vls_grey" style="padding:0px 0px 3px 0px"><strong>Worksheet&nbsp;Ref&nbsp;#:</strong>&nbsp;<?=$worksheetReferenceNumber?></div><? } ?>
                                                     <? if($locationID) { ?><div class="vls_grey" style="padding:0px 0px 3px 0px"><strong>Location&nbsp;ID:</strong>&nbsp;<?=$locationID?></div><? } ?>
                                                     <div class="vls_grey" style="padding:0px 0px 3px 0px"><strong>Facility:</strong>&nbsp;<?=$facilityName?></div>
                                                 </td>
@@ -494,8 +561,14 @@ function validate(results) {
                                                     <? if($otherID) { ?><div class="vls_grey" style="padding:3px 0px"><strong>Other&nbsp;ID:</strong>&nbsp;<?=$otherID?></div><? } ?>
                                                 </td>
                                                 <td class="vl_tdstandard">
+                                                	<? 
+													if($rejectionOverride) { 
+														echo "<div><font color=\"#FF0000\">Rejected</font> with reason <strong>$result</strong></div>";
+													} else {
+													?>
                                                     <div><strong>Result:</strong>&nbsp;<?=$result?></div>
                                                     <div class="vls_grey" style="padding:3px 0px"><strong>Factor:</strong>&nbsp;x<?=$factor?></div>
+                                                    <? } ?>
                                                 </td>
                                                 <td class="vl_tdstandard" align="center"><?=$dispatched?></td>
                                                 <td class="vl_tdstandard" align="center"><?=$repeat?></td>

@@ -925,8 +925,8 @@ function validate(worksheets) {
 }
 //-->
 </script>
-<!--<form name="worksheets" method="post" action="/worksheets/upload.results/<?=$worksheetID?>/" onsubmit="return validate(this)" enctype="multipart/form-data">-->
-<form name="worksheets" method="post" action="/worksheets/upload.results/<?=$worksheetID?>/" enctype="multipart/form-data">
+<form name="worksheets" method="post" action="/worksheets/upload.results/<?=$worksheetID?>/" onsubmit="return validate(this)" enctype="multipart/form-data">
+<!--<form name="worksheets" method="post" action="/worksheets/upload.results/<?=$worksheetID?>/" enctype="multipart/form-data">-->
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>

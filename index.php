@@ -90,7 +90,7 @@ $searchFilter=getValidatedVariable("searchFilter");
         </td>
       </tr>
       <tr>
-      	<td background="/images/bg.header.jpg?time=<?=rand(1,10)?>">
+      	<td background="/images/bg.header.jpg">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td width="1%" style="padding:0px 0px 0px 115px"><img src="/images/uganda.emblem.jpg" /></td>

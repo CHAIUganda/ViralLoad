@@ -4,7 +4,14 @@ $GLOBALS['vlDC']=true;
 include "conf.php";
 
 //array initiation
-$pdfFileName=array();
+//$pdfFileName=array();
+$html=0;
+$html="<style type=\"text/css\">
+<!--
+div.special { margin: 2mm; width:95%; padding: 1px; }
+div.special table { width:100%; font-size:10px; border-collapse:collapse; }
+-->
+</style>";
 
 //iterations
 if(count($sampleResultCheckbox)) {
@@ -118,6 +125,7 @@ if(count($sampleResultCheckbox)) {
 		//signatures
 		$worksheetOwner=0;
 		$worksheetOwner=getDetailedTableInfo2("vl_samples_worksheetcredentials","id='$worksheetID'","createdby");
+		
 		$labTechSignature=0;
 		if(getDetailedTableInfo2("vl_users","email='$worksheetOwner'","signaturePATH")) {
 			$labTechSignature="<img src=\"".getDetailedTableInfo2("vl_users","email='$worksheetOwner'","signaturePATH")."\" width=\"120\" height=\"50\" />";
@@ -186,120 +194,61 @@ if(count($sampleResultCheckbox)) {
 		}
 		
 		//generate form
-		$html=0;
-		$html="<style type=\"text/css\">
-		<!--
-		.vl {
-			font-family:Arial,Helvetica,sans-serif;
-			font-size:12px;
-			color:#3c3c3c;
-		}
-		.vl_red {
-			font-family:Arial,Helvetica,sans-serif;
-			font-size:12px;
-			color:#F00;
-		}
-		.vl11 {
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 11px;
-			color: #333333;
-		}
-		.vl11_grey {
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 11px;
-			color: #CCC;
-		}
-		.vl10 {
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 10px;
-			color: #333333;
-		}
-		.vl10_grey {
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 10px;
-			color: #CCC;
-		}
-		-->
-		</style>
-		
-		<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
+		$html.="<page orientation=\"portrait\" format=\"165x230\" style=\"font-size: 10px\">
+	<div class=\"special\">
 		  <!-- Start Header -->
-		  <tr>
-			<td style=\"padding:5px\" align=\"center\">
-				<div align=\"center\"><img src=\"$system_default_path"."images/uganda.emblem.gif\"></div>
-				<div align=\"center\"><strong>MINISTRY OF HEALTH UGANDA<br>NATIONAL AIDS CONTROL PROGRAM (ACP)</strong></div>
-			</td>
-		  </tr>
+			<div align=\"center\"><img src=\"$home_url/images/uganda.emblem.gif\"></div>
+			<div align=\"center\"><strong>MINISTRY OF HEALTH UGANDA<br>NATIONAL AIDS CONTROL PROGRAM (ACP)</strong></div>
 		  <!-- End Header -->
 		  <!-- Start Text -->
-		  <tr>
-			<td style=\"padding:5px\">
-				<div>&nbsp;</div>
-				<div style=\"padding:5px; border-bottom: 1px solid #333\" align=\"center\">CENTRAL PUBLIC HEALTH LABORATORIES</div>
-				<div style=\"padding:5px 0px 20px 0px\" align=\"center\">Viral Load Test Results</div>
-			</td>
-		  </tr>
+			<div style=\"padding:3px; border-bottom: 1px solid #333; text-align: center\">CENTRAL PUBLIC HEALTH LABORATORIES</div>
+			<div style=\"padding:3px 0px 10px 0px; text-align: center\">Viral Load Test Results</div>
 		  <!-- End Text -->
-		</table>
 		
 		<!-- Start Facility and Sample Details -->
-		<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
+		<table style=\"width: 100%\">
 		  <tr>
 			<!-- Start Facility Details -->
-			<td width=\"45%\" style=\"padding:5px\" valign=\"top\">
-				<fieldset style=\"width: 100%\">
-				<legend><strong>FACILITY DETAILS</strong></legend>
-					<div style=\"padding:5px 0px 0px 0px\">
-						<table width=\"100%\" border=\"0\" class=\"vl\">
-							<tr>
-								<td width=\"20%\">Name:</td>
-								<td width=\"80%\" style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$facilityName</td>
-							</tr>
-							<tr>
-								<td>District:</td>
-								<td>
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"45%\" style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$districtName</td>
-										<td width=\"10%\">Hub:</td>
-										<td width=\"45%\" style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$hubName</td>
-									  </tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</fieldset>
+			<td style=\"width: 45%; padding:0px 3px 0px 0px\">
+				<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>FACILITY DETAILS</strong></div>
+				<div style=\"padding: 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+					<table style=\"width: 90%\">
+						<tr>
+							<td style=\"width: 20%\">Name:</td>
+							<td style=\"width: 80%; padding: 5px 0px; border-bottom: 1px solid #333\">$facilityName</td>
+						</tr>
+						<tr>
+							<td>District:</td>
+							<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$districtName | Hub: $hubName</td>
+						</tr>
+					</table>
+				</div>
 			</td>
 			<!-- End Facility Details -->
 			<!-- Start Sample Details -->
-			<td width=\"55%\" style=\"padding:5px\" valign=\"top\">
-				<fieldset style=\"width: 100%\">
-				<legend><strong>SAMPLE DETAILS</strong></legend>
-					<div style=\"padding:5px 0px 0px 0px\">
-						<table width=\"100%\" border=\"0\" class=\"vl\">
-							<tr>
-								<td width=\"30%\" style=\"padding: 5px 0px\">Form&nbsp;#:</td>
-								<td width=\"70%\" style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$formNumber</td>
-							</tr>
-							<tr>
-								<td>Sample&nbsp;Type:</td>
-								<td style=\"padding: 4px 0px\">
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\" align=\"center\">".($sampleType=="DBS"?"<img src=\"$system_default_path"."images/check.gif\" />":"&nbsp;")."</div></td>
-										<td width=\"13%\" style=\"padding:0px 5px 0px 5px\">DBS</td>
-										<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\" align=\"center\">".($sampleType=="Plasma"?"<img src=\"$system_default_path"."images/check.gif\" />":"&nbsp;")."</div></td>
-										<td width=\"13%\" style=\"padding:0px 5px 0px 5px\">Plasma</td>
-										<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\" align=\"center\">".($sampleType=="Whole blood"?"<img src=\"$system_default_path"."images/check.gif\" />":"&nbsp;")."</div></td>
-										<td width=\"68%\" style=\"padding:0px 0px 0px 5px\">Whole&nbsp;Blood</td>
-									  </tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</fieldset>
+			<td style=\"width: 55%\">
+				<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>SAMPLE DETAILS</strong></div>
+				<div style=\"padding: 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+					<table style=\"width: 40%\">
+						<tr>
+							<td style=\"width: 30%; padding: 5px 0px\">Form&nbsp;#:</td>
+							<td style=\"width: 70%; padding: 5px 0px; border-bottom: 1px solid #333\">$formNumber</td>
+						</tr>
+						<tr>
+							<td>Sample&nbsp;Type:</td>
+							<td style=\"padding: 4px 0px\">
+								<table style=\"width: 100%\">
+								  <tr>
+									<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\" align=\"center\">".($sampleType=="DBS"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+									<td style=\"width: 48%; padding:0px 5px 0px 5px\">DBS</td>
+									<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\" align=\"center\">".($sampleType=="Plasma"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+									<td style=\"width: 48%; padding:0px 5px 0px 5px\">Plasma</td>
+								  </tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
 			</td>
 			<!-- End Sample Details -->
 		  </tr>
@@ -307,239 +256,215 @@ if(count($sampleResultCheckbox)) {
 		<!-- End Facility and Sample Details -->
 		
 		<!-- Start Patient Information -->
-		<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
-		  <tr>
-			<td style=\"padding:5px\" valign=\"top\">
-				<fieldset style=\"width: 100%\">
-				<legend><strong>PATIENT INFORMATION</strong></legend>
-					<div style=\"padding:5px 0px 0px 0px\">
-						<table width=\"100%\" border=\"0\" class=\"vl\">
-							<tr>
-								<!-- Start Column 1 -->
-								<td width=\"50%\" valign=\"top\">
-									<table width=\"100%\" border=\"0\" class=\"vl\">
+		<div style=\"padding: 0px 0px 2px 0px\">
+			<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>PATIENT INFORMATION</strong></div>
+			<div style=\"padding: 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+				<table style=\"width: 60%\">
+					<tr>
+						<!-- Start Column 1 -->
+						<td style=\"width: 50%; padding: 5px\">
+							<table style=\"width: 50%\">
+							  <tr>
+								<td style=\"width: 50%\">ART Number:</td>
+								<td style=\"width: 50%; padding: 5px 0px; border-bottom: 1px solid #333\">$artNumber</td>
+							  </tr>
+							  <tr>
+								<td>Other ID:</td>
+								<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$otherID</td>
+							  </tr>
+							  <tr>
+								<td>Gender:</td>
+								<td style=\"padding: 4px 0px\">
+									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
 									  <tr>
-										<td width=\"30%\">ART Number:</td>
-										<td width=\"70%\" style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$artNumber</td>
-									  </tr>
-									  <tr>
-										<td>Other ID:</td>
-										<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$otherID</td>
-									  </tr>
-									  <tr>
-										<td>Gender:</td>
-										<td style=\"padding: 4px 0px\">
-											<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-											  <tr>
-												<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".($gender=="Male"?"<img src=\"$system_default_path"."images/check.gif\" />":"&nbsp;")."</div></td>
-												<td width=\"18%\" style=\"padding:0px 5px 0px 5px\">Male</td>
-												<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".($gender=="Female"?"<img src=\"$system_default_path"."images/check.gif\" />":"&nbsp;")."</div></td>
-												<td width=\"18%\" style=\"padding:0px 0px 0px 5px\">Female</td>
-												<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".($gender=="Left Blank"?"<img src=\"$system_default_path"."images/check.gif\" />":"&nbsp;")."</div></td>
-												<td width=\"58%\" style=\"padding:0px 0px 0px 5px\">Left Blank</td>
-											  </tr>
-											</table>
-										</td>
+										<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".($gender=="Male"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+										<td style=\"width: 18%\" style=\"padding:0px 5px 0px 5px\">Male</td>
+										<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".($gender=="Female"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+										<td style=\"width: 18%\" style=\"padding:0px 0px 0px 5px\">Female</td>
+										<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".($gender=="Left Blank"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+										<td style=\"width: 58%; padding:0px 0px 0px 5px\">Left Blank</td>
 									  </tr>
 									</table>
 								</td>
-								<!-- End Column 1 -->
-								<!-- Start Column 2 -->
-								<td width=\"50%\" valign=\"top\">
-									<table width=\"100%\" border=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"55%\">Date of Birth (DOB):</td>
-										<td width=\"45%\" style=\"padding: 5px 0px; border-bottom: 1px solid #333\">".(getFormattedDate($dateOfBirth))."</td>
-									  </tr>
-									  <tr>
-										<td>Phone Number:</td>
-										<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$phone</td>
-									  </tr>
-									</table>
-								</td>
-								<!-- End Column 2 -->
-							</tr>
-						</table>
-					</div>
-				</fieldset>
-			</td>
-		  </tr>
-		</table>
+							  </tr>
+							</table>
+						</td>
+						<!-- End Column 1 -->
+						<!-- Start Column 2 -->
+						<td style=\"width: 50%; padding: 5px\">
+							<table style=\"width: 100%\">
+							  <tr>
+								<td style=\"width: 60%\">Date of Birth:</td>
+								<td style=\"width: 40%; padding: 5px 0px; border-bottom: 1px solid #333\">".(getFormattedDateLessDay($dateOfBirth))."</td>
+							  </tr>
+							  <tr>
+								<td>Phone Number:</td>
+								<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$phone</td>
+							  </tr>
+							</table>
+						</td>
+						<!-- End Column 2 -->
+					</tr>
+				</table>
+			</div>
+		</div>
 		<!-- End Patient Information -->
 		
 		<!-- Start Sample Test Information -->
-		<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
-		  <tr>
-			<td style=\"padding:5px\" valign=\"top\">
-				<fieldset style=\"width: 100%\">
-				<legend><strong>SAMPLE TEST INFORMATION </strong></legend>
-					<div style=\"padding:5px 0px 0px 0px\">
-						<!-- Start Sample Collection Date -->
-						<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
-							<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-							  <tr>
-								<td width=\"25%\">Sample&nbsp;Collection&nbsp;Date:</td>
-								<td width=\"13%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleCollectionDate)."</td>
-								<td width=\"13%\">Reception&nbsp;Date:</td>
-								<td width=\"12%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleReceiptDate)."</td>
-								<td width=\"25%\">Viral&nbsp;Load&nbsp;Test&nbsp;Date:</td>
-								<td width=\"12%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleVLTestDate)."</td>
-							  </tr>
-							</table>
-						</div>
-						<!-- End Sample Collection Date -->
-		
-						<!-- Start Repeat Test -->
-						<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
-							<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-							  <tr>
-								<td width=\"25%\">Repeat Test:</td>
-								<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID='$worksheetID'","id")?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-								<td width=\"18%\" style=\"padding:0px 5px 0px 5px\">Yes</td>
-								<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID='$worksheetID'","id")?"&nbsp;":"<img src=\"$home_url"."/images/check.gif\" />")."</div></td>
-								<td width=\"53%\" style=\"padding:0px 0px 0px 5px\">No</td>
-							  </tr>
-							</table>
-						</div>
-						<!-- End Repeat Test -->
-		
-						<!-- Start Sample Rejected -->
-						<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
-							<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-							  <tr>
-								<td width=\"25%\">Sample Rejected:</td>
-								<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">&nbsp;</div></td>
-								<td width=\"18%\" style=\"padding:0px 5px 0px 5px\">Yes</td>
-								<td width=\"2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\"><img src=\"$system_default_path"."images/check.gif\" /></div></td>
-								<td width=\"53%\" style=\"padding:0px 0px 0px 5px\">No</td>
-							  </tr>
-							</table>
-						</div>
-						<!-- End Sample Rejected -->
-		
-						<!-- Start Rejection Reason -->
-						<div style=\"padding:5px 0px\">
-							<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-							  <tr>
-								<td width=\"25%\">If Rejected, Reason:</td>
-								<td width=\"75%\" style=\"padding:0px 0px 0px 5px\">&nbsp;</td>
-							  </tr>
-							</table>
-						</div>
-						<!-- End Rejection Reason -->
-					</div>
-				</fieldset>
-			</td>
-		  </tr>
-		</table>
+		<div style=\"padding: 0px 0px 2px 0px\">
+			<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>SAMPLE TEST INFORMATION</strong></div>
+			<div style=\"padding: 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+				<!-- Start Sample Collection Date -->
+				<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
+					<table style=\"width: 100%\">
+					  <tr>
+						<td style=\"width: 25%\">Sample&nbsp;Collection&nbsp;Date:</td>
+						<td style=\"width: 13%; padding:0px 5px\">".getFormattedDateLessDay($sampleCollectionDate)."</td>
+						<td style=\"width: 13%\">Reception&nbsp;Date:</td>
+						<td style=\"width: 12%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleReceiptDate)."</td>
+						<td style=\"width: 25%\">Viral&nbsp;Load&nbsp;Test&nbsp;Date:</td>
+						<td style=\"width: 12%; padding:0px 5px\">".getFormattedDateLessDay($sampleVLTestDate)."</td>
+					  </tr>
+					</table>
+				</div>
+				<!-- End Sample Collection Date -->
+
+				<!-- Start Repeat Test -->
+				<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
+					<table style=\"width: 60%\">
+					  <tr>
+						<td style=\"width: 35%\">Repeat Test:</td>
+						<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID!=''","id")?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+						<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
+						<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID!=''","id")?"&nbsp;":"<img src=\"$home_url"."/images/check.gif\" />")."</div></td>
+						<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
+					  </tr>
+					</table>
+				</div>
+				<!-- End Repeat Test -->
+
+				<!-- Start Sample Rejected -->
+				<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
+					<table style=\"width: 60%\">
+					  <tr>
+						<td style=\"width: 35%\">Sample Rejected:</td>
+						<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\">&nbsp;</div></td>
+						<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
+						<td style=\"width: 2%\"><div style=\"height: 18px; width:18px; border: 1px solid #333\"><img src=\"$home_url"."/images/check.gif\" /></div></td>
+						<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
+					  </tr>
+					</table>
+				</div>
+				<!-- End Sample Rejected -->
+
+				<!-- Start Rejection Reason -->
+				<div style=\"width: 95%; padding:5px 0px\">
+					<table style=\"width: 60%\">
+					  <tr>
+						<td style=\"width: 35%\">If Rejected, Reason:</td>
+						<td style=\"width: 45%; padding:0px 0px 0px 5px\">&nbsp;</td>
+					  </tr>
+					</table>
+				</div>
+				<!-- End Rejection Reason -->
+			</div>
+		</div>
 		<!-- End Sample Test Information -->
 		
 		<!-- Start Viral Load Results -->
-		<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
-		  <tr>
-			<td style=\"padding:5px\" valign=\"top\">
-				<fieldset style=\"width: 100%\">
-				<legend><strong>VIRAL LOAD RESULTS</strong></legend>
-					<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">
-					  <tr>
-						<td width=\"80%\">
-							<div style=\"padding:5px 0px 0px 0px\">
-								<!-- Start Machine Type -->
-								<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"30%\">Method Used:</td>
-										<td width=\"70%\" style=\"padding:0px 5px\">$methodUsed</td>
-									  </tr>
-									</table>
-								</div>
-								<!-- End Machine Type -->
-		
-								<!-- Start Location ID -->
-								<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"30%\">Location ID:</td>
-										<td width=\"70%\" style=\"padding:0px 5px\">$locationID</td>
-									  </tr>
-									</table>
-								</div>
-								<!-- End Location ID -->
-				
-								<!-- Start Viral Load Testing # -->
-								<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"30%\">Viral Load Testing #:</td>
-										<td width=\"70%\" style=\"padding:0px 5px\">$vlSampleID</td>
-									  </tr>
-									</table>
-								</div>
-								<!-- End Viral Load Testing # -->
-				
-								<!-- Start Result of Viral Load -->
-								<div style=\"padding:5px 0px\">
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
-									  <tr>
-										<td width=\"30%\">Result of Viral Load:</td>
-										<td width=\"70%\" style=\"padding:0px 5px\">$vlResult</td>
-									  </tr>
-									</table>
-								</div>
-								<!-- End Result of Viral Load -->
+		<div style=\"padding: 0px 0px 2px 0px\">
+			<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>VIRAL LOAD RESULTS</strong></div>
+			<div style=\"padding: 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+				<table style=\"width: 95%\">
+				  <tr>
+					<td style=\"width: 81%\">
+						<div style=\"padding:5px 0px 0px 0px\">
+							<!-- Start Machine Type -->
+							<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
+								<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
+								  <tr>
+									<td style=\"width: 30%\">Method Used:</td>
+									<td style=\"width: 70%; padding:0px 5px\">$methodUsed</td>
+								  </tr>
+								</table>
 							</div>
-						</td>
-						".($smiley?"
-						<td width=\"20%\" align=\"center\" style=\"padding:10px\">
-							<!-- Start Smiley Face -->
-							$smiley
-							<!-- End Smiley Face -->
-						</td>
-						":"")."
-					  </tr>
-					</table>
-				</fieldset>
-			</td>
-		  </tr>
-		</table>
+							<!-- End Machine Type -->
+			
+							<!-- Start Location ID -->
+							<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
+								<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
+								  <tr>
+									<td style=\"width: 30%\">Location ID:</td>
+									<td style=\"width: 70%; padding:0px 5px\">$locationID</td>
+								  </tr>
+								</table>
+							</div>
+							<!-- End Location ID -->
+			
+							<!-- Start Viral Load Testing # -->
+							<div style=\"padding:5px 0px; border-bottom: 1px solid #CCC\">
+								<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
+								  <tr>
+									<td style=\"width: 30%\">Viral Load Testing #:</td>
+									<td style=\"width: 70%; padding:0px 5px\">$vlSampleID</td>
+								  </tr>
+								</table>
+							</div>
+							<!-- End Viral Load Testing # -->
+			
+							<!-- Start Result of Viral Load -->
+							<div style=\"padding:5px 0px\">
+								<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
+								  <tr>
+									<td style=\"width: 30%\">Result of Viral Load:</td>
+									<td style=\"width: 70%; padding:0px 5px\">$vlResult</td>
+								  </tr>
+								</table>
+							</div>
+							<!-- End Result of Viral Load -->
+						</div>
+					</td>
+					".($smiley?"
+					<td align=\"center\" style=\"width: 20% padding:10px\">
+						<!-- Start Smiley Face -->
+						$smiley
+						<!-- End Smiley Face -->
+					</td>
+					":"")."
+				  </tr>
+				</table>
+			</div>
+		</div>
 		<!-- End Viral Load Results -->
-		
 		".($recommendation?"
 		<!-- Start Recommendation -->
-		<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
-		  <tr>
-			<td style=\"padding:5px\" valign=\"top\">
-				<fieldset style=\"width: 100%\">
-				<legend><strong>RECOMMENDATIONS</strong></legend>
-					<!-- Start Clinical Recommendation -->
-					<div style=\"padding:10px\">Suggested Clinical Action based on National Guidelines:</div>
-					<div style=\"padding:5px 30px\">$recommendation</div>
-					<!-- End Clinical Recommendation -->
-				</fieldset>
-			</td>
-		  </tr>
-		</table>
+		<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>RECOMMENDATIONS</strong></div>
+		<div style=\"padding: 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+			<!-- Start Clinical Recommendation -->
+			<div style=\"width: 90%; padding:10px\">Suggested Clinical Action based on National Guidelines:</div>
+			<div style=\"width: 90%; padding:5px 30px\">$recommendation</div>
+			<!-- End Clinical Recommendation -->
+		</div>
 		<!-- End Recommendation -->
 		":"")."
-		
 		<!-- Start Sign Offs -->
 		<div style=\"padding:20px 0px 0px 0px\">
-			<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"vl\">
+			<table style=\"width: 100%\">
 			  <tr>
-				<td width=\"20%\">Lab Technologist:</td>
-				<td width=\"30%\" style=\"border-bottom: 1px solid #333\">".($labTechSignature?$labTechSignature:"&nbsp;")."</td>
-				<td width=\"20%\">Lab Manager:</td>
-				<td width=\"30%\" style=\"border-bottom: 1px solid #333\">".($labManagerSignature?$labManagerSignature:"&nbsp;")."</td>
+				<td style=\"width: 20%\">Lab Technologist:</td>
+				<td style=\"width: 30%; border-bottom: 1px solid #333\">".($labTechSignature?$labTechSignature:"&nbsp;")."</td>
+				<td style=\"width: 20%\">Lab Manager:</td>
+				<td style=\"width: 30%; border-bottom: 1px solid #333\">".($labManagerSignature?$labManagerSignature:"&nbsp;")."</td>
 			  </tr>
 			</table>
 		</div>
-		<!-- End Sign Offs -->";
-		
-		//filename
-		$filename=0;
-		$filename="VL.Results.Form.$sampleID.$worksheetID.pdf";
+		<!-- End Sign Offs -->
+
+	</div>
+</page>";
 		
 		//load PDF object
+		/*
 		$pdf = new DOMPDF();
 		$pdf->load_html($html);
 		$pdf->set_paper("letter", "portrait");
@@ -548,14 +473,31 @@ if(count($sampleResultCheckbox)) {
 		//$pdf->stream($formNumber, array("Attachment" => false));
 
 		$pdfFileName[]=$filename;
+		*/
 	}
 }
 
+//filename
+$filename=0;
+$filename="VL.Results.BatchForm.pdf";
+
+try {
+	$html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 0);
+	$html2pdf->writeHTML($html, isset($_GET['vuehtml']));
+	$html2pdf->Output($filename);
+}
+catch(HTML2PDF_exception $e) {
+	echo $e;
+	exit;
+}
+
 //render to PDF
+/*
 $pdfmerge = 0;
 $pdfmerge = new PDFMerger;
 for($i=0;$i<count($pdfFileName);$i++) {
 	$pdfmerge->addPDF("$system_default_path/downloads.forms/$pdfFileName[$i]","all","P");
 }
 $pdfmerge->merge('browser', '');
+*/
 ?>
