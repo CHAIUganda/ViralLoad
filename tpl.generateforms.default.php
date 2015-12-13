@@ -92,11 +92,9 @@ $refNumber=validate($refNumber);
                                   </form>
                                 </td>
                             </tr>
-                            -->
                             <tr>
     	                        <td style="padding:10px 0px 0px 0px"><a href="/generateforms/download/">Download Historical Forms</a> <font class="vls_grey">(<?=number_format((float)getDetailedTableInfo3("vl_forms_clinicalrequest","id!=''","count(id)","num"))?>)</font></td>
                             </tr>
-                            <!--
                             <tr>
     	                        <td style="padding:10px 0px 0px 0px"><a href="/generateforms/email/">Email Downloadable Forms</a></td>
                             </tr>

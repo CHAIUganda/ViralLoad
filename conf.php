@@ -30,8 +30,6 @@ $vlDC->sRequestURI=$home_url;
 $excelData = new Spreadsheet_Excel_Reader();
 // Set output Encoding.
 $excelData->setOutputEncoding('CP1251');
-//load PDF object
-$dompdf = new DOMPDF();
 
 /***
 * if you want you can change 'iconv' to mb_convert_encoding:

@@ -166,7 +166,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 		}
 	}
 
-	if($treatmentInitiationDateYear && $treatmentInitiationDateMonth && $treatmentInitiationDateDay) {
+	if($treatmentInitiationDateYear && $treatmentInitiationDateMonth && $treatmentInitiationDateDay && !$noTreatmentInitiationDateSupplied) {
 		$treatmentInitiationDate=0;
 		$treatmentInitiationDate="$treatmentInitiationDateYear-$treatmentInitiationDateMonth-$treatmentInitiationDateDay";
 		//ensure treatment initiation date is not greater than the current date
@@ -266,7 +266,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 		logTableChange("vl_samples","collectionDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","collectionDate"),$collectionDate);
 		logTableChange("vl_samples","receiptDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","receiptDate"),$receiptDate);
 		logTableChange("vl_samples","treatmentLast6Months",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","treatmentLast6Months"),$treatmentLast6Months);
-		logTableChange("vl_samples","treatmentInitiationDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","treatmentInitiationDate"),$treatmentInitiationDate);
+		if(!$noTreatmentInitiationDateSupplied) { logTableChange("vl_samples","treatmentInitiationDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","treatmentInitiationDate"),$treatmentInitiationDate); }
 		logTableChange("vl_samples","sampleTypeID",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","sampleTypeID"),$sampleTypeID);
 		logTableChange("vl_samples","viralLoadTestingID",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","viralLoadTestingID"),$viralLoadTestingID);
 		logTableChange("vl_samples","treatmentInitiationID",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","treatmentInitiationID"),$treatmentInitiationID);
@@ -307,7 +307,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 						collectionDate='$collectionDate',
 						receiptDate='$receiptDate',
 						treatmentLast6Months='$treatmentLast6Months',
-						treatmentInitiationDate='$treatmentInitiationDate',
+						".(!$noTreatmentInitiationDateSupplied?"treatmentInitiationDate='$treatmentInitiationDate',":"treatmentInitiationDate='',")."
 						sampleTypeID='$sampleTypeID',
 						viralLoadTestingID='$viralLoadTestingID',
 						treatmentInitiationID='$treatmentInitiationID',
@@ -436,6 +436,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 	$treatmentInitiationDate=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","treatmentInitiationDate");
 	if($treatmentInitiationDate=="0000-00-00") {
 		$treatmentInitiationDate="";
+		$noTreatmentInitiationDateSupplied=1;
 	}
 	
 	$sampleTypeID=0;
@@ -762,6 +763,20 @@ function disableEnableDateOfBirth(checkedObject) {
 		document.samples.dateOfBirthYear.disabled=false;
 		document.samples.dateOfBirthMonth.disabled=false;
 		document.samples.dateOfBirthDay.disabled=false;
+	}
+}
+
+function disableEnableTreatmentInitiationDate(checkedObject) {
+	if(checkedObject.checked==true) {
+		//has been checked
+		document.samples.treatmentInitiationDateYear.disabled=true;
+		document.samples.treatmentInitiationDateMonth.disabled=true;
+		document.samples.treatmentInitiationDateDay.disabled=true;
+	} else if(checkedObject.checked==false) {
+		//has been unchecked
+		document.samples.treatmentInitiationDateYear.disabled=false;
+		document.samples.treatmentInitiationDateMonth.disabled=false;
+		document.samples.treatmentInitiationDateDay.disabled=false;
 	}
 }
 
@@ -1206,7 +1221,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <td>
                                   <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                       <tr>
-                                        <td><select name="treatmentInitiationDateDay" id="treatmentInitiationDateDay" class="search">
+                                        <td><select name="treatmentInitiationDateDay" id="treatmentInitiationDateDay" class="search" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?>>
                                           <?
 											if($treatmentInitiationDate) {
 												echo "<option value=\"".getFormattedDateDay($treatmentInitiationDate)."\" selected=\"selected\">".getFormattedDateDay($treatmentInitiationDate)."</option>";
@@ -1218,7 +1233,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                             }
                                             ?>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="treatmentInitiationDateMonth" id="treatmentInitiationDateMonth" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="treatmentInitiationDateMonth" id="treatmentInitiationDateMonth" class="search" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?>>
                                           <? 
 											if($treatmentInitiationDate) {
 												echo "<option value=\"".getFormattedDateMonth($treatmentInitiationDate)."\" selected=\"selected\">".getFormattedDateMonthname($treatmentInitiationDate)."</option>";
@@ -1239,7 +1254,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                           <option value="11">Nov</option>
                                           <option value="12">Dec</option>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="treatmentInitiationDateYear" id="treatmentInitiationDateYear" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="treatmentInitiationDateYear" id="treatmentInitiationDateYear" class="search" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?>>
                                           		<?
 												if($treatmentInitiationDate) {
 													echo "<option value=\"".getFormattedDateYear($treatmentInitiationDate)."\" selected=\"selected\">".getFormattedDateYear($treatmentInitiationDate)."</option>";
@@ -1251,6 +1266,8 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                                 }
                                                 ?>
                                           </select></td>
+                                        <td style="padding:0px 0px 0px 5px"><input name="noTreatmentInitiationDateSupplied" type="checkbox" id="noTreatmentInitiationDateSupplied" value="1" onclick="disableEnableTreatmentInitiationDate(this);" <?=($noTreatmentInitiationDateSupplied?"checked=\"checked\"":"")?> /></td>
+                                        <td style="padding:0px 0px 0px 5px">No&nbsp;Treatment&nbsp;Initiation&nbsp;Date&nbsp;supplied</td>
                                         </tr>
                                     </table>
                               </td>

@@ -65,8 +65,8 @@ if($searchQueryURL) {
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
                           <td class="vl_tdsub" width="1%"><strong>#</strong></td>
-                          <td class="vl_tdsub" width="89%"><strong>Reference&nbsp;#</strong></td>
-                          <td class="vl_tdsub" width="10%"><strong>Options</strong></td>
+                          <td class="vl_tdsub" width="99%"><strong>Reference&nbsp;#</strong></td>
+                          <!--<td class="vl_tdsub" width="10%"><strong>Options</strong></td>-->
                         </tr>
                     	<?
                         $count=0;
@@ -81,7 +81,7 @@ if($searchQueryURL) {
                                 	<div>Clinical Request Form # <?=$q["refNumber"]?></div>
                                     <div style="padding:5px 0px 0px 0px" class="vls_grey"><strong><?=number_format((float)getDetailedTableInfo3("vl_forms_clinicalrequest","refNumber='$q[refNumber]'","count(id)","num"))?></strong> (<?=getDetailedTableInfo2("vl_forms_clinicalrequest","refNumber='$q[refNumber]' order by formNumber asc limit 1","formNumber")?> to <?=getDetailedTableInfo2("vl_forms_clinicalrequest","refNumber='$q[refNumber]' order by formNumber desc limit 1","formNumber")?>)</div>
                                 </td>
-                                <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="/downloads.forms/Clinical.Request.Form.<?=$q["refNumber"]?>.pdf" target="_blank">Download&nbsp;Batch&nbsp;Form</a>&nbsp;::&nbsp;<a href="#" onclick="iDisplayMessage('/generateforms/preview/<?=$q["refNumber"]?>/')">View/Download&nbsp;Individual&nbsp;Forms</a></div></td>
+                                <!--<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="/downloads.forms/Clinical.Request.Form.<?=$q["refNumber"]?>.pdf" target="_blank">Download&nbsp;Batch&nbsp;Form</a>&nbsp;::&nbsp;<a href="#" onclick="iDisplayMessage('/generateforms/preview/<?=$q["refNumber"]?>/')">View/Download&nbsp;Individual&nbsp;Forms</a></div></td>-->
                             </tr>
                         <? } ?>
  	               </table>
