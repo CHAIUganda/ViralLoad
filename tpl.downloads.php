@@ -43,7 +43,7 @@ switch($options) {
 								District,Hub,IP,DateofCollection,
 								SampleType,PatientART,PatientOtherID,Gender,
 								Age,PhoneNumber,HasPatientBeenontreatment,DateofTreatmentInitiation,
-								CurrentRegimen,IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,
+								CurrentRegimen,OtherRegimen,IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,
 								IsPatientPregnant,ANCNumber,IsPatientBreastfeeding,PatienthasActiveTB,
 								IfYesaretheyon,ARVAdherence,RoutineMonitoring,LastViralLoadDate1,
 								LastViralLoadValue1,SampleType1,RepeatViralLoadTest,LastViralLoadDate2,
@@ -57,7 +57,7 @@ switch($options) {
 								'District','Hub','Implementing Partner','Date of Collection',
 								'Sample Type','Patient ART','Patient OtherID','Gender',
 								'Age (Years)','Phone Number','Has Patient Been on treatment for at least 6 months','Date of Treatment Initiation',
-								'Current Regimen','Indication for Treatment Initiation','Which Treatment Line is Patient on','Reason for Failure',
+								'Current Regimen','Other Regimen','Indication for Treatment Initiation','Which Treatment Line is Patient on','Reason for Failure',
 								'Is Patient Pregnant','ANC Number','Is Patient Breastfeeding','Patient has Active TB',
 								'If Yes are they on','ARV Adherence','Routine Monitoring','Last Viral Load Date',
 								'Value','Sample Type','Repeat Viral Load Test after Suspected Treatment Failure adherence counseling','Last Viral Load Date',
@@ -137,7 +137,7 @@ switch($options) {
 									District,Hub,IP,DateofCollection,
 									SampleType,PatientART,PatientOtherID,Gender,
 									Age,PhoneNumber,HasPatientBeenontreatment,DateofTreatmentInitiation,
-									CurrentRegimen,IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,
+									CurrentRegimen,OtherRegimen,IndicationforTreatmentInitiation,WhichTreatmentLineisPatienton,ReasonforFailure,
 									IsPatientPregnant,ANCNumber,IsPatientBreastfeeding,PatienthasActiveTB,
 									IfYesaretheyon,ARVAdherence,RoutineMonitoring,LastViralLoadDate1,
 									LastViralLoadValue1,SampleType1,RepeatViralLoadTest,LastViralLoadDate2,
@@ -151,7 +151,7 @@ switch($options) {
 									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_districts","id='$q[districtID]' limit 1","district"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_hubs","id='$q[hubID]' limit 1","hub"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_ips","id='".getDetailedTableInfo2("vl_facilities","id='$q[facilityID]' limit 1","ipID")."' limit 1","ip"))."','".getRawFormattedDateLessDay($q["collectionDate"])."',
 									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[sampleTypeID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","artNumber"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","otherID"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","gender"))."',
 									'".(getDateDifference(getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","dateOfBirth"),$datetime)?ceil(getDateDifference(getDetailedTableInfo2("vl_patients","id='$q[patientID]' limit 1","dateOfBirth"),$datetime)/365):"")."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_patients_phone","patientID='$q[patientID]' order by created desc limit 1","phone"))."','$q[treatmentLast6Months]','".getRawFormattedDateLessDay($q["treatmentInitiationDate"])."',
-									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_regimen","id='$q[currentRegimenID]' limit 1","appendix"))."','".preg_replace("/,/s","",($q["treatmentInitiationID"]?getDetailedTableInfo2("vl_appendix_treatmentinitiation","id='$q[treatmentInitiationID]' limit 1","appendix"):$q["treatmentInitiationOther"]))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$q[treatmentStatusID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_failurereason","id='$q[reasonForFailureID]' limit 1","appendix"))."',
+									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_regimen","id='$q[currentRegimenID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_samples_otherregimen","sampleID='$q[id]' and currentRegimenID='$q[currentRegimenID]' limit 1","otherRegimen"))."','".preg_replace("/,/s","",($q["treatmentInitiationID"]?getDetailedTableInfo2("vl_appendix_treatmentinitiation","id='$q[treatmentInitiationID]' limit 1","appendix"):$q["treatmentInitiationOther"]))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_treatmentstatus","id='$q[treatmentStatusID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_failurereason","id='$q[reasonForFailureID]' limit 1","appendix"))."',
 									'$q[pregnant]','$q[pregnantANCNumber]','$q[breastfeeding]','$q[activeTBStatus]',
 									'".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_tbtreatmentphase","id='$q[tbTreatmentPhaseID]' limit 1","appendix"))."','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_arvadherence","id='$q[arvAdherenceID]' limit 1","appendix"))."','".($q["vlTestingRoutineMonitoring"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["routineMonitoringLastVLDate"])."',
 									'$q[routineMonitoringValue]','".preg_replace("/,/s","",getDetailedTableInfo2("vl_appendix_sampletype","id='$q[routineMonitoringSampleTypeID]' limit 1","appendix"))."','".($q["vlTestingRepeatTesting"]?"Yes":"No")."','".getRawFormattedDateLessDay($q["repeatVLTestLastVLDate"])."',
@@ -214,6 +214,7 @@ switch($options) {
 			$header[]="Has Patient Been on treatment for at least 6 months";
 			$header[]="Date of Treatment Initiation";
 			$header[]="Current Regimen";
+			$header[]="Other Regimen";
 			$header[]="Indication for Treatment Initiation";
 			$header[]="Which Treatment Line is Patient on";
 			$header[]="Reason for Failure";
@@ -351,6 +352,8 @@ switch($options) {
 				$row[]=getRawFormattedDateLessDay($q["treatmentInitiationDate"]);
 				//Current Regimen
 				$row[]=getDetailedTableInfo2("vl_appendix_regimen","id='$q[currentRegimenID]' limit 1","appendix");
+				//Other Regimen
+				$row[]=getDetailedTableInfo2("vl_samples_otherregimen","sampleID='$q[id]' and currentRegimenID='$q[currentRegimenID]' limit 1","otherRegimen");
 				//Indication for Treatment Initiation
 				$row[]=($q["treatmentInitiationID"]?getDetailedTableInfo2("vl_appendix_treatmentinitiation","id='$q[treatmentInitiationID]' limit 1","appendix"):$q["treatmentInitiationOther"]);
 				//Which Treatment Line is Patient on

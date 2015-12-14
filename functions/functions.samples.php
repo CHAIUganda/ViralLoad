@@ -313,6 +313,28 @@ function logRepeat($machineType,$sampleID,$worksheetID,$result,$flags) {
 	}
 }
 
+/**
+* function to log other regimen
+*/
+function logSampleOtherRegimen($sampleID,$currentRegimenID,$otherRegimen) {
+	global $datetime,$trailSessionUser;
+	
+	//validate
+	$sampleID=validate($sampleID);
+	$otherRegimen=validate($otherRegimen);
+	
+	$otherSampleID=0;
+	$otherSampleID=getDetailedTableInfo2("vl_samples_otherregimen","sampleID='$sampleID' and currentRegimenID='$currentRegimenID' limit 1","id");
+	if(!$otherSampleID) {
+		mysqlquery("insert ignore into vl_samples_otherregimen 
+						(sampleID,currentRegimenID,otherRegimen,created,createdby) 
+						values 
+						('$sampleID','$currentRegimenID','$otherRegimen','$datetime','$trailSessionUser')");
+	} else {
+		logTableChange("vl_samples_otherregimen","otherRegimen",$otherSampleID,getDetailedTableInfo2("vl_samples_otherregimen","sampleID='$sampleID' and currentRegimenID='$currentRegimenID' limit 1","otherRegimen"),$otherRegimen);
+		mysqlquery("update vl_samples_otherregimen set otherRegimen='$otherRegimen' where id='$otherSampleID'");
+	}
+}
 
 /**
 * function to fix repeated samples in the VL database

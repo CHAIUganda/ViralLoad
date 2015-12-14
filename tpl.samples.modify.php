@@ -89,6 +89,8 @@ if($viralLoadTestingIndication=="vlTestingSuspectedTreatmentFailure") {
 	$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
 }
 
+$otherRegimen=validate($otherRegimen);
+
 if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesting || $proceedWithWarningAlternativeFacilities) {
 
 	$error=0;
@@ -381,6 +383,15 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 						values 
 						('capturedAlternativeFacilityForFormNumber','Form Number $formNumber dispatched to Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")." but received from Facility ".getDetailedTableInfo2("vl_facilities","id='$facilityIDByFormNumber' limit 1","facility").".','','$datetime','$trailSessionUser')");
 		}
+		
+		//get latest sample ID, log $otherRegimen if any
+		if($otherRegimen) {
+			//log other regimen
+			logSampleOtherRegimen($modify,$currentRegimenID,$otherRegimen);
+		} else {
+			logDataRemoval("delete from vl_samples_otherregimen where sampleID='$modify'");
+			mysqlquery("delete from vl_samples_otherregimen where sampleID='$modify'");
+		}
 
 		//redirect to home with updates on the tracking number
 		go("/samples/modified/");
@@ -410,6 +421,9 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 	
 	$currentRegimenID=0;
 	$currentRegimenID=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","currentRegimenID");
+	
+	$otherRegimen=0;
+	$otherRegimen=getDetailedTableInfo2("vl_samples_otherregimen","sampleID='$modify' and currentRegimenID='$currentRegimenID' limit 1","otherRegimen");
 	
 	$pregnant=0;
 	$pregnant=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","pregnant");
@@ -736,6 +750,14 @@ function matchRegimenTreatmentLine(theField) {
 			}
 		}
 		?>
+	}
+}
+
+function captureOtherRegimen(theField) {
+	if(theField.value=='<?=getDetailedTableInfo2("vl_appendix_regimen","appendix like '%Other%' limit 1","id")?>') {
+		loadInput('otherRegimen','otherRegimenID','');
+	} else {
+		document.getElementById("otherRegimenID").innerHTML="";
 	}
 }
 
@@ -1274,9 +1296,10 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                             </tr>
                             <tr>
                               <td>Current&nbsp;Regimen&nbsp;<font class="vl_red">*</font></td>
-                              <td>
-								<select name="currentRegimenID" id="currentRegimenID" class="search" onchange="matchRegimenTreatmentLine(this)">
-                                <?
+                              <td><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                  <td width="5%"><select name="currentRegimenID" id="currentRegimenID" class="search" onchange="matchRegimenTreatmentLine(this), captureOtherRegimen(this)">
+                                    <?
 								$query=0;
 								$query=mysqlquery("select * from vl_appendix_regimen order by position");
 								if($currentRegimenID) {
@@ -1290,8 +1313,16 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 									}
 								}
 								?>
-                                </select>
-                              </td>
+                                  </select></td>
+                                  <td width="95%" style="padding: 0px 0px 0px 5px" id="otherRegimenID">
+								<?
+									if($currentRegimenID && $currentRegimenID==getDetailedTableInfo2("vl_appendix_regimen","appendix like '%Other%' limit 1","id")) {
+										echo "<input type=\"text\" name=\"otherRegimen\" id=\"otherRegimen\" value=\"$otherRegimen\" class=\"search_pre\" size=\"25\" maxlength=\"50\" />";
+									}
+								?>
+                                  </td>
+                                </tr>
+                              </table></td>
                             </tr>
                             <tr>
                               <td>Indication&nbsp;for&nbsp;Treatment&nbsp;Initiation</td>

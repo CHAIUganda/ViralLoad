@@ -83,6 +83,8 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 		$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
 	}
 	
+	$otherRegimen=validate($otherRegimen);
+	
 	//validate data
 	$warnings=0;
 	$warnings="";
@@ -460,6 +462,17 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 			
 			if(mysqlerror())
 				die("3: ".mysqlerror());
+			
+			//get latest sample ID, log $otherRegimen if any
+			if($otherRegimen) {
+				$latestSampleID=0;
+				$latestSampleID=getDetailedTableInfo2("vl_samples","createdby='$trailSessionUser' order by created desc limit 1","id");
+				//log other regimen
+				logSampleOtherRegimen($latestSampleID,$currentRegimenID,$otherRegimen);
+			} else {
+				logDataRemoval("delete from vl_samples_otherregimen where sampleID='$latestSampleID'");
+				mysqlquery("delete from vl_samples_otherregimen where sampleID='$latestSampleID'");
+			}
 
 			//review logs and fix any duplicates
 			fixDuplicateSampleIDs();
@@ -604,7 +617,7 @@ function checkGender(theField) {
 }
 
 function checkOptions(theField) {
-	if(theField.value==<?=getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix like '%other%' limit 1","id")?>) {
+	if(theField.value=='<?=getDetailedTableInfo2("vl_appendix_treatmentinitiation","appendix like '%other%' limit 1","id")?>') {
 		loadInput('treatmentInitiationOther','treatmentInitiationIDTD','');
 	} else {
 		document.getElementById("treatmentInitiationIDTD").innerHTML="";
@@ -709,6 +722,14 @@ function matchRegimenTreatmentLine(theField) {
 			}
 		}
 		?>
+	}
+}
+
+function captureOtherRegimen(theField) {
+	if(theField.value=='<?=getDetailedTableInfo2("vl_appendix_regimen","appendix like '%Other%' limit 1","id")?>') {
+		loadInput('otherRegimen','otherRegimenID','');
+	} else {
+		document.getElementById("otherRegimenID").innerHTML="";
 	}
 }
 
@@ -1265,9 +1286,10 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                             </tr>
                             <tr>
                               <td>Current&nbsp;Regimen&nbsp;<font class="vl_red">*</font></td>
-                              <td>
-								<select name="currentRegimenID" id="currentRegimenID" class="search" onchange="matchRegimenTreatmentLine(this)">
-                                <?
+                              <td><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                  <td width="5%"><select name="currentRegimenID" id="currentRegimenID" class="search" onchange="matchRegimenTreatmentLine(this), captureOtherRegimen(this)">
+                                    <?
 								$query=0;
 								$query=mysqlquery("select * from vl_appendix_regimen order by position");
 								if($currentRegimenID) {
@@ -1281,8 +1303,16 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 									}
 								}
 								?>
-                                </select>
-                              </td>
+                                  </select></td>
+                                  <td width="95%" style="padding: 0px 0px 0px 5px" id="otherRegimenID">
+								<?
+									if($currentRegimenID && $currentRegimenID==getDetailedTableInfo2("vl_appendix_regimen","appendix like '%Other%' limit 1","id")) {
+										echo "<input type=\"text\" name=\"otherRegimen\" id=\"otherRegimen\" value=\"$otherRegimen\" class=\"search_pre\" size=\"25\" maxlength=\"50\" />";
+									}
+								?>
+                                  </td>
+                                </tr>
+                              </table></td>
                             </tr>
                             <tr>
                               <td>Indication&nbsp;for&nbsp;Treatment&nbsp;Initiation</td>
