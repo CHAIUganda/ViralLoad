@@ -81,9 +81,9 @@ function XloadArtHistory($artNumber,$facilityID) {
 							</tr>
 							<tr>
 								<td class=\"vl_tdsub\" width=\"5%\"><strong>Form&nbsp;#</strong></td>
-								<td class=\"vl_tdsub\" width=\"90%\"><strong>Location&nbsp;ID</strong></td>
+								<td class=\"vl_tdsub\" width=\"85%\"><strong>Location&nbsp;ID</strong></td>
 								<td class=\"vl_tdsub\" width=\"5%\" align=\"center\"><strong>Received&nbsp;at&nbsp;CPHL</strong></td>
-								<!--<td class=\"vl_tdsub\" width=\"5%\"><strong>Gender</strong></td>-->
+								<td class=\"vl_tdsub\" width=\"5%\" align=\"center\"><strong>Date&nbsp;of&nbsp;Birth</strong></td>
 							</tr>";
 			$q=array();
 			$count=0;
@@ -93,7 +93,7 @@ function XloadArtHistory($artNumber,$facilityID) {
 									<td class=\"".($count<$num?"vl_tdstandard":"vl_tdnoborder")."\" style=\"padding:8px\">$q[formNumber]</td>
 									<td class=\"".($count<$num?"vl_tdstandard":"vl_tdnoborder")."\" style=\"padding:8px\">$q[lrCategory]$q[lrEnvelopeNumber]/$q[lrNumericID]</td>
 									<td class=\"".($count<$num?"vl_tdstandard":"vl_tdnoborder")."\" align=\"center\">".getFormattedDateLessDay($q["receiptDate"])."</td>
-									<!--<td class=\"".($count<$num?"vl_tdstandard":"vl_tdnoborder")."\" align=\"center\">".getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","gender")."</td>-->
+									<td class=\"".($count<$num?"vl_tdstandard":"vl_tdnoborder")."\" align=\"center\">".getFormattedDateLessDay(getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","dateOfBirth"))."</td>
 								</tr>";
 			}
 			$queryResults.="</table>";
