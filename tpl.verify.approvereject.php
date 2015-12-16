@@ -11,7 +11,19 @@ $outcome=validate($outcome);
 $outcomeReasonsID=validate($outcomeReasonsID);
 $comments=validate($comments);
 
-if($saveChanges) {
+//encrypted samples
+$searchQuery=0;
+$searchQueryCurrentPosition=0;
+$searchQueryNextPosition=0;
+if($encryptedSample) {
+	$searchQuery=validate(vlDecrypt($encryptedSample));
+	$searchQueryCurrentPosition=getDetailedTableInfo3("vl_samples y","y.vlSampleID='".getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")."'","(select count(x.id) from vl_samples x where (x.formNumber='$searchQuery' or x.vlSampleID='$searchQuery' or concat(x.lrCategory,x.lrEnvelopeNumber,'/',x.lrNumericID) like '$searchQuery%') and x.vlSampleID<=y.vlSampleID order by if(x.lrCategory='',1,0),x.lrCategory, if(x.lrEnvelopeNumber='',1,0),x.lrEnvelopeNumber, if(x.lrNumericID='',1,0),x.lrNumericID,x.created desc)","position");
+	if($searchQueryCurrentPosition) {
+		$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $searchQueryCurrentPosition,1","id");
+	}
+}
+
+if($saveChangesReturn || $saveChangesProceed) {
 	//validate data
 	$error=0;
 	$error=checkFormFields("Received_Status::$outcome");
@@ -29,7 +41,10 @@ if($saveChanges) {
 						values 
 						('$id','$outcome','$outcomeReasonsID','$comments','$datetime','$trailSessionUser')");
 		//redirect to home with updates on the tracking number
-		if($encryptedSample) {
+		if(($encryptedSample && $searchQueryCurrentPosition && $searchQueryNextPosition) || $saveChangesProceed) {
+			//proceed to next sample within the search results
+			go("/verify/approve.reject/$searchQueryNextPosition/$pg/".($encryptedSample?"search/$encryptedSample/1/":""));
+		} elseif(($encryptedSample && $searchQueryCurrentPosition && !$searchQueryNextPosition) || $saveChangesReturn) {
 			go("/verify/search/$encryptedSample/pg/$pg/modified/");
 		} else {
 			go("/verify/$pg/modified/");
@@ -81,7 +96,7 @@ function checkOutcome() {
 <table width="100%" border="0" class="vl">
           <? if($success) { ?>
             <tr>
-                <td class="vl_success">Data Captured Successfully!</td>
+                <td class="vl_success">Sample Approval/Rejection Status Captured Successfully!</td>
             </tr>
             <tr>
                 <td>&nbsp;</td>
@@ -162,7 +177,8 @@ function checkOutcome() {
             </tr>
             <tr>
               <td style="padding:10px 0px 0px 0px">
-              	<input type="submit" name="saveChanges" id="saveChanges" class="button" value="  Save Changes  " />
+              	<input type="submit" name="saveChangesProceed" id="saveChangesProceed" class="button" value="  Save Changes then proceed to next Sample  " />
+              	<input type="submit" name="saveChangesReturn" id="saveChangesReturn" class="button" value="  Save Changes and Return  " />
                 <input type="hidden" name="encryptedSample" id="encryptedSample" value="<?=$encryptedSample?>" />
               </td>
             </tr>
