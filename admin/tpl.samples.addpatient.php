@@ -26,6 +26,12 @@ if($searchQuery) {
             case add:
 				//validate
 				$artNumber=validate($artNumber);
+				//clean art number by removing - . / and spaces
+				$artNumber=preg_replace("/\-/s","",$artNumber);
+				$artNumber=preg_replace("/\./s","",$artNumber);
+				$artNumber=preg_replace("/\//s","",$artNumber);
+				$artNumber=preg_replace("/\s/s","",$artNumber);
+				
 				$otherID=validate($otherID);
 				$gender=validate($gender);
 				$dateOfBirthDay=validate($dateOfBirthDay);
