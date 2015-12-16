@@ -43,7 +43,11 @@ if($saveChangesReturn || $saveChangesProceed) {
 		//redirect to home with updates on the tracking number
 		if(($encryptedSample && $searchQueryCurrentPosition && $searchQueryNextPosition) || $saveChangesProceed) {
 			//proceed to next sample within the search results
-			go("/verify/approve.reject/$searchQueryNextPosition/$pg/".($encryptedSample?"search/$encryptedSample/1/":""));
+			if($searchQueryNextPosition) {
+				go("/verify/approve.reject/$searchQueryNextPosition/$pg/".($encryptedSample?"search/$encryptedSample/1/":""));
+			} else {
+				go("/verify/search/$encryptedSample/pg/$pg/modified/");
+			}
 		} elseif(($encryptedSample && $searchQueryCurrentPosition && !$searchQueryNextPosition) || $saveChangesReturn) {
 			go("/verify/search/$encryptedSample/pg/$pg/modified/");
 		} else {
