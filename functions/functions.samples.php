@@ -426,7 +426,8 @@ function isResultFailed($machineType,$worksheetID,$sampleID) {
 																					trim(getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","result"))=="There is insufficient volume in the vessel to perform an aspirate or dispense operation." || 
 																						trim(getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","result"))=="Unable to process result, instrument response is invalid." || 
 																							trim(substr(getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","flags"),0,47))=="4442 Internal control cycle number is too high." || 
-																								trim(substr(getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","flags"),0,37))=="4450 Normalized fluorescence too low.")) {
+																								trim(substr(getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","flags"),0,37))=="4450 Normalized fluorescence too low." || 
+																									trim(substr(getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","flags"),0,47))=="4447 Insufficient level of Assay reference dye.")) {
 				return 1;
 			}
 		break;
