@@ -143,8 +143,9 @@ if(!$searchQuery) {
 														vl_samples.formNumber like '%$searchQuery%' or 
 															vl_samples_worksheetcredentials.worksheetReferenceNumber like '%$searchQuery%' or 
 																vl_patients.artNumber like '%$searchQuery%' or 
-																	vl_patients.otherID like '%$searchQuery%') 
-																		order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID, $resultsTable.$sampleIDField desc limit $offset, $rowsToDisplay";
+																	vl_patients.otherID like '%$searchQuery%' or 
+																		concat(vl_samples.lrCategory,vl_samples.lrEnvelopeNumber,'/',vl_samples.lrNumericID) like '%$searchQuery%') 
+																			order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID, $resultsTable.$sampleIDField desc limit $offset, $rowsToDisplay";
 	$xRawQuery="select $resultsTable.* from 
 								$resultsTable,vl_samples,vl_samples_worksheetcredentials,vl_patients 
 									where 
@@ -155,8 +156,9 @@ if(!$searchQuery) {
 														vl_samples.formNumber like '%$searchQuery%' or 
 															vl_samples_worksheetcredentials.worksheetReferenceNumber like '%$searchQuery%' or 
 																vl_patients.artNumber like '%$searchQuery%' or 
-																	vl_patients.otherID like '%$searchQuery%') 
-																		order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID, $resultsTable.$sampleIDField desc";
+																	vl_patients.otherID like '%$searchQuery%' or 
+																		concat(vl_samples.lrCategory,vl_samples.lrEnvelopeNumber,'/',vl_samples.lrNumericID) like '%$searchQuery%') 
+																			order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID, $resultsTable.$sampleIDField desc";
 	$query=mysqlquery($rawQuery);
 	$xquery=mysqlquery($xRawQuery);
 
@@ -195,8 +197,9 @@ if(!$searchQuery) {
 													(vl_samples.vlSampleID like '%$searchQuery%' or 
 														vl_samples.formNumber like '%$searchQuery%' or 
 															vl_patients.artNumber like '%$searchQuery%' or 
-																vl_patients.otherID like '%$searchQuery%') 
-																	order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID limit $offset, $rowsToDisplay";
+																vl_patients.otherID like '%$searchQuery%' or 
+																	concat(vl_samples.lrCategory,vl_samples.lrEnvelopeNumber,'/',vl_samples.lrNumericID) like '%$searchQuery%') 
+																		order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID limit $offset, $rowsToDisplay";
 	$xRawQuery="select $resultsTable.*,vl_samples.vlSampleID vlSampleID from 
 								$resultsTable,vl_samples,vl_patients 
 									where 
@@ -206,8 +209,9 @@ if(!$searchQuery) {
 													(vl_samples.vlSampleID like '%$searchQuery%' or 
 														vl_samples.formNumber like '%$searchQuery%' or 
 															vl_patients.artNumber like '%$searchQuery%' or 
-																vl_patients.otherID like '%$searchQuery%') 
-																	order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID";
+																vl_patients.otherID like '%$searchQuery%' or 
+																	concat(vl_samples.lrCategory,vl_samples.lrEnvelopeNumber,'/',vl_samples.lrNumericID) like '%$searchQuery%') 
+																		order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID";
 	$query=mysqlquery($rawQuery);
 	$xquery=mysqlquery($xRawQuery);
 	$rejectionOverride=0;
