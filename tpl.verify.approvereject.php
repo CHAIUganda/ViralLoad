@@ -158,20 +158,91 @@ function checkOutcome() {
                           <td><?=getDetailedTableInfo2("vl_samples","id='$id'","formNumber")?></td>
                         </tr>
                         <tr>
-                          <td>Patient's&nbsp;ART&nbsp;#</td>
-                          <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","artNumber")?></td>
-                        </tr>
-                        <tr>
-                          <td>Patient's&nbsp;Other&nbsp;ID</td>
-                          <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","otherID")?></td>
-                        </tr>
-                        <tr>
-                          <td>Facility</td>
+                          <td>Facility Name</td>
                           <td><?=getDetailedTableInfo2("vl_facilities","id='".getDetailedTableInfo2("vl_samples","id='$id'","facilityID")."'","facility")?></td>
+                        </tr>
+                        <tr>
+                          <td>Collection&nbsp;Date</td>
+                          <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id'","collectionDate"))?></td>
                         </tr>
                         <tr>
                           <td>Sample&nbsp;Type</td>
                           <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id'","sampleTypeID")."' limit 1","appendix")?></td>
+                        </tr>
+                        <tr>
+                          <td>ART&nbsp;#</td>
+                          <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","artNumber")?></td>
+                        </tr>
+                        <tr>
+                          <td>Other&nbsp;ID</td>
+                          <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","otherID")?></td>
+                        </tr>
+                        <tr>
+                          <td>Treatment&nbsp;Initiation&nbsp;Date</td>
+                          <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id'","treatmentInitiationDate"))?></td>
+                        </tr>
+
+                        <? if(getDetailedTableInfo2("vl_samples","id='$id' limit 1","vlTestingRoutineMonitoring")) { ?>
+                            <tr>
+                              <td style="padding:5px 0px; border-bottom: 1px dashed #dfe6e6" colspan="2"><strong>Routine Monitoring</strong></td>
+                            </tr>
+                            <tr>
+                              <td>Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
+                              <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id' limit 1","routineMonitoringLastVLDate"))?></td>
+                            </tr>
+                            <tr>
+                              <td>Value:</td>
+                              <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","routineMonitoringValue")?></td>
+                            </tr>
+                            <tr>
+                              <td>Sample&nbsp;Type:</td>
+                              <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id' limit 1","routineMonitoringSampleTypeID")."' limit 1","appendix")?></td>
+                            </tr>
+                        <? } ?>
+
+                        <? if(getDetailedTableInfo2("vl_samples","id='$id' limit 1","vlTestingRepeatTesting")) { ?>
+                            <tr>
+                              <td style="padding:5px 0px; border-bottom: 1px dashed #dfe6e6" colspan="2"><strong>Repeat Viral Load Test after detectable viraemia and 6 months adherence counseling</strong></td>
+                            </tr>
+                            <tr>
+                              <td>Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
+                              <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id' limit 1","repeatVLTestLastVLDate"))?></td>
+                            </tr>
+                            <tr>
+                              <td>Value:</td>
+                              <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","repeatVLTestValue")?></td>
+                            </tr>
+                            <tr>
+                              <td>Sample&nbsp;Type:</td>
+                              <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id' limit 1","repeatVLTestSampleTypeID")."' limit 1","appendix")?></td>
+                            </tr>
+                        <? } ?>
+
+                        <? if(getDetailedTableInfo2("vl_samples","id='$id' limit 1","vlTestingSuspectedTreatmentFailure")) { ?>
+                            <tr>
+                              <td style="padding:5px 0px; border-bottom: 1px dashed #dfe6e6" colspan="2"><strong>Suspected Treatment Failure</strong></td>
+                            </tr>
+                            <tr>
+                              <td>Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
+                              <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id' limit 1","suspectedTreatmentFailureLastVLDate"))?></td>
+                            </tr>
+                            <tr>
+                              <td>Value:</td>
+                              <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","suspectedTreatmentFailureValue")?></td>
+                            </tr>
+                            <tr>
+                              <td>Sample&nbsp;Type:</td>
+                              <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id' limit 1","suspectedTreatmentFailureSampleTypeID")."' limit 1","appendix")?></td>
+                            </tr>
+                        <? } ?>
+
+                        <tr>
+                          <td>Captured&nbsp;By</td>
+                          <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","createdby")?></td>
+                        </tr>
+                        <tr>
+                          <td>On</td>
+                          <td><?=getFormattedDate(getDetailedTableInfo2("vl_samples","id='$id' limit 1","created"))?></td>
                         </tr>
                         <tr>
                           <td width="20%">Received&nbsp;Status</td>
