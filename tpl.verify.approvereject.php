@@ -23,6 +23,20 @@ if($encryptedSample) {
 	}
 }
 
+//envelope Number From
+$searchQueryFrom=0;
+$searchQueryTo=0;
+$searchQueryCurrentPosition=0;
+$searchQueryNextPosition=0;
+if($envelopeNumberFrom && $envelopeNumberTo) {
+	$searchQueryFrom=validate(vlDecrypt($envelopeNumberFrom));
+	$searchQueryTo=validate(vlDecrypt($envelopeNumberTo));
+	$searchQueryCurrentPosition=getDetailedTableInfo3("vl_samples y","y.vlSampleID='".getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")."'","(select count(x.id) from vl_samples x where concat(x.lrCategory,x.lrEnvelopeNumber)>='$searchQueryFrom' and concat(x.lrCategory,x.lrEnvelopeNumber)<='$searchQueryTo' and x.vlSampleID<=y.vlSampleID order by if(x.lrCategory='',1,0),x.lrCategory, if(x.lrEnvelopeNumber='',1,0),x.lrEnvelopeNumber, if(x.lrNumericID='',1,0),x.lrNumericID,x.created desc)","position");
+	if($searchQueryCurrentPosition) {
+		$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","concat(lrCategory,lrEnvelopeNumber)>='$searchQueryFrom' and concat(lrCategory,lrEnvelopeNumber)<='$searchQueryTo' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $searchQueryCurrentPosition,1","id");
+	}
+}
+
 if($saveChangesReturn || $saveChangesProceed) {
 	//validate data
 	$error=0;
@@ -41,15 +55,19 @@ if($saveChangesReturn || $saveChangesProceed) {
 						values 
 						('$id','$outcome','$outcomeReasonsID','$comments','$datetime','$trailSessionUser')");
 		//redirect to home with updates on the tracking number
-		if(($encryptedSample && $searchQueryCurrentPosition && $searchQueryNextPosition) || $saveChangesProceed) {
+		if($saveChangesProceed) {
 			//proceed to next sample within the search results
-			if($searchQueryNextPosition) {
-				go("/verify/approve.reject/$searchQueryNextPosition/$pg/".($encryptedSample?"search/$encryptedSample/1/":""));
-			} else {
-				go("/verify/search/$encryptedSample/pg/$pg/modified/");
+			if($encryptedSample && $searchQueryCurrentPosition && $searchQueryNextPosition) {
+				go("/verify/approve.reject/$searchQueryNextPosition/$pg/search/$encryptedSample/1/");
+			} elseif($envelopeNumberFrom && $envelopeNumberTo && $searchQueryCurrentPosition && $searchQueryNextPosition) {
+				go("/verify/approve.reject/$searchQueryNextPosition/$pg/search/$envelopeNumberFrom/$envelopeNumberTo/1/");
 			}
-		} elseif(($encryptedSample && $searchQueryCurrentPosition && !$searchQueryNextPosition) || $saveChangesReturn) {
-			go("/verify/search/$encryptedSample/pg/$pg/modified/");
+		} elseif(!$searchQueryNextPosition || $saveChangesReturn) {
+			if($encryptedSample) {
+				go("/verify/search/$encryptedSample/pg/$pg/modified/");
+			} elseif($envelopeNumberFrom && $envelopeNumberTo) {
+				go("/verify/search/$envelopeNumberFrom/$envelopeNumberTo/pg/$pg/modified/");
+			}
 		} else {
 			go("/verify/$pg/modified/");
 		}
@@ -181,9 +199,11 @@ function checkOutcome() {
             </tr>
             <tr>
               <td style="padding:10px 0px 0px 0px">
-              	<input type="submit" name="saveChangesProceed" id="saveChangesProceed" class="button" value="  Save Changes then proceed to next Sample  " />
+              	<? if($searchQueryNextPosition) { ?><input type="submit" name="saveChangesProceed" id="saveChangesProceed" class="button" value="  Save Changes then proceed to next Sample  " /><? } ?>
               	<input type="submit" name="saveChangesReturn" id="saveChangesReturn" class="button" value="  Save Changes and Return  " />
                 <input type="hidden" name="encryptedSample" id="encryptedSample" value="<?=$encryptedSample?>" />
+                <input type="hidden" name="envelopeNumberFrom" id="envelopeNumberFrom" value="<?=$envelopeNumberFrom?>" />
+                <input type="hidden" name="envelopeNumberTo" id="envelopeNumberTo" value="<?=$envelopeNumberTo?>" />
               </td>
             </tr>
             <tr>
