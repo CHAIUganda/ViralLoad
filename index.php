@@ -164,6 +164,10 @@ $searchFilter=getValidatedVariable("searchFilter");
                             </table>
                         </td>
                         </tr>
+                        <tr>
+                          <td>&nbsp;</td>
+                          <td style="padding:3px 0px 0px 0px"><a href="/search.advanced/" class="vls_white">Advanced Search</a></td>
+                        </tr>
                       </table>
                       </form>
                     </td>
@@ -214,28 +218,62 @@ $searchFilter=getValidatedVariable("searchFilter");
 								//log the query
 								logSearchQuery($searchQuery,$searchFilter);
 								//process the query
-								switch($searchFilter) {
-									case "Samples":
-		                                go("/samples/find.and.edit/search/".vlEncrypt($searchQuery)."/");
-									break;
-									case "Patients":
-		                                go("/samples/manage.patients/search/".vlEncrypt($searchQuery)."/");
-									break;
-									case "VerifySamples":
-		                                go("/verify/search/".vlEncrypt($searchQuery)."/");
-									break;
-									case "unVerifySamples":
-		                                go("/verify/search.unverified/".vlEncrypt($searchQuery)."/");
-									break;
-									case "Worksheets":
-		                                go("/worksheets/manage/search/".vlEncrypt($searchQuery)."/");
-									break;
-									case "GeneratedForms":
-		                                go("/generateforms/search/".vlEncrypt($searchQuery)."/1/");
-									break;
-									case "Results":
-		                                go("/results/search/".vlEncrypt($searchQuery)."/");
-									break;
+								if($advancedSearch) {
+									$envelopeNumberFrom=validate($envelopeNumberFrom);
+									$envelopeNumberTo=validate($envelopeNumberTo);
+									switch($searchFilter) {
+										case "Samples":
+											go("/samples/find.and.edit/search/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/");
+										break;
+										case "Patients":
+											go("/samples/manage.patients/search/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/");
+										break;
+										case "VerifySamples":
+											go("/verify/search/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/");
+										break;
+										case "unVerifySamples":
+											go("/verify/search.unverified/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/");
+										break;
+										case "Worksheets":
+											go("/worksheets/manage/search/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/");
+										break;
+										case "GeneratedForms":
+											go("/generateforms/search/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/1/");
+										break;
+										case "Results":
+											go("/results/search/".vlEncrypt($envelopeNumberFrom)."/".vlEncrypt($envelopeNumberTo)."/");
+										break;
+										case advanced:
+											include "tpl.search.advanced.php";
+										break;
+									}
+								} else {
+									switch($searchFilter) {
+										case "Samples":
+											go("/samples/find.and.edit/search/".vlEncrypt($searchQuery)."/");
+										break;
+										case "Patients":
+											go("/samples/manage.patients/search/".vlEncrypt($searchQuery)."/");
+										break;
+										case "VerifySamples":
+											go("/verify/search/".vlEncrypt($searchQuery)."/");
+										break;
+										case "unVerifySamples":
+											go("/verify/search.unverified/".vlEncrypt($searchQuery)."/");
+										break;
+										case "Worksheets":
+											go("/worksheets/manage/search/".vlEncrypt($searchQuery)."/");
+										break;
+										case "GeneratedForms":
+											go("/generateforms/search/".vlEncrypt($searchQuery)."/1/");
+										break;
+										case "Results":
+											go("/results/search/".vlEncrypt($searchQuery)."/");
+										break;
+										case advanced:
+											include "tpl.search.advanced.php";
+										break;
+									}
 								}
                             break;
                             case generateforms:

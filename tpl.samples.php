@@ -35,6 +35,13 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 			//validate
 			if($encryptedSample) {
 				$sample=validate(vlDecrypt($encryptedSample));
+			} elseif($envelopeNumberFrom && $envelopeNumberTo) {
+				$sample=0;
+				$sample=validate(vlDecrypt($envelopeNumberFrom));
+				/*
+				$sampleTo=0;
+				$sampleTo=validate(vlDecrypt($envelopeNumberTo));
+				*/
 			} else {
 				$sample=validate($sample);
 			}

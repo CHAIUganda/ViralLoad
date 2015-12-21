@@ -9,6 +9,10 @@ $patientID=0;
 if($encryptedSample) {
 	$patientID=validate(vlDecrypt($encryptedSample));
 }
+
+if($envelopeNumberFrom && $envelopeNumberTo) {
+	$patientID=validate(vlDecrypt($envelopeNumberFrom));
+}
 ?>
 <table width="100%" border="0" class="vl">
 			<? if(!getDetailedTableInfo2("vl_patients","id!='' limit 1","id")) { ?>

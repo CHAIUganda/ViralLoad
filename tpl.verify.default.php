@@ -11,6 +11,15 @@ if($encryptedSample) {
 	$approvedstatus="search";
 }
 
+//envelope Number From
+$searchQueryFrom=0;
+$searchQueryTo=0;
+if($envelopeNumberFrom && $envelopeNumberTo) {
+	$searchQueryFrom=validate(vlDecrypt($envelopeNumberFrom));
+	$searchQueryTo=validate(vlDecrypt($envelopeNumberTo));
+	$approvedstatus="search";
+}
+
 if($encryptedSampleUnverified) {
 	$searchQuery=validate(vlDecrypt($encryptedSampleUnverified));
 	$approvedstatus="reverse";
@@ -195,6 +204,9 @@ if($reverseApprovalRejection) {
 						$query=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
 						$xquery=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
 					}
+				} elseif($searchQueryFrom && $searchQueryTo) {
+					$query=mysqlquery("select * from vl_samples where concat(lrCategory,lrEnvelopeNumber)>='$searchQueryFrom' and concat(lrCategory,lrEnvelopeNumber)<='$searchQueryTo' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
+					$xquery=mysqlquery("select * from vl_samples where concat(lrCategory,lrEnvelopeNumber)>='$searchQueryFrom' and concat(lrCategory,lrEnvelopeNumber)<='$searchQueryTo' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
 				} else {
                     if(!$approvedstatus || $approvedstatus=="pending") {
                         $query=mysqlquery("select * from vl_samples where id not in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
