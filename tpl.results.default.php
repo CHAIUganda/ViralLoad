@@ -117,9 +117,9 @@ if(!$searchQuery) {
 																			order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID, $resultsTable.$sampleIDField desc";
 	$query=mysqlquery($rawQuery);
 	$xquery=mysqlquery($xRawQuery);
-	if(mysqlnumrows($query)) {
+	if(mysqlnumrows($xquery)) {
 		$q=array();
-		while($q=mysqlfetcharray($query)) {
+		while($q=mysqlfetcharray($xquery)) {
 			$sampleIDFieldArray[]=$q["$sampleIDField"];
 			$worksheetIDArray[]=$q["worksheetID"];
 		}
@@ -162,9 +162,9 @@ if(!$searchQuery) {
 	$query=mysqlquery($rawQuery);
 	$xquery=mysqlquery($xRawQuery);
 
-	if(mysqlnumrows($query)) {
+	if(mysqlnumrows($xquery)) {
 		$q=array();
-		while($q=mysqlfetcharray($query)) {
+		while($q=mysqlfetcharray($xquery)) {
 			$sampleIDFieldArray[]=$q["$sampleIDField"];
 			$worksheetIDArray[]=$q["worksheetID"];
 		}
@@ -216,9 +216,9 @@ if(!$searchQuery) {
 	$xquery=mysqlquery($xRawQuery);
 	$rejectionOverride=0;
 
-	if(mysqlnumrows($query)) {
+	if(mysqlnumrows($xquery)) {
 		$q=array();
-		while($q=mysqlfetcharray($query)) {
+		while($q=mysqlfetcharray($xquery)) {
 			$sampleIDFieldArray[]=$q["vlSampleID"];
 			//$worksheetIDArray[]=$q["worksheetID"];
 			//change rejection override flag to 1
