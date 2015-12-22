@@ -291,7 +291,11 @@ if($reverseApprovalRejection) {
                                 ?>
                                   <td class="vl_tdsub" width="5%"><strong>Form&nbsp;#</strong></td>
                                   <td class="vl_tdsub" width="5%"><strong>Location&nbsp;ID</strong></td>
-                                  <td class="vl_tdsub" width="5%"><strong>Sample&nbsp;Reference&nbsp;#</strong></td>
+                                  <!--<td class="vl_tdsub" width="5%"><strong>Sample&nbsp;Reference&nbsp;#</strong></td>-->
+                                  <td class="vl_tdsub" width="2%"><strong>Sample&nbsp;Type</strong></td>
+                                  <td class="vl_tdsub" width="1%"><strong>Date&nbsp;of&nbsp;Collection</strong></td>
+                                  <td class="vl_tdsub" width="1%"><strong>Initiation&nbsp;Date</strong></td>
+                                  <td class="vl_tdsub" width="1%"><strong>Reception&nbsp;Date</strong></td>
                                   <td class="vl_tdsub" width="5%"><strong>Patient&nbsp;ART&nbsp;#</strong></td>
                                   <td class="vl_tdsub" width="5%"><strong>Patient&nbsp;Other&nbsp;ID</strong></td>
                                   <td class="vl_tdsub" width="5%"><strong>District</strong></td>
@@ -318,11 +322,15 @@ if($reverseApprovalRejection) {
                                         ?>
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')"><?=$q["formNumber"]?></a></td>
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["lrNumericID"]?$q["lrCategory"].$q["lrEnvelopeNumber"]."/".$q["lrNumericID"]:"&nbsp;")?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["vlSampleID"]?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber")?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_patients","id='$q[patientID]'","otherID")?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_districts","id='$q[districtID]'","district")?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","facility")?></td>
+                                        <!--<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["vlSampleID"]?></td>-->
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_appendix_sampletype","id='$q[sampleTypeID]'","appendix")?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["collectionDate"])?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["treatmentInitiationDate"])?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["receiptDate"])?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber"))?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_patients","id='$q[patientID]'","otherID"))?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_districts","id='$q[districtID]'","district"))?></td>
+                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","facility"))?></td>
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($status?"<a href=\"#\" onclick=\"iDisplayMessage('/verify/status/$q[id]/$status/')\">$status</a>":"Pending")?></td>
                                         <!--<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')">Approve</a></div></td>-->
                                         <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a <?=(!getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]'","outcome")?"href=\"/verify/approve.reject/$q[id]/$pg/".($encryptedSample?"search/$encryptedSample/":($envelopeNumberFrom && $envelopeNumberTo?"search/$envelopeNumberFrom/$envelopeNumberTo/":""))."\"":"href=\"#\" onclick=\"iDisplayMessage('/verify/preview/$q[id]/$pg/".($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))."')\"")?>>Approve</a></div></td>
