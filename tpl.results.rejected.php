@@ -96,7 +96,7 @@ $numberPages=ceil($numberRecords/$rowsToDisplay);
 <!--
 function validate(results) {
 	//ammend the form action variable
-	if(document.pressed == '  Print Results (Batch)  ') {
+	if(document.pressed == '  Print Selected Results  ') {
 		document.results.target = "_blank";
 		document.results.action ="/results/print.rejected/batch/";
 	} else if(document.pressed == '  Dispatch Selected Results  ') {

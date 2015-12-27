@@ -577,7 +577,7 @@ function validate(results) {
                                                 <td class="vl_tdstandard" align="center"><?=$dispatched?></td>
                                                 <td class="vl_tdstandard" align="center"><?=$repeat?></td>
                                                 <td class="vl_tdstandard" align="center"><?=$printed?></td>
-                                                <td class="vl_tdstandard"><div class="vls_grey" style="padding:3px 0px 0px 0px"><? if(!$noprint) { ?><a href="/results/print/<?=$sampleID?>/<?=$worksheetUniqueID?>/<?=($worksheetMachineType?$worksheetMachineType:$machineType)?>/" target="_blank">Print</a>&nbsp;::&nbsp;<? } ?><a href="/results/dispatch/<?=$sampleID?>/<?=$worksheetUniqueID?>/">Dispatch</a></div></td>
+                                                <td class="vl_tdstandard"><div class="vls_grey" style="padding:3px 0px 0px 0px"><? if($machineType=="rejected" && !$noprint) { echo "<a href=\"/results/print.rejected/$sampleID/\" target=\"_blank\">Print</a>&nbsp;::&nbsp;"; } elseif($machineType!="rejected" && !$noprint) { ?><a href="/results/print/<?=$sampleID?>/<?=$worksheetUniqueID?>/<?=($worksheetMachineType?$worksheetMachineType:$machineType)?>/" target="_blank">Print</a>&nbsp;::&nbsp;<? } ?><a href="/results/dispatch/<?=$sampleID?>/<?=$worksheetUniqueID?>/">Dispatch</a></div></td>
                                             </tr>
                                         <? } ?>
                                    </table>

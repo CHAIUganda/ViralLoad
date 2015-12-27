@@ -83,195 +83,193 @@ if(count($sampleResultCheckbox)) {
 		
 		//generate form
 		$html.="<page orientation=\"portrait\" format=\"150x220\" style=\"font-size: 9px\">
-	<div class=\"special\">
-		  <!-- Start Header -->
-			<div align=\"center\"><img src=\"$home_url/images/uganda.emblem.gif\"></div>
-			<div align=\"center\"><strong>MINISTRY OF HEALTH UGANDA<br>NATIONAL AIDS CONTROL PROGRAM (ACP)</strong></div>
-		  <!-- End Header -->
-		  <!-- Start Text -->
-			<div style=\"padding:10px; border-bottom: 1px solid #333; text-align: center\">CENTRAL PUBLIC HEALTH LABORATORIES</div>
-			<div style=\"padding:10px 0px 30px 0px; text-align: center\">Viral Load Test Results</div>
-		  <!-- End Text -->
-		
-		<!-- Start Facility and Sample Details -->
-		<table style=\"width: 100%\">
-		  <tr>
-			<!-- Start Facility Details -->
-			<td style=\"width: 45%; padding:0px 3px 0px 0px\">
-				<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>FACILITY DETAILS</strong></div>
-				<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
-					<table style=\"width: 90%\">
-						<tr>
-							<td style=\"width: 20%; padding: 5px 0px\">Name:</td>
-							<td style=\"width: 80%; padding: 5px 0px; border-bottom: 1px solid #333\">$facilityName</td>
-						</tr>
-						<tr>
-							<td style=\"padding: 5px 0px\">District:</td>
-							<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$districtName | Hub: $hubName</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-			<!-- End Facility Details -->
-			<!-- Start Sample Details -->
-			<td style=\"width: 55%\">
-				<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>SAMPLE DETAILS</strong></div>
-				<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
-					<table style=\"width: 40%\">
-						<tr>
-							<td style=\"width: 30%; padding: 5px 0px\">Form&nbsp;#:</td>
-							<td style=\"width: 70%; padding: 5px 0px; border-bottom: 1px solid #333\">$formNumber</td>
-						</tr>
-						<tr>
-							<td>Sample&nbsp;Type:</td>
-							<td style=\"padding: 4px 0px\">
-								<table style=\"width: 100%\">
-								  <tr>
-									<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($sampleType=="DBS"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-									<td style=\"width: 48%; padding:0px 5px 0px 5px\">DBS</td>
-									<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($sampleType=="Plasma"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-									<td style=\"width: 48%; padding:0px 5px 0px 5px\">Plasma</td>
-								  </tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</div>
-			</td>
-			<!-- End Sample Details -->
-		  </tr>
-		</table>
-		<!-- End Facility and Sample Details -->
-		
-		<!-- Start Patient Information -->
-		<div style=\"padding: 0px 0px 2px 0px\">
-			<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>PATIENT INFORMATION</strong></div>
-			<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
-				<table style=\"width: 60%\">
-					<tr>
-						<!-- Start Column 1 -->
-						<td style=\"width: 50%; padding: 5px\">
-							<table style=\"width: 50%\">
-							  <tr>
-								<td style=\"width: 50%\">ART Number:</td>
-								<td style=\"width: 50%; padding: 5px 0px; border-bottom: 1px solid #333\">$artNumber</td>
-							  </tr>
-							  <tr>
-								<td>Other ID:</td>
-								<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$otherID</td>
-							  </tr>
-							  <tr>
-								<td>Gender:</td>
-								<td style=\"padding: 4px 0px\">
-									<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
+			<div class=\"special\">
+				  <!-- Start Header -->
+					<div align=\"center\"><img src=\"$home_url/images/uganda.emblem.gif\"></div>
+					<div align=\"center\"><strong>MINISTRY OF HEALTH UGANDA<br>NATIONAL AIDS CONTROL PROGRAM (ACP)</strong></div>
+				  <!-- End Header -->
+				  <!-- Start Text -->
+					<div style=\"padding:10px; border-bottom: 1px solid #333; text-align: center\">CENTRAL PUBLIC HEALTH LABORATORIES</div>
+					<div style=\"padding:10px 0px 30px 0px; text-align: center\">Viral Load Test Results</div>
+				  <!-- End Text -->
+				
+				<!-- Start Facility and Sample Details -->
+				<table style=\"width: 100%\">
+				  <tr>
+					<!-- Start Facility Details -->
+					<td style=\"width: 45%; padding:0px 3px 0px 0px\">
+						<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>FACILITY DETAILS</strong></div>
+						<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+							<table style=\"width: 90%\">
+								<tr>
+									<td style=\"width: 20%; padding: 5px 0px\">Name:</td>
+									<td style=\"width: 80%; padding: 5px 0px; border-bottom: 1px solid #333\">$facilityName</td>
+								</tr>
+								<tr>
+									<td style=\"padding: 5px 0px\">District:</td>
+									<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$districtName | Hub: $hubName</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					<!-- End Facility Details -->
+					<!-- Start Sample Details -->
+					<td style=\"width: 55%\">
+						<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>SAMPLE DETAILS</strong></div>
+						<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+							<table style=\"width: 40%\">
+								<tr>
+									<td style=\"width: 30%; padding: 5px 0px\">Form&nbsp;#:</td>
+									<td style=\"width: 70%; padding: 5px 0px; border-bottom: 1px solid #333\">$formNumber</td>
+								</tr>
+								<tr>
+									<td>Sample&nbsp;Type:</td>
+									<td style=\"padding: 4px 0px\">
+										<table style=\"width: 100%\">
+										  <tr>
+											<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($sampleType=="DBS"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+											<td style=\"width: 48%; padding:0px 5px 0px 5px\">DBS</td>
+											<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($sampleType=="Plasma"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+											<td style=\"width: 48%; padding:0px 5px 0px 5px\">Plasma</td>
+										  </tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					<!-- End Sample Details -->
+				  </tr>
+				</table>
+				<!-- End Facility and Sample Details -->
+				
+				<!-- Start Patient Information -->
+				<div style=\"padding: 0px 0px 2px 0px\">
+					<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>PATIENT INFORMATION</strong></div>
+					<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+						<table style=\"width: 60%\">
+							<tr>
+								<!-- Start Column 1 -->
+								<td style=\"width: 50%; padding: 5px\">
+									<table style=\"width: 50%\">
 									  <tr>
-										<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($gender=="Male"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-										<td style=\"width: 18%\" style=\"padding:0px 5px 0px 5px\">Male</td>
-										<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($gender=="Female"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-										<td style=\"width: 18%\" style=\"padding:0px 0px 0px 5px\">Female</td>
-										<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($gender=="Left Blank"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-										<td style=\"width: 58%; padding:0px 0px 0px 5px\">Left Blank</td>
+										<td style=\"width: 50%\">ART Number:</td>
+										<td style=\"width: 50%; padding: 5px 0px; border-bottom: 1px solid #333\">$artNumber</td>
+									  </tr>
+									  <tr>
+										<td>Other ID:</td>
+										<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$otherID</td>
+									  </tr>
+									  <tr>
+										<td>Gender:</td>
+										<td style=\"padding: 4px 0px\">
+											<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"vl\">
+											  <tr>
+												<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($gender=="Male"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+												<td style=\"width: 18%\" style=\"padding:0px 5px 0px 5px\">Male</td>
+												<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($gender=="Female"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+												<td style=\"width: 18%\" style=\"padding:0px 0px 0px 5px\">Female</td>
+												<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".($gender=="Left Blank"?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+												<td style=\"width: 58%; padding:0px 0px 0px 5px\">Left Blank</td>
+											  </tr>
+											</table>
+										</td>
 									  </tr>
 									</table>
 								</td>
+								<!-- End Column 1 -->
+								<!-- Start Column 2 -->
+								<td style=\"width: 50%; padding: 5px\">
+									<table style=\"width: 100%\">
+									  <tr>
+										<td style=\"width: 60%\">Date of Birth:</td>
+										<td style=\"width: 40%; padding: 5px 0px; border-bottom: 1px solid #333\">".(getFormattedDateLessDay($dateOfBirth))."</td>
+									  </tr>
+									  <tr>
+										<td>Phone Number:</td>
+										<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$phone</td>
+									  </tr>
+									</table>
+								</td>
+								<!-- End Column 2 -->
+							</tr>
+						</table>
+					</div>
+				</div>
+				<!-- End Patient Information -->
+				
+				<!-- Start Sample Test Information -->
+				<div style=\"padding: 0px 0px 2px 0px\">
+					<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>SAMPLE TEST INFORMATION</strong></div>
+					<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
+						<!-- Start Sample Collection Date -->
+						<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
+							<table style=\"width: 95%\">
+							  <tr>
+								<td style=\"width: 23%\">Sample&nbsp;Collection&nbsp;Date:</td>
+								<td style=\"width: 15%; padding:0px 5px\">".getFormattedDateLessDay($sampleCollectionDate)."</td>
+								<td style=\"width: 15%\">Reception&nbsp;Date:</td>
+								<td style=\"width: 47%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleReceiptDate)."</td>
 							  </tr>
 							</table>
-						</td>
-						<!-- End Column 1 -->
-						<!-- Start Column 2 -->
-						<td style=\"width: 50%; padding: 5px\">
-							<table style=\"width: 100%\">
-							  <tr>
-								<td style=\"width: 60%\">Date of Birth:</td>
-								<td style=\"width: 40%; padding: 5px 0px; border-bottom: 1px solid #333\">".(getFormattedDateLessDay($dateOfBirth))."</td>
-							  </tr>
-							  <tr>
-								<td>Phone Number:</td>
-								<td style=\"padding: 5px 0px; border-bottom: 1px solid #333\">$phone</td>
-							  </tr>
-							</table>
-						</td>
-						<!-- End Column 2 -->
-					</tr>
-				</table>
-			</div>
-		</div>
-		<!-- End Patient Information -->
+						</div>
+						<!-- End Sample Collection Date -->
 		
-		<!-- Start Sample Test Information -->
-		<div style=\"padding: 0px 0px 2px 0px\">
-			<div style=\"padding: 5px; background: #ccc; border-bottom: 1px solid #666\"><strong>SAMPLE TEST INFORMATION</strong></div>
-			<div style=\"padding: 2px 5px; border-left: 1px solid #999; border-right: 1px solid #999; border-bottom: 1px solid #999\">
-				<!-- Start Sample Collection Date -->
-				<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
-					<table style=\"width: 95%\">
+						<!-- Start Repeat Test -->
+						<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
+							<table style=\"width: 60%\">
+							  <tr>
+								<td style=\"width: 35%\">Repeat Test:</td>
+								<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID!=''","id")?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
+								<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
+								<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID!=''","id")?"&nbsp;":"<img src=\"$home_url"."/images/check.gif\" />")."</div></td>
+								<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
+							  </tr>
+							</table>
+						</div>
+						<!-- End Repeat Test -->
+		
+						<!-- Start Sample Rejected -->
+						<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
+							<table style=\"width: 60%\">
+							  <tr>
+								<td style=\"width: 35%\">Sample Rejected:</td>
+								<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\"><img src=\"$home_url"."/images/check.gif\" /></div></td>
+								<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
+								<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">&nbsp;</div></td>
+								<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
+							  </tr>
+							</table>
+						</div>
+						<!-- End Sample Rejected -->
+		
+						<!-- Start Rejection Reason -->
+						<div style=\"width: 95%; padding:5px 0px\">
+							<table style=\"width: 80%\">
+							  <tr>
+								<td style=\"width: 35%\">If Rejected, Reason:</td>
+								<td style=\"width: 45%; padding:0px 0px 0px 5px\"><font color=\"#FF0000\">$rejectionReason</font></td>
+							  </tr>
+							</table>
+						</div>
+						<!-- End Rejection Reason -->
+					</div>
+				</div>
+				<!-- End Sample Test Information -->
+		
+				<!-- Start Sign Offs -->
+				<div style=\"padding:20px 0px 0px 0px\">
+					<table style=\"width: 100%\">
 					  <tr>
-						<td style=\"width: 23%\">Sample&nbsp;Collection&nbsp;Date:</td>
-						<td style=\"width: 15%; padding:0px 5px\">".getFormattedDateLessDay($sampleCollectionDate)."</td>
-						<td style=\"width: 15%\">Reception&nbsp;Date:</td>
-						<td style=\"width: 10%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleReceiptDate)."</td>
-						<td style=\"width: 20%\">Viral&nbsp;Load&nbsp;Test&nbsp;Date:</td>
-						<td style=\"width: 17%; padding:0px 5px\">".getFormattedDateLessDay($sampleVLTestDate)."</td>
+						<td style=\"width: 20%\">Lab Manager:</td>
+						<td style=\"width: 80%; border-bottom: 1px solid #333\">".($labManagerSignature?$labManagerSignature:"&nbsp;")."</td>
 					  </tr>
 					</table>
 				</div>
-				<!-- End Sample Collection Date -->
-
-				<!-- Start Repeat Test -->
-				<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
-					<table style=\"width: 60%\">
-					  <tr>
-						<td style=\"width: 35%\">Repeat Test:</td>
-						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID!=''","id")?"<img src=\"$home_url"."/images/check.gif\" />":"&nbsp;")."</div></td>
-						<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
-						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">".(getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' and withWorksheetID!=''","id")?"&nbsp;":"<img src=\"$home_url"."/images/check.gif\" />")."</div></td>
-						<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
-					  </tr>
-					</table>
-				</div>
-				<!-- End Repeat Test -->
-
-				<!-- Start Sample Rejected -->
-				<div style=\"width: 95%; padding:5px 0px; border-bottom: 1px solid #CCC\">
-					<table style=\"width: 60%\">
-					  <tr>
-						<td style=\"width: 35%\">Sample Rejected:</td>
-						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">&nbsp;</div></td>
-						<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
-						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\"><img src=\"$home_url"."/images/check.gif\" /></div></td>
-						<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
-					  </tr>
-					</table>
-				</div>
-				<!-- End Sample Rejected -->
-
-				<!-- Start Rejection Reason -->
-				<div style=\"width: 95%; padding:5px 0px\">
-					<table style=\"width: 80%\">
-					  <tr>
-						<td style=\"width: 35%\">If Rejected, Reason:</td>
-						<td style=\"width: 45%; padding:0px 0px 0px 5px\"><font color=\"#FF0000\">$rejectionReason</font></td>
-					  </tr>
-					</table>
-				</div>
-				<!-- End Rejection Reason -->
+				<!-- End Sign Offs -->
+		
 			</div>
-		</div>
-		<!-- End Sample Test Information -->
-
-		<!-- Start Sign Offs -->
-		<div style=\"padding:20px 0px 0px 0px\">
-			<table style=\"width: 100%\">
-			  <tr>
-				<td style=\"width: 20%\">Lab Manager:</td>
-				<td style=\"width: 80%; border-bottom: 1px solid #333\">".($labManagerSignature?$labManagerSignature:"&nbsp;")."</td>
-			  </tr>
-			</table>
-		</div>
-		<!-- End Sign Offs -->
-
-	</div>
-</page>";
+		</page>";
 		
 		//load PDF object
 		/*

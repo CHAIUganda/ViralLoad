@@ -203,9 +203,7 @@ div.special table { width:100%; font-size:9px; border-collapse:collapse; }
 						<td style=\"width: 23%\">Sample&nbsp;Collection&nbsp;Date:</td>
 						<td style=\"width: 15%; padding:0px 5px\">".getFormattedDateLessDay($sampleCollectionDate)."</td>
 						<td style=\"width: 15%\">Reception&nbsp;Date:</td>
-						<td style=\"width: 10%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleReceiptDate)."</td>
-						<td style=\"width: 20%\">Viral&nbsp;Load&nbsp;Test&nbsp;Date:</td>
-						<td style=\"width: 17%; padding:0px 5px\">".getFormattedDateLessDay($sampleVLTestDate)."</td>
+						<td style=\"width: 47%\" style=\"padding:0px 5px\">".getFormattedDateLessDay($sampleReceiptDate)."</td>
 					  </tr>
 					</table>
 				</div>
@@ -230,9 +228,9 @@ div.special table { width:100%; font-size:9px; border-collapse:collapse; }
 					<table style=\"width: 60%\">
 					  <tr>
 						<td style=\"width: 35%\">Sample Rejected:</td>
-						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">&nbsp;</div></td>
-						<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
 						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\"><img src=\"$home_url"."/images/check.gif\" /></div></td>
+						<td style=\"width: 18%; padding:0px 5px 0px 5px\">Yes</td>
+						<td style=\"width: 2%\"><div style=\"padding: 1px; height: 12px; width:12px; border: 1px solid #333; text-align: center\">&nbsp;</div></td>
 						<td style=\"width: 43%; padding:0px 0px 0px 5px\">No</td>
 					  </tr>
 					</table>
