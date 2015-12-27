@@ -252,7 +252,7 @@ if(!$GLOBALS['vlDC']) {
             <tr>
               <td style="border-bottom:1px solid #cccccc; padding:10px 0px">
               	<!--<input type="text" name="result" id="result" class="search" size="45" value="Invalid test result. There is insufficient sample to repeat the assay." maxlength="250" />-->
-                <input type="text" name="result" id="result" class="search" size="45" value="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample." maxlength="250" />
+                <input type="text" name="result" id="result" class="search" size="45" value="<?=$default_resultFailureNewSampleMessage?>" maxlength="250" />
               </td>
             </tr>
             <tr> 

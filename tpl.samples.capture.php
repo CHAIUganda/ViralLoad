@@ -195,7 +195,7 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	*/
 
 	//sample collection date
-	if(!$collectionDateDay || !$collectionDateMonth || !$collectionDateYear) {
+	if((!$collectionDateDay || !$collectionDateMonth || !$collectionDateYear) && !$noCollectionDateSupplied) {
 		$error.="<br /><strong>Sample Collection Date Missing</strong><br />Kindly provide the Sample Collection Date<br />";
 	}
 
@@ -791,6 +791,20 @@ function disableEnableTreatmentInitiationDate(checkedObject) {
 	}
 }
 
+function disableEnableCollectionDate(checkedObject) {
+	if(checkedObject.checked==true) {
+		//has been checked
+		document.samples.collectionDateYear.disabled=true;
+		document.samples.collectionDateMonth.disabled=true;
+		document.samples.collectionDateDay.disabled=true;
+	} else if(checkedObject.checked==false) {
+		//has been unchecked
+		document.samples.collectionDateYear.disabled=false;
+		document.samples.collectionDateMonth.disabled=false;
+		document.samples.collectionDateDay.disabled=false;
+	}
+}
+
 function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityIDField){
 	//get hub
 	vlDC_XloadFacilityFromFormName(formNumberObject.value,formName,fieldID,facilityIDField);
@@ -964,7 +978,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <td width="80%">
 								<table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                       <tr>
-                                        <td><select name="collectionDateDay" id="collectionDateDay" class="search">
+                                        <td><select name="collectionDateDay" id="collectionDateDay" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
                                           <?
 											if($collectionDate) {
 												echo "<option value=\"".getFormattedDateDay($collectionDate)."\" selected=\"selected\">".getFormattedDateDay($collectionDate)."</option>";
@@ -976,7 +990,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                             }
                                             ?>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateMonth" id="collectionDateMonth" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateMonth" id="collectionDateMonth" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
                                           <? 
 											if($collectionDate) {
 												echo "<option value=\"".getFormattedDateMonth($collectionDate)."\" selected=\"selected\">".getFormattedDateMonthname($collectionDate)."</option>";
@@ -997,7 +1011,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                           <option value="11">Nov</option>
                                           <option value="12">Dec</option>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateYear" id="collectionDateYear" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateYear" id="collectionDateYear" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
                                           		<?
 												if($collectionDate) {
 													echo "<option value=\"".getFormattedDateYear($collectionDate)."\" selected=\"selected\">".getFormattedDateYear($collectionDate)."</option>";
@@ -1009,6 +1023,8 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                                 }
                                                 ?>
                                           </select></td>
+                                        <td style="padding:0px 0px 0px 5px"><input name="noCollectionDateSupplied" type="checkbox" id="noCollectionDateSupplied" value="1" onclick="disableEnableCollectionDate(this);" <?=($noCollectionDateSupplied?"checked=\"checked\"":"")?> /></td>
+                                        <td style="padding:0px 0px 0px 5px">No&nbsp;Collection&nbsp;Date&nbsp;supplied</td>
                                         </tr>
                                     </table>
                               </td>

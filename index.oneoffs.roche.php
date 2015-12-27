@@ -23,6 +23,8 @@ include "conf.php";
 $query=0;
 $query=mysqlquery("select * from vl_results_roche");
 if(mysqlnumrows($query)) {
+	//flush the db
+	mysqlquery("delete from vl_results_merged where machine='roche'");
 	while($q=mysqlfetcharray($query)) {
 		//factor
 		$factor=0;
@@ -32,7 +34,8 @@ if(mysqlnumrows($query)) {
 		}
 		//alphanumeric result
 		$resultAlphanumeric=0;
-		$resultAlphanumeric=getVLResult("roche",$q["worksheetID"],$q["sampleID"],$factor);
+		$resultAlphanumeric=getVLResult("roche",$q["worksheetID"],$q["SampleID"],$factor);
+		$resultAlphanumeric=preg_replace("/'/s","\'",$resultAlphanumeric);
 		//numeric result
 		$resultNumeric=0;
 		$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
@@ -40,7 +43,7 @@ if(mysqlnumrows($query)) {
 						(machine,worksheetID,vlSampleID,resultAlphanumeric,
 							resultNumeric,created,createdby) 
 						values 
-						('roche','$q[worksheetID]','$q[sampleID]','$resultAlphanumeric',
+						('roche','$q[worksheetID]','$q[SampleID]','$resultAlphanumeric',
 							'$resultNumeric','$q[created]','$q[createdby]')");
 	}
 }

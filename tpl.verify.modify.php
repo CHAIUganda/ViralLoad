@@ -161,7 +161,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 	}
 
 	//concatenations
-	if($collectionDateYear && $collectionDateMonth && $collectionDateDay) {
+	if($collectionDateYear && $collectionDateMonth && $collectionDateDay && !$noCollectionDateSupplied) {
 		$collectionDate=0;
 		$collectionDate="$collectionDateYear-$collectionDateMonth-$collectionDateDay";
 		//ensure collection date is not greater than the current date
@@ -282,7 +282,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 		logTableChange("vl_samples","pregnantANCNumber",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","pregnantANCNumber"),$pregnantANCNumber);
 		logTableChange("vl_samples","breastfeeding",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","breastfeeding"),$breastfeeding);
 		logTableChange("vl_samples","activeTBStatus",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","activeTBStatus"),$activeTBStatus);
-		logTableChange("vl_samples","collectionDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","collectionDate"),$collectionDate);
+		if(!$noCollectionDateSupplied) { logTableChange("vl_samples","collectionDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","collectionDate"),$collectionDate); }
 		logTableChange("vl_samples","receiptDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","receiptDate"),$receiptDate);
 		logTableChange("vl_samples","treatmentLast6Months",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","treatmentLast6Months"),$treatmentLast6Months);
 		if(!$noTreatmentInitiationDateSupplied) { logTableChange("vl_samples","treatmentInitiationDate",$modify,getDetailedTableInfo2("vl_samples","id='$modify'","treatmentInitiationDate"),$treatmentInitiationDate); }
@@ -323,7 +323,7 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 						pregnantANCNumber='$pregnantANCNumber',
 						breastfeeding='$breastfeeding',
 						activeTBStatus='$activeTBStatus',
-						collectionDate='$collectionDate',
+						".(!$noCollectionDateSupplied?"collectionDate='$collectionDate',":"collectionDate='',")."
 						receiptDate='$receiptDate',
 						treatmentLast6Months='$treatmentLast6Months',
 						".(!$noTreatmentInitiationDateSupplied?"treatmentInitiationDate='$treatmentInitiationDate',":"treatmentInitiationDate='',")."
@@ -452,6 +452,10 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 	
 	$collectionDate=0;
 	$collectionDate=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","collectionDate");
+	if($collectionDate=="0000-00-00") {
+		$collectionDate="";
+		$noCollectionDateSupplied=1;
+	}
 	
 	$receiptDate=0;
 	$receiptDate=getDetailedTableInfo2("vl_samples","id='$modify' limit 1","receiptDate");
@@ -815,6 +819,20 @@ function disableEnableTreatmentInitiationDate(checkedObject) {
 	}
 }
 
+function disableEnableCollectionDate(checkedObject) {
+	if(checkedObject.checked==true) {
+		//has been checked
+		document.samples.collectionDateYear.disabled=true;
+		document.samples.collectionDateMonth.disabled=true;
+		document.samples.collectionDateDay.disabled=true;
+	} else if(checkedObject.checked==false) {
+		//has been unchecked
+		document.samples.collectionDateYear.disabled=false;
+		document.samples.collectionDateMonth.disabled=false;
+		document.samples.collectionDateDay.disabled=false;
+	}
+}
+
 function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityIDField){
 	//get hub
 	vlDC_XloadFacilityFromFormName(formNumberObject.value,formName,fieldID,facilityIDField);
@@ -984,7 +1002,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <td width="80%">
 								<table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                       <tr>
-                                        <td><select name="collectionDateDay" id="collectionDateDay" class="search">
+                                        <td><select name="collectionDateDay" id="collectionDateDay" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
                                           <?
 											if($collectionDate) {
 												echo "<option value=\"".getFormattedDateDay($collectionDate)."\" selected=\"selected\">".getFormattedDateDay($collectionDate)."</option>";
@@ -996,7 +1014,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                             }
                                             ?>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateMonth" id="collectionDateMonth" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateMonth" id="collectionDateMonth" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
                                           <? 
 											if($collectionDate) {
 												echo "<option value=\"".getFormattedDateMonth($collectionDate)."\" selected=\"selected\">".getFormattedDateMonthname($collectionDate)."</option>";
@@ -1017,7 +1035,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                           <option value="11">Nov</option>
                                           <option value="12">Dec</option>
                                           </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateYear" id="collectionDateYear" class="search">
+                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateYear" id="collectionDateYear" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
                                           		<?
 												if($collectionDate) {
 													echo "<option value=\"".getFormattedDateYear($collectionDate)."\" selected=\"selected\">".getFormattedDateYear($collectionDate)."</option>";
@@ -1029,6 +1047,8 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                                 }
                                                 ?>
                                           </select></td>
+                                        <td style="padding:0px 0px 0px 5px"><input name="noCollectionDateSupplied" type="checkbox" id="noCollectionDateSupplied" value="1" onclick="disableEnableCollectionDate(this);" <?=($noCollectionDateSupplied?"checked=\"checked\"":"")?> /></td>
+                                        <td style="padding:0px 0px 0px 5px">No&nbsp;Collection&nbsp;Date&nbsp;supplied</td>
                                         </tr>
                                     </table>
                               </td>

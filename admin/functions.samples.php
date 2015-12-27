@@ -125,12 +125,22 @@ function generateWorksheetReferenceNumber() {
 * function to retrieve the result
 */
 function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
+	global $default_resultFailureNewSampleMessage;
+	
 	$result=0;
 	//first check if any result overrides are in place
-	if(getDetailedTableInfo2("vl_results_override","sampleID='$sampleID'","id")) {
+	if($worksheetID && getDetailedTableInfo2("vl_results_override","sampleID='$sampleID' and worksheetID='$worksheetID'","id")) {
+		$result=getDetailedTableInfo2("vl_results_override","sampleID='$sampleID' and worksheetID='$worksheetID'","result");
+		return $result;
+	} elseif(!$worksheetID && getDetailedTableInfo2("vl_results_override","sampleID='$sampleID'","id")) {
 		$result=getDetailedTableInfo2("vl_results_override","sampleID='$sampleID'","result");
 		return $result;
 	} else {
+		$rocheFailedResult=0;
+		$rocheFailedResult="Invalid Test Result. Insufficient sample remained to repeat the assay.";
+		$abbottFailedResult=0;
+		$abbottFailedResult="Failed.";
+		
 		if($machineType=="roche") {
 			if(isResultFailed($machineType,($worksheetID?$worksheetID:""),$sampleID)) {
 				/*
@@ -139,16 +149,26 @@ function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
 				* there is insufficient sample left for a re-run hence;
 				* Change result to read "invalid test result. Insufficient sample remained to repeat the assay"
 				*/
-				return "Invalid Test Result. Insufficient sample remained to repeat the assay.";
-			/*
-			} elseif(getDetailedTableInfo2("vl_results_roche","worksheetID!='$worksheetID' and SampleID='$sampleID' and Result='Failed'","id")) {
-				/*
-				* 21/Jan/15: 
-				* (sewyisaac@yahoo.co.uk) 
-				* Regarding the report where we do not have results, this is the massage to I propose.
-				* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample. 
-				return "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
-			*/
+				if(getDetailedTableInfo3("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID'","count(id)","num")==1 && 
+					getDetailedTableInfo2("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID' order by created limit 1","resultAlphanumeric")==$rocheFailedResult) {
+					/*
+					* 21/Jan/15: 
+					* (sewyisaac@yahoo.co.uk) 
+					* Regarding the report where we do not have results, this is the massage to I propose.
+					* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample. 
+					* 
+					* 23/Dec/2015
+					* Request from Joseph Kibirige (joseph.kibirige@yahoo.com, CPHL) and Prossy Mbabazi (pronam2000@yahoo.com, CPHL)
+					* when a sample has failed twice, automatically override the 2nd result with
+					* "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample."
+					*/
+					logResultOverride($sampleID,$worksheetID,$default_resultFailureNewSampleMessage);
+					//return
+					return $default_resultFailureNewSampleMessage;
+				} else {
+					//return
+					return $rocheFailedResult;
+				}
 			} else {
 				$result=getDetailedTableInfo2("vl_results_roche",($worksheetID?"worksheetID='$worksheetID' and ":"")."SampleID='$sampleID' order by created desc limit 1","Result");
 				$result=getVLNumericResult($result,$machineType,$factor);
@@ -165,7 +185,26 @@ function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
 				* 22/Sept/14
 				* Adjustment made to recognize both samples as failures
 				*/
-				return "Failed.";
+				if(getDetailedTableInfo3("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID'","count(id)","num")==1 && 
+					getDetailedTableInfo2("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID' order by created limit 1","resultAlphanumeric")==$abbottFailedResult) {
+					/*
+					* 21/Jan/15: 
+					* (sewyisaac@yahoo.co.uk) 
+					* Regarding the report where we do not have results, this is the massage to I propose.
+					* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample. 
+					* 
+					* 23/Dec/2015
+					* Request from Joseph Kibirige (joseph.kibirige@yahoo.com, CPHL) and Prossy Mbabazi (pronam2000@yahoo.com, CPHL)
+					* when a sample has failed twice, automatically override the 2nd result with
+					* "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample."
+					*/
+					logResultOverride($sampleID,$worksheetID,$default_resultFailureNewSampleMessage);
+					//return
+					return $default_resultFailureNewSampleMessage;
+				} else {
+					//return
+					return $abbottFailedResult;
+				}
 			} else {
 				$result=getDetailedTableInfo2("vl_results_abbott",($worksheetID?"worksheetID='$worksheetID' and ":"")."sampleID='$sampleID' order by created desc limit 1","result");
 				$result=getVLNumericResult($result,$machineType,$factor);
@@ -412,6 +451,34 @@ function isResultFailed($machineType,$worksheetID,$sampleID) {
 				return 1;
 			}
 		break;
+	}
+}
+
+/**
+* function to log result overrides
+*/
+function logResultOverride($sampleID,$worksheetID,$result) {
+	global $datetime,$user;
+	
+	//validate
+	$sampleID=validate($sampleID);
+	$worksheetID=validate($worksheetID);
+	$result=validate($result);
+	
+	$id=0;
+	$id=getDetailedTableInfo2("vl_results_override","sampleID='$sampleID' and worksheetID='$worksheetID'","id");
+	//avoid duplicates
+	if(!$id) {
+		//insert into vl_results_override
+		mysqlquery("insert into vl_results_override 
+				(sampleID,worksheetID,result,created,createdby) 
+				values 
+				('$sampleID','$worksheetID','$result','$datetime','$user')");
+	} else {
+		//log table change
+		logTableChange("vl_results_override","result",$id,getDetailedTableInfo2("vl_results_override","id='$id'","result"),$result);
+		//update vl_results_override
+		mysqlquery("update vl_results_override set result='$result' where id='$id'");
 	}
 }
 ?>
