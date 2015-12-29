@@ -149,7 +149,7 @@ function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
 				* there is insufficient sample left for a re-run hence;
 				* Change result to read "invalid test result. Insufficient sample remained to repeat the assay"
 				*/
-				if(getDetailedTableInfo3("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID'","count(id)","num")==1 && 
+				if(getDetailedTableInfo3("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID'","count(id)","num")>1 && 
 					getDetailedTableInfo2("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID' order by created limit 1","resultAlphanumeric")==$rocheFailedResult) {
 					/*
 					* 21/Jan/15: 
@@ -185,7 +185,7 @@ function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
 				* 22/Sept/14
 				* Adjustment made to recognize both samples as failures
 				*/
-				if(getDetailedTableInfo3("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID'","count(id)","num")==1 && 
+				if(getDetailedTableInfo3("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID'","count(id)","num")>1 && 
 					getDetailedTableInfo2("vl_results_merged","lower(machine)='".strtolower($machineType)."' and vlSampleID='$sampleID' order by created limit 1","resultAlphanumeric")==$abbottFailedResult) {
 					/*
 					* 21/Jan/15: 

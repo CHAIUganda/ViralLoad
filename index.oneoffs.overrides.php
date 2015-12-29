@@ -8,7 +8,6 @@ include "conf.php";
 * ran as lnx http://192.168.0.43/index.oneoffs.php
 * task 1: get all sample IDs from abbott which appear more than once in vl_results_merged 
 * task 2: get all sample IDs from roche which appear more than once in vl_results_merged 
-*/
 
 //key variables
 $rocheFailedResult=0;
@@ -48,6 +47,25 @@ if(mysqlnumrows($query)) {
 	while($q=mysqlfetcharray($query)) {
 		//log result override
 		logResultOverride($q["vlSampleID"],getDetailedTableInfo2("vl_results_merged","lower(machine)='".strtolower($machine)."' and vlSampleID='$q[vlSampleID]' and created='$q[dateCreated]' limit 1","worksheetID"),$default_resultFailureNewSampleMessage);
+	}
+}
+*/
+
+//task 3: results collected 29/dec/15 and 
+$query=0;
+$query=mysqlquery("select vlSampleID,created,count(id) num from vl_results_merged 
+							where 
+								vlSampleID in (select sampleID from vl_results_override) and 
+									date(created)>='2015-12-27' 
+										group by vlSampleID having num=1");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//get the id
+		$id=0;
+		$id=getDetailedTableInfo2("vl_results_override","sampleID='$q[vlSampleID]' and date(created)>='2015-12-27' order by created desc limit 1","id");
+		//log and remove record
+		logDataRemoval("delete from vl_results_override where id='$id'");
+		mysqlquery("delete from vl_results_override where id='$id'");
 	}
 }
 ?>
