@@ -18,12 +18,8 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	$hubID=validate($hubID);
 	$districtID=validate($districtID);
 
-	$collectionDateDay=validate($collectionDateDay);
-	$collectionDateMonth=validate($collectionDateMonth);
-	$collectionDateYear=validate($collectionDateYear);
-	$receiptDateDay=validate($receiptDateDay);
-	$receiptDateMonth=validate($receiptDateMonth);
-	$receiptDateYear=validate($receiptDateYear);
+	$collectionDate=validate($collectionDate);
+	$receiptDate=validate($receiptDate);
 	$sampleTypeID=validate($sampleTypeID);
 
 	$artNumber=validate($artNumber);
@@ -35,17 +31,13 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	
 	$otherID=validate($otherID);
 	$gender=validate($gender);
-	$dateOfBirthDay=validate($dateOfBirthDay);
-	$dateOfBirthMonth=validate($dateOfBirthMonth);
-	$dateOfBirthYear=validate($dateOfBirthYear);
+	$dateOfBirth=validate($dateOfBirth);
 	$dateOfBirthAge=validate($dateOfBirthAge);
 	$dateOfBirthIn=validate($dateOfBirthIn);
 	$patientPhone=validate($patientPhone);
 
 	$treatmentLast6Months=validate($treatmentLast6Months);
-	$treatmentInitiationDateDay=validate($treatmentInitiationDateDay);
-	$treatmentInitiationDateMonth=validate($treatmentInitiationDateMonth);
-	$treatmentInitiationDateYear=validate($treatmentInitiationDateYear);
+	$treatmentInitiationDate=validate($treatmentInitiationDate);
 	$currentRegimenID=validate($currentRegimenID);
 	$treatmentInitiationID=validate($treatmentInitiationID);
 	$treatmentInitiationOther=validate($treatmentInitiationOther);
@@ -60,33 +52,21 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	$arvAdherenceID=validate($arvAdherenceID);
 	
 	if($viralLoadTestingIndication=="vlTestingRoutineMonitoring") {
-		$routineMonitoringLastVLDateDay=validate($routineMonitoringLastVLDateDay);
-		$routineMonitoringLastVLDateMonth=validate($routineMonitoringLastVLDateMonth);
-		$routineMonitoringLastVLDateYear=validate($routineMonitoringLastVLDateYear);
+		$routineMonitoringLastVLDate=validate($routineMonitoringLastVLDate);
 		$routineMonitoringValue=validate($routineMonitoringValue);
 		$routineMonitoringSampleTypeID=validate($routineMonitoringSampleTypeID);
-		$routineMonitoringLastVLDate=0;
-		$routineMonitoringLastVLDate="$routineMonitoringLastVLDateYear-$routineMonitoringLastVLDateMonth-$routineMonitoringLastVLDateDay";
 	}
 	
 	if($viralLoadTestingIndication=="vlTestingRepeatTesting") {
-		$repeatVLTestLastVLDateDay=validate($repeatVLTestLastVLDateDay);
-		$repeatVLTestLastVLDateMonth=validate($repeatVLTestLastVLDateMonth);
-		$repeatVLTestLastVLDateYear=validate($repeatVLTestLastVLDateYear);
+		$repeatVLTestLastVLDate=validate($repeatVLTestLastVLDate);
 		$repeatVLTestValue=validate($repeatVLTestValue);
 		$repeatVLTestSampleTypeID=validate($repeatVLTestSampleTypeID);
-		$repeatVLTestLastVLDate=0;
-		$repeatVLTestLastVLDate="$repeatVLTestLastVLDateYear-$repeatVLTestLastVLDateMonth-$repeatVLTestLastVLDateDay";
 	}
 	
 	if($viralLoadTestingIndication=="vlTestingSuspectedTreatmentFailure") {
-		$suspectedTreatmentFailureLastVLDateDay=validate($suspectedTreatmentFailureLastVLDateDay);
-		$suspectedTreatmentFailureLastVLDateMonth=validate($suspectedTreatmentFailureLastVLDateMonth);
-		$suspectedTreatmentFailureLastVLDateYear=validate($suspectedTreatmentFailureLastVLDateYear);
+		$suspectedTreatmentFailureLastVLDate=validate($suspectedTreatmentFailureLastVLDate);
 		$suspectedTreatmentFailureValue=validate($suspectedTreatmentFailureValue);
 		$suspectedTreatmentFailureSampleTypeID=validate($suspectedTreatmentFailureSampleTypeID);
-		$suspectedTreatmentFailureLastVLDate=0;
-		$suspectedTreatmentFailureLastVLDate="$suspectedTreatmentFailureLastVLDateYear-$suspectedTreatmentFailureLastVLDateMonth-$suspectedTreatmentFailureLastVLDateDay";
 	}
 	
 	$otherRegimen=validate($otherRegimen);
@@ -149,16 +129,14 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	* whose date of birth or age is not given by the facility. This was initially a 'must-have' option but with massive 
 	* numbers of forms returning without this information, they would like to have the option of leaving it as a "Left blank". 
 	* This can be put after the age variable.
-	if((!$dateOfBirthDay || !$dateOfBirthMonth || !$dateOfBirthYear) && (!$dateOfBirthAge || !$dateOfBirthIn)) {
+	if(!$dateOfBirth && (!$dateOfBirthAge || !$dateOfBirthIn)) {
 		$error.="<br /><strong>Date of Birth Missing</strong><br />Kindly provide the Date of Birth<br />";
 	}
 	*/
 	
 	//is both date of birth and age in years/months missing?
 	$dateOfBirth=0;
-	if($dateOfBirthYear && $dateOfBirthMonth && $dateOfBirthDay) {
-		$dateOfBirth="$dateOfBirthYear-$dateOfBirthMonth-$dateOfBirthDay";
-	} else {
+	if(!$dateOfBirth) {
 		if($dateOfBirthIn=="Months") {
 			$dateOfBirth=subtractFromDate($datetime,($dateOfBirthAge*30.5));
 			/*
@@ -195,12 +173,12 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	*/
 
 	//sample collection date
-	if((!$collectionDateDay || !$collectionDateMonth || !$collectionDateYear) && !$noCollectionDateSupplied) {
+	if(!$collectionDate && !$noCollectionDateSupplied) {
 		$error.="<br /><strong>Sample Collection Date Missing</strong><br />Kindly provide the Sample Collection Date<br />";
 	}
 
 	//treatment initiation date
-	if((!$treatmentInitiationDateDay || !$treatmentInitiationDateMonth || !$treatmentInitiationDateYear) && !$noTreatmentInitiationDateSupplied) {
+	if(!$treatmentInitiationDate && !$noTreatmentInitiationDateSupplied) {
 		$error.="<br /><strong>Treatment Initiation Date Missing</strong><br />Kindly provide the Treatment Initiation Date<br />";
 	}
 
@@ -220,18 +198,14 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	}
 
 	//concatenations
-	if($collectionDateYear && $collectionDateMonth && $collectionDateDay) {
-		$collectionDate=0;
-		$collectionDate="$collectionDateYear-$collectionDateMonth-$collectionDateDay";
+	if($collectionDate) {
 		//ensure collection date is not greater than the current date
 		if(getStandardDateDifference($datetime,$collectionDate)<0) {
 			$error.="<br /><strong>Sample Collection Date ".getFormattedDateLessDay($collectionDate)." should not be in the future.</strong><br />Kindly provide an alternative Sample Collection Date<br />";
 		}
 	}
 
-	if($treatmentInitiationDateYear && $treatmentInitiationDateMonth && $treatmentInitiationDateDay) {
-		$treatmentInitiationDate=0;
-		$treatmentInitiationDate="$treatmentInitiationDateYear-$treatmentInitiationDateMonth-$treatmentInitiationDateDay";
+	if($treatmentInitiationDate) {
 		//ensure treatment initiation date is not greater than the current date
 		if(getStandardDateDifference($datetime,$treatmentInitiationDate)<0) {
 			$error.="<br /><strong>Treatment Initiation Date ".getFormattedDateLessDay($treatmentInitiationDate)." should not be in the future.</strong><br />Kindly provide an alternative Treatment Initiation Date<br />";
@@ -242,9 +216,7 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 		}
 	}
 	
-	if($receiptDateYear && $receiptDateMonth && $receiptDateDay) {
-		$receiptDate=0;
-		$receiptDate="$receiptDateYear-$receiptDateMonth-$receiptDateDay";
+	if($receiptDate) {
 		//ensure received at CPHL date is not greater than the current date
 		if(getStandardDateDifference($datetime,$receiptDate)<0) {
 			$error.="<br /><strong>Received at CPHL Date ".getFormattedDateLessDay($receiptDate)." should not be in the future.</strong><br />Kindly provide an alternative Date<br />";
@@ -254,7 +226,7 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 			$error.="<br /><strong>Received at CPHL Date ".getFormattedDateLessDay($receiptDate)." should not be prior to 01/May/2014.</strong><br />Kindly provide an alternative Date<br />";
 		}
 		//ensure collection date is not greater than the received at CPHL date
-		if($collectionDateYear && $collectionDateMonth && $collectionDateDay && getStandardDateDifference($receiptDate,$collectionDate)<0) {
+		if($collectionDate && getStandardDateDifference($receiptDate,$collectionDate)<0) {
 			$error.="<br /><strong>Sample Collection Date ".getFormattedDateLessDay($collectionDate)." should not be greater than the Received at CPHL Date ".getFormattedDateLessDay($receiptDate).".</strong><br />Kindly provide an alternative Sample Collection Date<br />";
 		}
 	}
@@ -546,15 +518,15 @@ function validate(samples) {
 		return (false);
 	}
 	/*
-	if((!document.samples.dateOfBirthDay.value || !document.samples.dateOfBirthMonth.value || !document.samples.dateOfBirthYear.value) && (!document.samples.dateOfBirthAge.value || !document.samples.dateOfBirthIn.value)) {
+	if(!document.samples.dateOfBirth.value && (!document.samples.dateOfBirthAge.value || !document.samples.dateOfBirthIn.value)) {
 		alert('Missing Mandatory Field: Date of Birth or Patient Age');
-		document.samples.dateOfBirthDay.focus();
+		document.samples.dateOfBirth.focus();
 		return (false);
 	}
 	*/
-	if(!document.samples.collectionDateDay.value || !document.samples.collectionDateMonth.value || !document.samples.collectionDateYear.value) {
+	if(!document.samples.collectionDate.value) {
 		alert('Missing Mandatory Field: Sample Collection Date');
-		document.samples.collectionDateDay.focus();
+		document.samples.collectionDate.focus();
 		return (false);
 	}
 	if(!document.samples.sampleTypeID.value) {
@@ -599,9 +571,9 @@ function validate(samples) {
 		document.samples.viralLoadTestingID.focus();
 		return (false);
 	}
-	if(!document.samples.treatmentInitiationDateDay.value || !document.samples.treatmentInitiationDateMonth.value || !document.samples.treatmentInitiationDateYear.value) {
+	if(!document.samples.treatmentInitiationDate.value) {
 		alert('Missing Mandatory Field: Treatment Initiation Date');
-		document.samples.treatmentInitiationDateDay.focus();
+		document.samples.treatmentInitiationDate.focus();
 		return (false);
 	}
 	if(!document.samples.treatmentLast6Months.value) {
@@ -664,14 +636,6 @@ function checkForHubDistrict(){
 	vlDC_XloadHub('samples','checkHubDistrictID','hubID','hubTextID',theFacilityID);
 	//get district
 	vlDC_XloadDistrict('samples','checkHubDistrictID','districtID','districtTextID',theFacilityID);
-}
-
-function checkMonthDay(theField) {
-	if(theField.value && !document.samples.dateOfBirthMonth.value && !document.samples.dateOfBirthDay.value) {
-		//default to first day/month
-		document.samples.dateOfBirthDay.value="01";
-		document.samples.dateOfBirthMonth.value="01"
-	}
 }
 
 function selectVLTesting(theField) {
@@ -764,44 +728,32 @@ function disableEnableDateOfBirth(checkedObject) {
 		//has been checked
 		document.samples.dateOfBirthIn.disabled=true;
 		document.samples.dateOfBirthAge.disabled=true;
-		document.samples.dateOfBirthYear.disabled=true;
-		document.samples.dateOfBirthMonth.disabled=true;
-		document.samples.dateOfBirthDay.disabled=true;
+		document.samples.dateOfBirth.disabled=true;
 	} else if(checkedObject.checked==false) {
 		//has been unchecked
 		document.samples.dateOfBirthIn.disabled=false;
 		document.samples.dateOfBirthAge.disabled=false;
-		document.samples.dateOfBirthYear.disabled=false;
-		document.samples.dateOfBirthMonth.disabled=false;
-		document.samples.dateOfBirthDay.disabled=false;
+		document.samples.dateOfBirth.disabled=false;
 	}
 }
 
 function disableEnableTreatmentInitiationDate(checkedObject) {
 	if(checkedObject.checked==true) {
 		//has been checked
-		document.samples.treatmentInitiationDateYear.disabled=true;
-		document.samples.treatmentInitiationDateMonth.disabled=true;
-		document.samples.treatmentInitiationDateDay.disabled=true;
+		document.samples.treatmentInitiationDate.disabled=true;
 	} else if(checkedObject.checked==false) {
 		//has been unchecked
-		document.samples.treatmentInitiationDateYear.disabled=false;
-		document.samples.treatmentInitiationDateMonth.disabled=false;
-		document.samples.treatmentInitiationDateDay.disabled=false;
+		document.samples.treatmentInitiationDate.disabled=false;
 	}
 }
 
 function disableEnableCollectionDate(checkedObject) {
 	if(checkedObject.checked==true) {
 		//has been checked
-		document.samples.collectionDateYear.disabled=true;
-		document.samples.collectionDateMonth.disabled=true;
-		document.samples.collectionDateDay.disabled=true;
+		document.samples.collectionDate.disabled=true;
 	} else if(checkedObject.checked==false) {
 		//has been unchecked
-		document.samples.collectionDateYear.disabled=false;
-		document.samples.collectionDateMonth.disabled=false;
-		document.samples.collectionDateDay.disabled=false;
+		document.samples.collectionDate.disabled=false;
 	}
 }
 
@@ -976,111 +928,29 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                             <tr>
 							<td width="20%">Collection&nbsp;Date&nbsp;<font class="vl_red">*</font></td>
                               <td width="80%">
+								<script>
+                                $(function() {
+									$('#collectionDate').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
 								<table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="collectionDateDay" id="collectionDateDay" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
-                                          <?
-											if($collectionDate) {
-												echo "<option value=\"".getFormattedDateDay($collectionDate)."\" selected=\"selected\">".getFormattedDateDay($collectionDate)."</option>";
-											} else {
-												echo "<option value=\"".getFormattedDateDay($datetime)."\" selected=\"selected\">".getFormattedDateDay($datetime)."</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateMonth" id="collectionDateMonth" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
-                                          <? 
-											if($collectionDate) {
-												echo "<option value=\"".getFormattedDateMonth($collectionDate)."\" selected=\"selected\">".getFormattedDateMonthname($collectionDate)."</option>";
-											} else {
-												echo "<option value=\"".getFormattedDateMonth($datetime)."\" selected=\"selected\">".getFormattedDateMonthname($datetime)."</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="collectionDateYear" id="collectionDateYear" class="search" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?>>
-                                          		<?
-												if($collectionDate) {
-													echo "<option value=\"".getFormattedDateYear($collectionDate)."\" selected=\"selected\">".getFormattedDateYear($collectionDate)."</option>";
-												} else {
-													echo "<option value=\"".getFormattedDateYear($datetime)."\" selected=\"selected\">".getFormattedDateYear($datetime)."</option>"; 
-												}
-                                                for($j=(getFormattedDateYear($datetime)-1);$j>=(getCurrentYear()-10);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><input name="noCollectionDateSupplied" type="checkbox" id="noCollectionDateSupplied" value="1" onclick="disableEnableCollectionDate(this);" <?=($noCollectionDateSupplied?"checked=\"checked\"":"")?> /></td>
-                                        <td style="padding:0px 0px 0px 5px">No&nbsp;Collection&nbsp;Date&nbsp;supplied</td>
-                                        </tr>
-                                    </table>
+                                  <tr>
+                                    <td><input type="text" name="collectionDate" id="collectionDate" value="<?=($collectionDate?$collectionDate:getRawFormattedDateLessDay($datetime))?>" class="search_pre" size="10" maxlength="10" <?=($noCollectionDateSupplied?"disabled=\"disabled\"":"")?> /></td>
+                                    <td style="padding:0px 0px 0px 5px"><input name="noCollectionDateSupplied" type="checkbox" id="noCollectionDateSupplied" value="1" onclick="disableEnableCollectionDate(this);" <?=($noCollectionDateSupplied?"checked=\"checked\"":"")?> /></td>
+                                    <td style="padding:0px 0px 0px 5px">No&nbsp;Collection&nbsp;Date&nbsp;supplied</td>
+                                    </tr>
+                                </table>
                               </td>
                             </tr>
                             <tr>
 							<td width="20%">Received&nbsp;at&nbsp;CPHL&nbsp;<font class="vl_red">*</font></td>
                               <td width="80%">
-								<table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="receiptDateDay" id="receiptDateDay" class="search">
-                                          <?
-											if($receiptDate) {
-												echo "<option value=\"".getFormattedDateDay($receiptDate)."\" selected=\"selected\">".getFormattedDateDay($receiptDate)."</option>";
-											} else {
-												echo "<option value=\"".getFormattedDateDay($datetime)."\" selected=\"selected\">".getFormattedDateDay($datetime)."</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="receiptDateMonth" id="receiptDateMonth" class="search">
-                                          <? 
-											if($receiptDate) {
-												echo "<option value=\"".getFormattedDateMonth($receiptDate)."\" selected=\"selected\">".getFormattedDateMonthname($receiptDate)."</option>";
-											} else {
-												echo "<option value=\"".getFormattedDateMonth($datetime)."\" selected=\"selected\">".getFormattedDateMonthname($datetime)."</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="receiptDateYear" id="receiptDateYear" class="search">
-                                          		<?
-												if($receiptDate) {
-													echo "<option value=\"".getFormattedDateYear($receiptDate)."\" selected=\"selected\">".getFormattedDateYear($receiptDate)."</option>";
-												} else {
-													echo "<option value=\"".getFormattedDateYear($datetime)."\" selected=\"selected\">".getFormattedDateYear($datetime)."</option>"; 
-												}
-                                                for($j=getFormattedDateYear($datetime);$j>=2014;$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                        </tr>
-                                    </table>
+								<script>
+                                $(function() {
+									$('#receiptDate').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
+                                <input type="text" name="receiptDate" id="receiptDate" value="<?=($receiptDate?$receiptDate:getRawFormattedDateLessDay($datetime))?>" class="search_pre" size="10" maxlength="10" />
                               </td>
                             </tr>
                             <tr>
@@ -1142,54 +1012,16 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                 </tr>
                                 <tr>
                                   <td>Date&nbsp;of&nbsp;Birth</td>
-                                  <td><table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                  <td>
+                                <script>
+                                $(function() {
+									$('#dateOfBirth').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
+								<table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                     <tr>
-                                      <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
-                                        <?
-										  	if($dateOfBirth) {
-												echo "<option value=\"".getFormattedDateDay($dateOfBirth)."\" selected=\"selected\">".getFormattedDateDay($dateOfBirth)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                      </select></td>
-                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
-                                        <? 
-										  	if($dateOfBirth) {
-												echo "<option value=\"".getFormattedDateMonth($dateOfBirth)."\" selected=\"selected\">".getFormattedDateMonthname($dateOfBirth)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                        <option value="01">Jan</option>
-                                        <option value="02">Feb</option>
-                                        <option value="03">Mar</option>
-                                        <option value="04">Apr</option>
-                                        <option value="05">May</option>
-                                        <option value="06">Jun</option>
-                                        <option value="07">Jul</option>
-                                        <option value="08">Aug</option>
-                                        <option value="09">Sept</option>
-                                        <option value="10">Oct</option>
-                                        <option value="11">Nov</option>
-                                        <option value="12">Dec</option>
-                                      </select></td>
-                                      <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
-                                        <?
-												if($dateOfBirth) {
-													echo "<option value=\"".getFormattedDateYear($dateOfBirth)."\" selected=\"selected\">".getFormattedDateYear($dateOfBirth)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-                                                for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-100);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                      </select></td>
-                                      <td style="padding:0px 5px 0px 5px">or</td>
+                                      <td><input type="text" name="dateOfBirth" id="dateOfBirth" value="<?=($dateOfBirth?$dateOfBirth:"")?>" class="search_pre" size="10" maxlength="10" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?> /></td>
+                                      <td style="padding:0px 5px 0px 10px">or</td>
                                       <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthAge" id="dateOfBirthAge" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
                                         <?
 												if($dateOfBirthAge) {
@@ -1268,53 +1100,14 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                             <tr>
                               <td>Treatment&nbsp;Initiation&nbsp;Date&nbsp;<font class="vl_red">*</font></td>
                               <td>
+								<script>
+                                $(function() {
+									$('#treatmentInitiationDate').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
                                   <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
                                       <tr>
-                                        <td><select name="treatmentInitiationDateDay" id="treatmentInitiationDateDay" class="search" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?>>
-                                          <?
-											if($treatmentInitiationDate) {
-												echo "<option value=\"".getFormattedDateDay($treatmentInitiationDate)."\" selected=\"selected\">".getFormattedDateDay($treatmentInitiationDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="treatmentInitiationDateMonth" id="treatmentInitiationDateMonth" class="search" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?>>
-                                          <? 
-											if($treatmentInitiationDate) {
-												echo "<option value=\"".getFormattedDateMonth($treatmentInitiationDate)."\" selected=\"selected\">".getFormattedDateMonthname($treatmentInitiationDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="treatmentInitiationDateYear" id="treatmentInitiationDateYear" class="search" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?>>
-                                          		<?
-												if($treatmentInitiationDate) {
-													echo "<option value=\"".getFormattedDateYear($treatmentInitiationDate)."\" selected=\"selected\">".getFormattedDateYear($treatmentInitiationDate)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-												for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=1990;$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
+                                        <td><input type="text" name="treatmentInitiationDate" id="treatmentInitiationDate" value="<?=($treatmentInitiationDate?$treatmentInitiationDate:"")?>" class="search_pre" size="10" maxlength="10" <?=($noTreatmentInitiationDateSupplied?"disabled=\"disabled\"":"")?> /></td>
                                         <td style="padding:0px 0px 0px 5px"><input name="noTreatmentInitiationDateSupplied" type="checkbox" id="noTreatmentInitiationDateSupplied" value="1" onclick="disableEnableTreatmentInitiationDate(this);" <?=($noTreatmentInitiationDateSupplied?"checked=\"checked\"":"")?> /></td>
                                         <td style="padding:0px 0px 0px 5px">No&nbsp;Treatment&nbsp;Initiation&nbsp;Date&nbsp;supplied</td>
                                         </tr>
@@ -1553,55 +1346,12 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <td width="69%">Routine Monitoring</td>
                               <td width="5%" align="right">Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
                               <td width="5%" style="padding:0px 0px 0px 5px">
-                                  <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="routineMonitoringLastVLDateDay" id="routineMonitoringLastVLDateDay" class="search">
-                                          <?
-											if($routineMonitoringLastVLDate) {
-												echo "<option value=\"".getFormattedDateDay($routineMonitoringLastVLDate)."\" selected=\"selected\">".getFormattedDateDay($routineMonitoringLastVLDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="routineMonitoringLastVLDateMonth" id="routineMonitoringLastVLDateMonth" class="search">
-                                          <? 
-											if($routineMonitoringLastVLDate) {
-												echo "<option value=\"".getFormattedDateMonth($routineMonitoringLastVLDate)."\" selected=\"selected\">".getFormattedDateMonthname($routineMonitoringLastVLDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="routineMonitoringLastVLDateYear" id="routineMonitoringLastVLDateYear" class="search">
-                                          		<?
-												if($routineMonitoringLastVLDate) {
-													echo "<option value=\"".getFormattedDateYear($routineMonitoringLastVLDate)."\" selected=\"selected\">".getFormattedDateYear($routineMonitoringLastVLDate)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-												for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-10);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                        </tr>
-                                    </table>
+								<script>
+                                $(function() {
+									$('#routineMonitoringLastVLDate').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
+                                  <input type="text" name="routineMonitoringLastVLDate" id="routineMonitoringLastVLDate" value="<?=($routineMonitoringLastVLDate?$routineMonitoringLastVLDate:"")?>" class="search_pre" size="10" maxlength="10" />
                               </td>
                               <td width="5%" style="padding: 0px 0px 0px 10px" align="right">Value:</td>
                               <td width="5%" style="padding:0px 0px 0px 5px"><input type="text" name="routineMonitoringValue" id="routineMonitoringValue" value="<?=$routineMonitoringValue?>" class="search_pre" size="7" maxlength="10" /></td>
@@ -1630,55 +1380,12 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <td>Repeat Viral Load Test after detectable viraemia and 6 months adherence counseling</td>
                               <td width="10%" align="right">Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
                               <td width="10%" style="padding:0px 0px 0px 5px">
-                                  <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="repeatVLTestLastVLDateDay" id="repeatVLTestLastVLDateDay" class="search">
-                                          <?
-											if($repeatVLTestLastVLDate) {
-												echo "<option value=\"".getFormattedDateDay($repeatVLTestLastVLDate)."\" selected=\"selected\">".getFormattedDateDay($repeatVLTestLastVLDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="repeatVLTestLastVLDateMonth" id="repeatVLTestLastVLDateMonth" class="search">
-                                          <? 
-											if($repeatVLTestLastVLDate) {
-												echo "<option value=\"".getFormattedDateMonth($repeatVLTestLastVLDate)."\" selected=\"selected\">".getFormattedDateMonthname($repeatVLTestLastVLDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="repeatVLTestLastVLDateYear" id="repeatVLTestLastVLDateYear" class="search">
-                                          		<?
-												if($repeatVLTestLastVLDate) {
-													echo "<option value=\"".getFormattedDateYear($repeatVLTestLastVLDate)."\" selected=\"selected\">".getFormattedDateYear($repeatVLTestLastVLDate)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-												for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-10);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                        </tr>
-                                    </table>
+								<script>
+                                $(function() {
+									$('#repeatVLTestLastVLDate').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
+                                  <input type="text" name="repeatVLTestLastVLDate" id="repeatVLTestLastVLDate" value="<?=($repeatVLTestLastVLDate?$repeatVLTestLastVLDate:"")?>" class="search_pre" size="10" maxlength="10" />
                               </td>
                               <td style="padding: 0px 0px 0px 10px" align="right">Value:</td>
                               <td style="padding:0px 0px 0px 5px"><input type="text" name="repeatVLTestValue" id="repeatVLTestValue" value="<?=$repeatVLTestValue?>" class="search_pre" size="7" maxlength="10" /></td>
@@ -1707,55 +1414,12 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <td>Suspected Treatment Failure</td>
                               <td width="10%" align="right">Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
                               <td width="10%" style="padding:0px 0px 0px 5px">
-                                  <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="suspectedTreatmentFailureLastVLDateDay" id="suspectedTreatmentFailureLastVLDateDay" class="search">
-                                          <?
-											if($suspectedTreatmentFailureLastVLDate) {
-												echo "<option value=\"".getFormattedDateDay($suspectedTreatmentFailureLastVLDate)."\" selected=\"selected\">".getFormattedDateDay($suspectedTreatmentFailureLastVLDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="suspectedTreatmentFailureLastVLDateMonth" id="suspectedTreatmentFailureLastVLDateMonth" class="search">
-                                          <? 
-											if($suspectedTreatmentFailureLastVLDate) {
-												echo "<option value=\"".getFormattedDateMonth($suspectedTreatmentFailureLastVLDate)."\" selected=\"selected\">".getFormattedDateMonthname($suspectedTreatmentFailureLastVLDate)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="suspectedTreatmentFailureLastVLDateYear" id="suspectedTreatmentFailureLastVLDateYear" class="search">
-                                          		<?
-												if($suspectedTreatmentFailureLastVLDate) {
-													echo "<option value=\"".getFormattedDateYear($suspectedTreatmentFailureLastVLDate)."\" selected=\"selected\">".getFormattedDateYear($suspectedTreatmentFailureLastVLDate)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-												for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-10);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                        </tr>
-                                    </table>
+								<script>
+                                $(function() {
+									$('#suspectedTreatmentFailureLastVLDate').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
+                                  <input type="text" name="suspectedTreatmentFailureLastVLDate" id="suspectedTreatmentFailureLastVLDate" value="<?=($suspectedTreatmentFailureLastVLDate?$suspectedTreatmentFailureLastVLDate:"")?>" class="search_pre" size="10" maxlength="10" />
                               </td>
                               <td style="padding: 0px 0px 0px 10px" align="right">Value:</td>
                               <td style="padding:0px 0px 0px 5px"><input type="text" name="suspectedTreatmentFailureValue" id="suspectedTreatmentFailureValue" value="<?=$suspectedTreatmentFailureValue?>" class="search_pre" size="7" maxlength="10" /></td>

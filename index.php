@@ -19,6 +19,7 @@ $searchFilter=getValidatedVariable("searchFilter");
 <link href="/css/vl.css" rel="stylesheet" type="text/css">
 <link href="/css/jsdialog.css" rel="stylesheet" media="screen" type="text/css">
 <link href="/css/dhtmlxcombo.css" rel="stylesheet" type="text/css">
+<link href="/css/datepicker.jquery.css" rel="stylesheet">
 <? $vlDC->printJavascript(); ?>
 <? if($_SESSION["VLEMAIL"]) { ?>
 	<script src="/js/tooltip.js"></script>
@@ -34,6 +35,10 @@ $searchFilter=getValidatedVariable("searchFilter");
     <script src="/js/dhtmlxcombo_extra.js"></script>
     <script src="/js/dhtmlxcommon.js"></script>
     <script src="/js/dhtmlxcombo.js"></script>
+
+	<script src="/js/datepicker.jquery.min.js"></script>
+    <script src="/js/datepicker.jquery.plugin.js"></script>
+    <script src="/js/datepicker.jquery.js"></script>
     
     <script>
 	//image path

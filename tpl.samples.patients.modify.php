@@ -15,9 +15,7 @@ $artNumber=preg_replace("/\s/s","",$artNumber);
 
 $otherID=validate($otherID);
 $gender=validate($gender);
-$dateOfBirthDay=validate($dateOfBirthDay);
-$dateOfBirthMonth=validate($dateOfBirthMonth);
-$dateOfBirthYear=validate($dateOfBirthYear);
+$dateOfBirth=validate($dateOfBirth);
 $patientPhone=validate($patientPhone);
 
 if($savePatient) {
@@ -37,17 +35,11 @@ if($savePatient) {
 	* whose date of birth or age is not given by the facility. This was initially a 'must-have' option but with massive 
 	* numbers of forms returning without this information, they would like to have the option of leaving it as a "Left blank". 
 	* This can be put after the age variable.
-	if(!$dateOfBirthDay || !$dateOfBirthMonth || !$dateOfBirthYear) {
+	if(!$dateOfBirth) {
 		$error.="<br /><strong>Date of Birth Missing</strong><br />Kindly provide the Date of Birth<br />";
 	}
 	*/
 	
-	//is both date of birth and age in years/months missing?
-	$dateOfBirth=0;
-	if($dateOfBirthYear && $dateOfBirthMonth && $dateOfBirthDay) {
-		$dateOfBirth="$dateOfBirthYear-$dateOfBirthMonth-$dateOfBirthDay";
-	}
-
 	//input data
 	if(!$error) {
 		//log changes
@@ -121,34 +113,22 @@ function validate(envelopes) {
 		return (false);
 	}
 	/*
-	if((!document.samples.dateOfBirthDay.value || !document.samples.dateOfBirthMonth.value || !document.samples.dateOfBirthYear.value) && (!document.samples.dateOfBirthAge.value || !document.samples.dateOfBirthIn.value)) {
+	if(!document.samples.dateOfBirth && (!document.samples.dateOfBirthAge.value || !document.samples.dateOfBirthIn.value)) {
 		alert('Missing Mandatory Field: Date of Birth or Patient Age');
-		document.samples.dateOfBirthDay.focus();
+		document.samples.dateOfBirth.focus();
 		return (false);
 	}
 	*/
 	return (true);
 }
 
-function checkMonthDay(theField) {
-	if(theField.value && !document.samples.dateOfBirthMonth.value && !document.samples.dateOfBirthDay.value) {
-		//default to first day/month
-		document.samples.dateOfBirthDay.value="01";
-		document.samples.dateOfBirthMonth.value="01"
-	}
-}
-
 function disableEnableDateOfBirth(checkedObject) {
 	if(checkedObject.checked==true) {
 		//has been checked
-		document.samples.dateOfBirthYear.disabled=true;
-		document.samples.dateOfBirthMonth.disabled=true;
-		document.samples.dateOfBirthDay.disabled=true;
+		document.samples.dateOfBirth.disabled=true;
 	} else if(checkedObject.checked==false) {
 		//has been unchecked
-		document.samples.dateOfBirthYear.disabled=false;
-		document.samples.dateOfBirthMonth.disabled=false;
-		document.samples.dateOfBirthDay.disabled=false;
+		document.samples.dateOfBirth.disabled=false;
 	}
 }
 //-->
@@ -214,62 +194,23 @@ function disableEnableDateOfBirth(checkedObject) {
                             <tr>
                               <td>Date&nbsp;of&nbsp;Birth</td>
                               <td>
-                                  <table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                      <tr>
-                                        <td><select name="dateOfBirthDay" id="dateOfBirthDay" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
-                                          <?
-										  	if($dateOfBirth) {
-												echo "<option value=\"".getFormattedDateDay($dateOfBirth)."\" selected=\"selected\">".getFormattedDateDay($dateOfBirth)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Date</option>";
-											}
-											for($j=1;$j<=31;$j++) {
-                                                echo "<option value=\"".($j<10?"0$j":$j)."\">$j</option>";
-                                            }
-                                            ?>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthMonth" id="dateOfBirthMonth" class="search" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
-                                          <? 
-										  	if($dateOfBirth) {
-												echo "<option value=\"".getFormattedDateMonth($dateOfBirth)."\" selected=\"selected\">".getFormattedDateMonthname($dateOfBirth)."</option>";
-											} else {
-	                                            echo "<option value=\"\" selected=\"selected\">Select Month</option>"; 
-											}
-										  ?>
-                                          <option value="01">Jan</option>
-                                          <option value="02">Feb</option>
-                                          <option value="03">Mar</option>
-                                          <option value="04">Apr</option>
-                                          <option value="05">May</option>
-                                          <option value="06">Jun</option>
-                                          <option value="07">Jul</option>
-                                          <option value="08">Aug</option>
-                                          <option value="09">Sept</option>
-                                          <option value="10">Oct</option>
-                                          <option value="11">Nov</option>
-                                          <option value="12">Dec</option>
-                                          </select></td>
-                                        <td style="padding:0px 0px 0px 5px"><select name="dateOfBirthYear" id="dateOfBirthYear" class="search" onchange="checkMonthDay(this)" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?>>
-                                          		<?
-												if($dateOfBirth) {
-													echo "<option value=\"".getFormattedDateYear($dateOfBirth)."\" selected=\"selected\">".getFormattedDateYear($dateOfBirth)."</option>";
-												} else {
-													echo "<option value=\"\" selected=\"selected\">Select Year</option>";
-												}
-                                                for($j=getFormattedDateYear(getDualInfoWithAlias("last_day(now())","lastmonth"));$j>=(getCurrentYear()-100);$j--) {
-                                                    echo "<option value=\"$j\">$j</option>";
-                                                }
-                                                ?>
-                                          </select></td>
-                                          <td style="padding:0px 0px 0px 5px">or</td>
-                                          <td style="padding:0px 0px 0px 5px"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
-                                              <tr>
-                                                <td width="1%"><input name="noDateOfBirthSupplied" type="checkbox" id="noDateOfBirthSupplied" value="1" onclick="disableEnableDateOfBirth(this);" <?=($noDateOfBirthSupplied?"checked=\"checked\"":"")?> /></td>
-                                                <td width="99%" style="padding:0px 0px 0px 5px">No&nbsp;date&nbsp;of&nbsp;birth&nbsp;supplied</td>
-                                              </tr>
-                                            </table></td>
-                                        </tr>
-                                    </table>
+                                <script>
+                                $(function() {
+									$('#dateOfBirth').datepick({dateFormat: 'yyyy-mm-dd'});
+                                });
+                                </script>
+								<table width="10%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                    <tr>
+                                      <td><input type="text" name="dateOfBirth" id="dateOfBirth" value="<?=($dateOfBirth?$dateOfBirth:"")?>" class="search_pre" size="10" maxlength="10" <?=($noDateOfBirthSupplied?"disabled=\"disabled\"":"")?> /></td>
+                                      <td style="padding:0px 0px 0px 5px">or</td>
+                                      <td style="padding:0px 0px 0px 5px"><table width="100%" border="0" cellspacing="0" cellpadding="0" class="vl">
+                                          <tr>
+                                            <td width="1%"><input name="noDateOfBirthSupplied" type="checkbox" id="noDateOfBirthSupplied" value="1" onclick="disableEnableDateOfBirth(this);" <?=($noDateOfBirthSupplied?"checked=\"checked\"":"")?> /></td>
+                                            <td width="99%" style="padding:0px 0px 0px 5px">No&nbsp;date&nbsp;of&nbsp;birth&nbsp;supplied</td>
+                                          </tr>
+                                        </table></td>
+                                    </tr>
+                                </table>
                               </td>
                             </tr>
                             <tr>
