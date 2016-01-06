@@ -161,7 +161,7 @@ $default_mglength=12;
 //system IP
 $default_systemIP="127.0.0.1";
 //default result failure message - need for a new sample
-$default_resultFailureNewSampleMessage="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
+$default_resultFailureNewSampleMessage="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.";
 
 //$ipAddress = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 $serverAddress = $_SERVER['REMOTE_ADDR'];

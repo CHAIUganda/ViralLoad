@@ -26,8 +26,8 @@ if($encryptedSample) {
 //envelope Number From
 $searchQueryFrom=0;
 $searchQueryTo=0;
-$searchQueryCurrentPosition=0;
-$searchQueryNextPosition=0;
+//$searchQueryCurrentPosition=0;
+//$searchQueryNextPosition=0;
 if($envelopeNumberFrom && $envelopeNumberTo) {
 	$searchQueryFrom=validate(vlDecrypt($envelopeNumberFrom));
 	$searchQueryTo=validate(vlDecrypt($envelopeNumberTo));

@@ -301,7 +301,7 @@ function validate(results) {
 <form name="results" method="post" action="/results/print/batch/<?=$machineType?>/" onsubmit="return validate(this)">
 <!--<form name="results" method="post" action="/results/print/batch/<?=$machineType?>/">-->
 <table width="100%" border="0" class="vl">
-			<? if(!$resultsRoche && !$resultsAbbott) { ?>
+			<? if(!$resultsRoche && !$resultsAbbott && !count($sampleIDFieldArray)) { ?>
             <tr>
                 <td class="vl_error">
                 There are No Results on the System!<br />

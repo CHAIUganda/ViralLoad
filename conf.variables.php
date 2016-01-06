@@ -131,7 +131,7 @@ $default_viralLoadRepeatTestWindow=5;
 $serverAddress = $_SERVER['REMOTE_ADDR'];
 
 //default result failure message - need for a new sample
-$default_resultFailureNewSampleMessage="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
+$default_resultFailureNewSampleMessage="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.";
 
 //free memory
 clearstatcache();

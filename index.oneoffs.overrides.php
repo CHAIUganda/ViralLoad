@@ -8,6 +8,13 @@ include "conf.php";
 * ran as lnx http://192.168.0.43/index.oneoffs.php
 * task 1: get all sample IDs from abbott which appear more than once in vl_results_merged 
 * task 2: get all sample IDs from roche which appear more than once in vl_results_merged 
+* task 3: a procedure to remove result override for data collected after 29/dec/15
+	this was done because the system was applying the override to samples that had failed once not twice
+	the correct procedure is to apply the override to samples that have failed twice
+* task 4: a procedure to override key abbott results based on this query
+	select sampleID,count(id) num from vl_results_abbott where result='3119 A no clot exit detected error was encountered by the Liquid Handler.' and sampleID not in (select sampleID from vl_results_override) group by sampleID having num>1 order by num desc
+* task 5: fix a result typo
+	update vl_results_override set result='There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.' where result='There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.'
 
 //key variables
 $rocheFailedResult=0;
@@ -49,9 +56,8 @@ if(mysqlnumrows($query)) {
 		logResultOverride($q["vlSampleID"],getDetailedTableInfo2("vl_results_merged","lower(machine)='".strtolower($machine)."' and vlSampleID='$q[vlSampleID]' and created='$q[dateCreated]' limit 1","worksheetID"),$default_resultFailureNewSampleMessage);
 	}
 }
-*/
 
-//task 3: results collected 29/dec/15 and 
+//task 3: a procedure to remove result override for data collected after 29/dec/15
 $query=0;
 $query=mysqlquery("select vlSampleID,created,count(id) num from vl_results_merged 
 							where 
@@ -68,4 +74,22 @@ if(mysqlnumrows($query)) {
 		mysqlquery("delete from vl_results_override where id='$id'");
 	}
 }
+*/
+
+//task 4: a procedure to override key abbott results
+$query=0;
+$query=mysqlquery("select sampleID, count(id) num, max(created) dateCreated from vl_results_abbott 
+						where 
+							result='3119 A no clot exit detected error was encountered by the Liquid Handler.' and 
+								sampleID not in (select sampleID from vl_results_override) 
+									group by sampleID having num>1 order by num desc");
+if(mysqlnumrows($query)) {
+	while($q=mysqlfetcharray($query)) {
+		//log result override
+		logResultOverride($q["sampleID"],getDetailedTableInfo2("vl_results_abbott","sampleID='$q[sampleID]' and created='$q[dateCreated]' limit 1","worksheetID"),$default_resultFailureNewSampleMessage);
+	}
+}
+
+//task 5: fix a result typo
+mysqlquery("update vl_results_override set result='There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.' where result='There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.'");
 ?>
