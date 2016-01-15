@@ -27,10 +27,10 @@ if($searchQuery) {
 				//validate
 				$artNumber=validate($artNumber);
 				//clean art number by removing - . / and spaces
-				$artNumber=preg_replace("/\-/s","",$artNumber);
-				$artNumber=preg_replace("/\./s","",$artNumber);
-				$artNumber=preg_replace("/\//s","",$artNumber);
-				$artNumber=preg_replace("/\s/s","",$artNumber);
+				//$artNumber=preg_replace("/\-/s","",$artNumber);
+				//$artNumber=preg_replace("/\./s","",$artNumber);
+				//$artNumber=preg_replace("/\//s","",$artNumber);
+				//$artNumber=preg_replace("/\s/s","",$artNumber);
 				
 				$otherID=validate($otherID);
 				$gender=validate($gender);

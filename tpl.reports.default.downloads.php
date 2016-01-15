@@ -101,8 +101,8 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                                 </select></td>
                                 <td style="padding:0px 0px 0px 5px"><select name="toYear" id="toYear" class="search">
                                   <?
-                                        for($j=getFormattedDateYear($datetime);$j<=(getCurrentYear()+50);$j++) {
-                                            echo "<option value=\"$j\">$j</option>";
+                                        for($j=(getFormattedDateYear($datetime)-5);$j<=(getCurrentYear()+50);$j++) {
+                                            echo "<option value=\"$j\"".($j==getFormattedDateYear($datetime)?" selected=\"selected\"":"").">$j</option>";
                                         }
                                         ?>
                                 </select></td>
@@ -221,8 +221,8 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                                 </select></td>
                                 <td style="padding:0px 0px 0px 5px"><select name="toYear" id="toYear" class="search">
                                   <?
-                                        for($j=getFormattedDateYear($datetime);$j<=(getCurrentYear()+50);$j++) {
-                                            echo "<option value=\"$j\">$j</option>";
+                                        for($j=(getFormattedDateYear($datetime)-5);$j<=(getCurrentYear()+50);$j++) {
+                                            echo "<option value=\"$j\"".($j==getFormattedDateYear($datetime)?" selected=\"selected\"":"").">$j</option>";
                                         }
                                         ?>
                                 </select></td>
