@@ -49,7 +49,15 @@ if($searchQuery) {
 				$uniqueID=0;
 				$uniqueIDlength=0;
 				if($artNumber || $otherID) {
-					$uniqueID=$facilityID."-".($artNumber?"A-$artNumber":"O-$otherID");
+					$artNumberModified=0;
+					$artNumberModified=$artNumber;
+					//clean art number by removing - . / and spaces
+					$artNumberModified=preg_replace("/\-/s","",$artNumberModified);
+					$artNumberModified=preg_replace("/\./s","",$artNumberModified);
+					$artNumberModified=preg_replace("/\//s","",$artNumberModified);
+					$artNumberModified=preg_replace("/\s/s","",$artNumberModified);
+
+					$uniqueID=$facilityID."-".($artNumber?"A-$artNumberModified":"O-$otherID");
 					$uniqueIDlength=strlen($facilityID."-".($artNumber?"A-":"O-"));
 				}
 		

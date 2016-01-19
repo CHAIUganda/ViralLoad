@@ -282,7 +282,15 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	//possible contradicting gender
 	$uniqueID=0;
 	if($artNumber || $otherID) {
-		$uniqueID=$facilityID."-".($artNumber?"A-$artNumber":"O-$otherID");
+		$artNumberModified=0;
+		$artNumberModified=$artNumber;
+		//clean art number by removing - . / and spaces
+		$artNumberModified=preg_replace("/\-/s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\./s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\//s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\s/s","",$artNumberModified);
+		
+		$uniqueID=$facilityID."-".($artNumber?"A-$artNumberModified":"O-$otherID");
 	}
 
 	$mostRecentGender=0;
@@ -340,7 +348,15 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 		//concatenations
 		$uniqueID=0;
 		if($artNumber || $otherID) {
-			$uniqueID=$facilityID."-".($artNumber?"A-$artNumber":"O-$otherID");
+			$artNumberModified=0;
+			$artNumberModified=$artNumber;
+			//clean art number by removing - . / and spaces
+			$artNumberModified=preg_replace("/\-/s","",$artNumberModified);
+			$artNumberModified=preg_replace("/\./s","",$artNumberModified);
+			$artNumberModified=preg_replace("/\//s","",$artNumberModified);
+			$artNumberModified=preg_replace("/\s/s","",$artNumberModified);
+			
+			$uniqueID=$facilityID."-".($artNumber?"A-$artNumberModified":"O-$otherID");
 		}
 
 		//log patient, if unique
