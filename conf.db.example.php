@@ -11,8 +11,8 @@ if($_SERVER['REMOTE_ADDR']=="127.0.0.1") {
 	$db = mysqlconnect('localhost', 'borrower_vl', 'viralload#123');
 	mysqlselectdb("borrower_vl");
 } else {
-	$db = mysqlconnect('localhost', 'root', 'chai8910');
-	mysqlselectdb("vl20160124");
+	$db = mysqlconnect('localhost', 'root', 'root#VL');
+	mysqlselectdb("eid_uganda_vl");
 }
 
 /**
