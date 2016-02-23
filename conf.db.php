@@ -15,6 +15,9 @@ if($_SERVER['REMOTE_ADDR']=="127.0.0.1") {
 	mysqlselectdb("vl20160124");
 }
 
+$db = mysqlconnect('localhost', 'root', 'chai8910');
+	mysqlselectdb("vl20160124");
+
 /**
 * function to override mysql_connect
 */
