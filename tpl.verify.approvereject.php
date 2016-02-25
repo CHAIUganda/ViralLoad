@@ -73,6 +73,8 @@ if($saveChangesReturn || $saveChangesProceed) {
 				go("/verify/search/$encryptedSample/pg/$pg/modified/");
 			} elseif($envelopeNumberFrom && $envelopeNumberTo) {
 				go("/verify/search/$envelopeNumberFrom/$envelopeNumberTo/pg/$pg/modified/");
+			} else {
+				go("/verify/$pg/modified/");
 			}
 		} else {
 			go("/verify/$pg/modified/");

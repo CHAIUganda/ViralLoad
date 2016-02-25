@@ -21,7 +21,7 @@ function queMail($fromName,$from,$to,$subject,$message,$html) {
 	mysqlquery("insert into vl_daemon_email 
 					(fromName,fromAddress,toAddress,subject,message,html,created,createdby) 
 					values 
-					('$fromName','$from','$to','".ereg_replace("'","\'",$subject)."','".ereg_replace("'","\'",$message)."','$html','$datetime','$user')");
+					('$fromName','$from','$to','".preg_replace("/'/s","\'",$subject)."','".preg_replace("/'/s","\'",$message)."','$html','$datetime','$user')");
 }
 
 /*

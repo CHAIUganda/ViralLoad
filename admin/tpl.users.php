@@ -24,8 +24,32 @@ if(!$GLOBALS['vlDC']) {
 				$error=0;
 				$error="";
 				//generate password
-				$password=0;
-				$password=generatePassword();
+				//password
+				if($password) {
+					/*
+					* check password
+					* must be alphanumeric
+					* must have upper and lower case characters
+					* must be at least 8 characters in length
+					*/
+					if(!preg_match("/([0-9]+)/s", $password)) {
+						$error.="<br>Password should contain at least one (1) numeric entry";
+					} 
+					if(!preg_match("/([a-z]+)/s", $password)) {
+						$error.="<br>Password should contain at least one (1) lower case Character";
+					}
+					if(!preg_match("/([A-Z]+)/s", $password)) {
+						//$error.="<br>Password should contain at least one (1) UPPER CASE Character";
+					}
+					if(!preg_match("/([^a-zA-Z0-9]+)/s", $password)) {
+						//$error.="<br>Password should contain at least one (1) Special Character e.g. @#%&amp;!?";
+					}
+					if(strlen($password)<$default_passwordLength) {
+						$error.="<br>Password should be at least $default_passwordLength characters in length";
+					}
+				} else {
+					$password=generatePassword();
+				}
 				//email
 				if(!$email) 
 					$error.="<br>No Email provided";
@@ -403,12 +427,12 @@ System Team";
                   <td>Email</td>
                   <td><input type="text" name="email" id="email" class="search" size="25" value="<?=($id?getDetailedTableInfo2("vl_users","id='$id'","email"):"")?>"></td>
                 </tr>
-                <? if($task!="add") { ?>
+                <? //if($task!="add") { ?>
                 <tr>
                   <td>Password</td>
                   <td><input type="password" name="password" id="password" class="search" size="25" value=""></td>
                 </tr>
-                <? } ?>
+                <? //} ?>
                 <tr>
                   <td>Phone</td>
                   <td><input type="text" name="phone" id="phone" class="search" size="25" value="<?=($id?getDetailedTableInfo2("vl_users","id='$id'","phone"):"+")?>"></td>
