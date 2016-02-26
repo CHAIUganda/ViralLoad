@@ -186,6 +186,12 @@ function checkOutcome() {
                           <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","otherID")?></td>
                         </tr>
                         <tr>
+                          <td>Date of Birth</td>
+                          <td>
+                            <? $dob=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","dateOfBirth") ?>
+                            <?=getFormattedDate($dob)?></td>
+                        </tr>
+                        <tr>
                           <td>Treatment&nbsp;Initiation&nbsp;Date</td>
                           <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id'","treatmentInitiationDate"))?></td>
                         </tr>

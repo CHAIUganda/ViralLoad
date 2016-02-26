@@ -824,3 +824,7 @@ legend {
 	border-color:#878787;
 	background:#ecffef;
 }
+
+.date_box{
+	width: 100px;
+}
