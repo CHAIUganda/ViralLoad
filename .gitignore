@@ -3,7 +3,6 @@
 /downloads.reports
 /worksheets
 /admin/php.ini
-.htaccess
 php.ini
 conf.db.php
 conf.variables.php
