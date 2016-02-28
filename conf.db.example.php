@@ -8,11 +8,11 @@ if($_SERVER['REMOTE_ADDR']=="127.0.0.1") {
 	$db = mysqlconnect('localhost', 'root', '');
 	mysqlselectdb("eid_uganda_vl");
 } elseif($_SERVER['SERVER_NAME']=="vl.trailanalytics.com") {
-	$db = mysqlconnect('localhost', 'borrower_vl', 'viralload#123');
-	mysqlselectdb("borrower_vl");
+	$db = mysqlconnect('localhost', 'borrower_vl', 'secret');
+	mysqlselectdb("db_name");
 } else {
-	$db = mysqlconnect('localhost', 'root', 'root#VL');
-	mysqlselectdb("eid_uganda_vl");
+	$db = mysqlconnect('localhost', 'root', 'secret');
+	mysqlselectdb("db_name");
 }
 
 /**
