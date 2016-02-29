@@ -282,7 +282,16 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	//possible contradicting gender
 	$uniqueID=0;
 	if($artNumber || $otherID) {
-		$uniqueID=$facilityID."-".($artNumber?"A-$artNumber":"O-$otherID");
+
+		$artNumberModified=0;
+		$artNumberModified=$artNumber;
+		//clean art number by removing - . / and spaces
+		$artNumberModified=preg_replace("/\-/s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\./s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\//s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\s/s","",$artNumberModified);
+		
+		$uniqueID=$facilityID."-".($artNumber?"A-$artNumberModified":"O-$otherID");
 	}
 
 	$mostRecentGender=0;
@@ -315,8 +324,17 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 		$mostRecentPatientIDTested && 
 			getStandardDateDifference($datetime,$mostRecentPatientIDTested)<($default_viralLoadRepeatTestWindow*30.5) && 
 				!$proceedWithWarningVLRepeatTesting) {
+
+
+		$last_result=getDetailedTableInfo2("vl_results_merged","vlSampleID='$mostRecentPatientSampleID' order by created desc limit 1","resultAlphanumeric");
+		$last_collection_date=getDetailedTableInfo2("vl_samples","vlSampleID='$mostRecentPatientSampleID' order by created desc limit 1","collectionDate");
+
 		$warnings.="<div style=\"padding: 10px 0px 0px 0px\">Possible Repeat Viral Load Test occuring within $default_viralLoadRepeatTestWindow months!</div>
 					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">The patient with ".($artNumber?"ART <strong>$artNumber</strong>":"").($artNumber && $otherID?", ":"").($otherID?"Other ID <strong>$otherID</strong>":"")." was last tested on <strong>".getFormattedDate($mostRecentPatientIDTested)."</strong> i.e ".round(getStandardDateDifference($datetime,$mostRecentPatientIDTested)/30.5)." month(s) back (less than $default_viralLoadRepeatTestWindow months ago).</div>
+					
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\"> Last Sample Reference #: $mostRecentPatientSampleID</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\"> Last Collection Date:".getFormattedDate($last_collection_date)."</div>
+					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\"> Last Result: $last_result</div>
 					<div style=\"padding: 5px 0px 0px 0px\" class=\"vls_grey\">Repeat Viral Load tests are carried out at intervals of $default_viralLoadRepeatTestWindow months or more. If this is an authentic repeat Viral Load test, then click \"Proceed Anyway\" otherwise, input a different patient then click \"Save Samples\" to proceed.</div>
 					<div style=\"padding: 10px 0px 10px 0px\" class=\"trailanalyticss_grey\"><input type=\"submit\" name=\"proceedWithWarningVLRepeatTesting\" class=\"button\" value=\"   Proceed Anyway   \" /></div>";
 	}
@@ -340,7 +358,15 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 		//concatenations
 		$uniqueID=0;
 		if($artNumber || $otherID) {
-			$uniqueID=$facilityID."-".($artNumber?"A-$artNumber":"O-$otherID");
+			$artNumberModified=0;
+			$artNumberModified=$artNumber;
+			//clean art number by removing - . / and spaces
+			$artNumberModified=preg_replace("/\-/s","",$artNumberModified);
+			$artNumberModified=preg_replace("/\./s","",$artNumberModified);
+			$artNumberModified=preg_replace("/\//s","",$artNumberModified);
+			$artNumberModified=preg_replace("/\s/s","",$artNumberModified);
+			
+			$uniqueID=$facilityID."-".($artNumber?"A-$artNumberModified":"O-$otherID");
 		}
 
 		//log patient, if unique

@@ -133,7 +133,24 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
                     <div style="padding:3px 0px 5px 2px"><a href="/download/facilities.excel/">Download current list of facilities</a></div>
                 </td>
               </tr>
-            </table></td>
+            </table>
+          </td>
+      </tr>
+      <tr>
+        <td valign="top" style="padding:10px 0px; border-bottom: 1px dashed #CCC">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td class="vl_tdnoborder" width="5%"><img src="/images/download.excel.gif" width="55" height="55" alt="downloads" border="0" /></td>
+                <td class="vl_tdnoborder" width="95%">
+                  <div style="padding:3px 0px 5px 2px">
+                   From: <input type="text" name="fro_date_tor" id="fro_date_tor" class="pick_date date_box" placeholder=" dd/mm/yyyy" maxlength="10">
+                   To: <input type="text" name="to_date_tor" id="to_date_tor" class="pick_date date_box" placeholder=" dd/mm/yyyy " maxlength="10">
+                 </div>
+                    <div style="padding:3px 0px 5px 2px"><a href="#" onclick="testOR()">Test out come report</a></div>
+                </td>
+              </tr>
+            </table>
+          </td>
       </tr>
       <tr>
         <td valign="top" style="padding:10px 0px<?=(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reportsQC' limit 1","id")?"; border-bottom: 1px dashed #CCC":"")?>">
@@ -259,3 +276,54 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
       <? } ?>
     </table>
   </div>
+  <script type="text/javascript">
+  function empty(e) {
+    switch (e) {
+      case "":
+      case 0:
+      case "0":
+      case null:
+      case false:
+       case typeof this == "undefined":
+       return true;
+       default:
+       return false;
+     }
+   }
+
+  function stdDate(str){
+    var arr=str.split("/");
+    if(arr.length<3){
+      return "";
+    }
+    return arr[2]+"-"+arr[1]+"-"+arr[0];
+  }
+
+  function strtotime(std_date){
+    var obj=new Date(std_date);
+    var micro_secs=obj.getTime();
+    return micro_secs/1000;
+  }
+
+  function testOR(){
+    var fro_date=stdDate($("#fro_date_tor").val());
+    var to_date=stdDate($("#to_date_tor").val());
+
+    var fro_s=strtotime(fro_date);
+    var to_s=strtotime(to_date);
+
+    if(empty(fro_s)||isNaN(fro_s) ||empty(to_s)||isNaN(to_s)){
+      alert("Please enter right dates");
+      return false;
+    }else if (fro_s>to_s){
+      alert("The fro date can't be after the to date");
+      return false;
+    }else{
+      return window.location.assign("/test_outcome_report/"+fro_s+"/"+to_s);
+    }
+
+  }
+
+
+   $(function() { $( ".pick_date" ).datepicker(); });
+  </script>

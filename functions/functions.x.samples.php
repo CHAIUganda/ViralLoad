@@ -62,8 +62,17 @@ function XloadArtHistory($artNumber,$facilityID) {
 	$uniqueID=0;
 	$patientID=0;
 	if($artNumber) {
-		$uniqueID=$facilityID."-A-$artNumber";
-		$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and artNumber='$artNumber' limit 1","id");
+		$artNumberModified=0;
+		$artNumberModified=$artNumber;
+		//clean art number by removing - . / and spaces
+		$artNumberModified=preg_replace("/\-/s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\./s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\//s","",$artNumberModified);
+		$artNumberModified=preg_replace("/\s/s","",$artNumberModified);
+
+		$uniqueID=$facilityID."-A-$artNumberModified";
+		//$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and artNumber='$artNumber' limit 1","id");
+		$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' limit 1","id");
 	}
 
 	$objResponse = new vlDCResponse();
@@ -97,9 +106,11 @@ function XloadArtHistory($artNumber,$facilityID) {
 								</tr>";
 			}
 			$queryResults.="</table>";
+			//return results
+			$objResponse->addAssign("artNumberHistoryID","innerHTML","<div style=\"border: 1px solid #c3ab94; background-color: #ebdfd4; padding: 10px\">$queryResults</div>");
+		} else {
+			$objResponse->addAssign("artNumberHistoryID","innerHTML","");
 		}
-		
-		$objResponse->addAssign("artNumberHistoryID","innerHTML","<div style=\"border: 1px solid #c3ab94; background-color: #ebdfd4; padding: 10px\">$queryResults</div>");
 	} else {
 		$objResponse->addAssign("artNumberHistoryID","innerHTML","");
 	}

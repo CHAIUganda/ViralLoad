@@ -18,7 +18,6 @@ if($_SERVER['REMOTE_ADDR']=="127.0.0.1") {
 } else {
 	$system_default_path="C:/xampp/htdocs/viralload/";
 }
-$system_default_path="/var/www/html/projects/viral_load/";
 date_default_timezone_set('Africa/Nairobi');
 $site_default_name=$_SERVER['HTTP_HOST'];
 $home_url=0;

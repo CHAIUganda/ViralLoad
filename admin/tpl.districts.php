@@ -35,7 +35,7 @@ if(!$GLOBALS['vlDC']) {
 						mysqlquery("insert into vl_districts 
 								(district,regionID,created,createdby) 
 								values 
-								('$district','$regionID','$datetime','$_SESSION[VLADMIN]')");
+								('$district','$formRegionID','$datetime','$_SESSION[VLADMIN]')");
 						//flag
 						$added=1;
 					} else {
@@ -45,10 +45,11 @@ if(!$GLOBALS['vlDC']) {
             break;
             case modify:
 				//log table change
-				logTableChange("vl_districts","regionID",$id,getDetailedTableInfo2("vl_districts","id='$id'","regionID"),$regionID);
+				logTableChange("vl_districts","regionID",$id,getDetailedTableInfo2("vl_districts","id='$id'","regionID"),$formRegionID);
 				logTableChange("vl_districts","district",$id,getDetailedTableInfo2("vl_districts","id='$id'","district"),$district);
 				//update vl_districts
-				mysqlquery("update vl_districts set district='$district',regionID='$regionID' where id='$id'");
+				mysqlquery("update vl_districts set district='$district',regionID='$formRegionID' where id='$id'");
+
 				//flag
 				$modified=1;
             break;
@@ -89,8 +90,8 @@ if(!$GLOBALS['vlDC']) {
         }
         //-->
         </script>
-        
-        <form name="districtsForm" method="post" action="?act=districts&regionID=<?=$regionID?>&nav=configuration" onsubmit="return checkForm(this)">
+        <form name="districtsForm" method="post" action="?act=districts&getRegionID=<?=$regionID?>&nav=configuration" onsubmit="return checkForm(this)">
+
           <table width="90%" border="0" class="vl">
 		<? if($added) { ?>
             <tr>
@@ -138,7 +139,7 @@ if(!$GLOBALS['vlDC']) {
                 </tr>
                 <tr>
                   <td>Region</td>
-                  <td><select name="regionID" id="regionID" class="search">
+                  <td><select name="formRegionID" id="formRegionID" class="search">
 						<?
 						$query=0;
 						$query=mysqlquery("select * from vl_regions order by region");
@@ -146,7 +147,7 @@ if(!$GLOBALS['vlDC']) {
 						if($id) {
 							echo "<option value=\"".getDetailedTableInfo2("vl_districts","id='$id'","regionID")."\" selected=\"selected\">".getDetailedTableInfo2("vl_regions","id='".getDetailedTableInfo2("vl_districts","id='$id'","regionID")."'","region")."</option>";
 						} else {
-							echo "<option value=\"$regionID\" selected=\"selected\">".getDetailedTableInfo2("vl_regions","id='$regionID'","region")."</option>";
+							echo "<option value=\"$formRegionID\" selected=\"selected\">".getDetailedTableInfo2("vl_regions","id='$formRegionID'","region")."</option>";
 						}
 						
 						if(mysqlnumrows($query)) {

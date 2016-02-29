@@ -298,20 +298,7 @@ function logRepeat($machineType,$sampleID,$worksheetID,$result,$flags) {
 	$id=getDetailedTableInfo2("vl_logs_samplerepeats","sampleID='$sampleID' limit 1","id");
 	if(!$id) {
 		//first time, and sample qualifies for an automatic repeat?
-		/*
-		if(($machineType=="roche" && 
-			($result=="failed" || $result=="invalid")) || 
-				($machineType=="abbott" && 
-					($result=="-1.00" || 
-						$result=="3153 there is insufficient volume in the vessel to perform an aspirate or dispense operation." || 
-							$result=="3109 a no liquid detected error was encountered by the liquid handler." || 
-								$flags=="4442 internal control cycle number is too high. valid range is [18.35, 22.35]."))) {
-			mysqlquery("insert into vl_logs_samplerepeats 
-							(sampleID,oldWorksheetID,created,createdby) 
-							values 
-							('$sampleID','$worksheetID','$datetime','$trailSessionUser')");
-		}
-		*/
+
 		if(($machineType=="roche" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID"))) || 
 				($machineType=="abbott" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID")))) {
 			mysqlquery("insert into vl_logs_samplerepeats 
@@ -344,18 +331,6 @@ function logRepeat($machineType,$sampleID,$worksheetID,$result,$flags) {
 			| 37 |     4794 |            192 | 2014-11-17 10:06:58 |             193 |
 			| 40 |     4794 |            193 | 2014-11-18 10:07:59 |             203 |
 			+----+----------+----------------+---------------------+-----------------+
-			if(($machineType=="roche" && 
-				($result=="failed" || $result=="invalid")) || 
-					($machineType=="abbott" && 
-						($result=="-1.00" || 
-							$result=="3153 there is insufficient volume in the vessel to perform an aspirate or dispense operation." || 
-								$result=="3109 a no liquid detected error was encountered by the liquid handler." || 
-									$flags=="4442 internal control cycle number is too high. valid range is [18.35, 22.35]."))) {
-					mysqlquery("insert into vl_logs_samplerepeats 
-									(sampleID,oldWorksheetID,created,createdby) 
-									values 
-									('$sampleID','$worksheetID','$datetime','$trailSessionUser')");
-			}
 			*/
 			if(($machineType=="roche" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID"))) || 
 				($machineType=="abbott" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID")))) {
