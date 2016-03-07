@@ -16,7 +16,7 @@ extract($_GET);
 
 $headers=["Form Number","Location ID","Sample ID","Facility","District","Hub","IP","Date of Collection"
 ,"Sample Type","Patient ART","Patient OtherID","Gender","Date Of Birth","Age (Years)","Phone Number","Has Patient Been on treatment for at least 6 months"
-,"Date of Treatment Initiation","Current Regimen","Indication for Treatment Initiation","Other Indication","Which Treatment Line is Patient on","Other Treatment Line"
+,"Date of Treatment Initiation","Current Regimen","Other Regimen","Indication for Treatment Initiation","Other Indication","Which Treatment Line is Patient on"
 ,"Reason for Failure","Is Patient Pregnant","ANC Number","Is Patient Breastfeeding","Patient has Active TB"
 ,"If Yes are they on","ARV Adherence","Routine Monitoring","Last Viral Load Date"
 ,"Value","Sample Type ","Repeat Viral Load Test after Suspected Treatment Failure adherence counseling"
@@ -60,12 +60,13 @@ $sql="  SELECT s.*,s.id AS s_id,facility,district,hub,ip,
 			rjct.appendix AS rejection_reason,
 			(UNIX_TIMESTAMP(s.created)-UNIX_TIMESTAMP(p.dateOfBirth))/31536000 AS age,
 			p.dateOfBirth,
-			s_regimen.otherRegimen,a_regimen.appendix AS trmt_line,
+			s_regimen.otherRegimen,a_line.appendix AS trmt_line,
 			af_reason.appendix AS failure_reason,
 			$rjctn_cat_case AS rejection_category,
 			r.vlSampleID AS tested,print.created AS print_date,
-			wksht.created AS wksht_date,GROUP_CONCAT(wksht.worksheetID SEPARATOR ',') AS worksheetID,r.created AS res_date,
-			r.resultAlphanumeric
+			GROUP_CONCAT(wksht.created SEPARATOR ',') AS wksht_date,
+			GROUP_CONCAT(wksht.worksheetID SEPARATOR ',') AS worksheetID,
+			r.created AS res_date,r.resultAlphanumeric
 		FROM vl_samples AS s 
 		LEFT JOIN vl_patients AS p ON s.patientID=p.id
 		LEFT JOIN vl_results_merged AS r ON s.vlSampleID=r.vlSampleID
@@ -84,7 +85,7 @@ $sql="  SELECT s.*,s.id AS s_id,facility,district,hub,ip,
 		LEFT JOIN vl_samples_verify AS verify ON s.id=verify.sampleID
 		LEFT JOIN vl_appendix_samplerejectionreason AS rjct ON verify.outcomeReasonsID=rjct.id
 		LEFT JOIN vl_samples_otherregimen AS s_regimen ON s.id=s_regimen.sampleID
-		LEFT JOIN vl_appendix_regimen AS a_regimen ON s.currentRegimenID=a_regimen.id
+		LEFT JOIN vl_appendix_treatmentstatus AS a_line ON s.treatmentStatusID=a_line.id
 		LEFT JOIN vl_appendix_failurereason AS af_reason ON s.reasonForFailureID=af_reason.id
 		LEFT JOIN vl_logs_printedresults AS print ON s.id=print.sampleID
 		LEFT JOIN vl_samples_worksheet AS wksht ON s.id=wksht.sampleID
@@ -111,16 +112,16 @@ $row2["Patient ART"]=$artNumber;
 $row2["Patient OtherID"]=$otherID;
 $row2["Gender"]=$gender;
 $row2["Date Of Birth"]=$dateOfBirth;
-$row2["Age (Years)"]=round($age,1);
+$row2["Age (Years)"]=$age>0?round($age,1):0;
 $row2["Phone Number"]=$phone;
 $row2["Has Patient Been on treatment for at least 6 months"]=$treatmentLast6Months;
 $row2["Date of Treatment Initiation"]=$treatmentInitiationDate;
 $row2["Current Regimen"]=$current_regimen;
+$row2["Other Regimen"]=$otherRegimen;
 $row2["Indication for Treatment Initiation"]=$treatment_indication;
 $row2["Other Indication"]=$treatmentInitiationOther;
 
 $row2["Which Treatment Line is Patient on"]=$trmt_line;
-$row2["Other Treatment Line"]=$otherRegimen;
 
 $row2["Reason for Failure"]=$failure_reason;
 $row2["Is Patient Pregnant"]=$pregnant;
@@ -151,7 +152,8 @@ $row2["Date/Time Approved"]=$approval_status=='Accepted'?$approval_time:"";
 $row2["Date/Time Rejected"]=$approval_status=='Rejected'?$approval_time:"";
 $row2["Rejection Reason"]=$rejection_reason;
 $row2["Rejection Category"]=$rejection_category;
-$row2["Date/Time Added to Worksheet"]=$wksht_date;
+$w_date_arr=explode(",", $wksht_date);
+$row2["Date/Time Added to Worksheet"]=max($w_date_arr);
 $row2["Date/Time Latest Results Uploaded"]=$res_date;
 $row2["Date/Time Results Printed"]=$print_date;
 $row2["Date Received at CPHL"]=$receiptDate;
