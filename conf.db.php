@@ -6,7 +6,7 @@ if(!$GLOBALS['vlDC']) {
 
 if($_SERVER['REMOTE_ADDR']=="127.0.0.1") {
 	$db = mysqlconnect('localhost', 'root', 'chai8910');
-	mysqlselectdb("vl20160124");
+	mysqlselectdb("vl20160301");
 } elseif($_SERVER['SERVER_NAME']=="vl.trailanalytics.com") {
 	$db = mysqlconnect('localhost', 'borrower_vl', 'viralload#123');
 	mysqlselectdb("borrower_vl");

@@ -15,22 +15,38 @@ $output = fopen('php://output', 'w');
 extract($_GET);
 
 $headers=["Form Number","Location ID","Sample ID","Facility","District","Hub","IP","Date of Collection"
-,"Sample Type","Patient ART","Patient OtherID","Gender","Age (Years)","Phone Number","Has Patient Been on treatment for at least 6 months"
-,"Date of Treatment Initiation","Current Regimen","Indication for Treatment Initiation","Which Treatment Line is Patient on"
+,"Sample Type","Patient ART","Patient OtherID","Gender","Date Of Birth","Age (Years)","Phone Number","Has Patient Been on treatment for at least 6 months"
+,"Date of Treatment Initiation","Current Regimen","Indication for Treatment Initiation","Other Indication","Which Treatment Line is Patient on","Other Treatment Line"
 ,"Reason for Failure","Is Patient Pregnant","ANC Number","Is Patient Breastfeeding","Patient has Active TB"
 ,"If Yes are they on","ARV Adherence","Routine Monitoring","Last Viral Load Date"
 ,"Value","Sample Type ","Repeat Viral Load Test after Suspected Treatment Failure adherence counseling"
 ,"Last Viral Load Date ","Value ","Sample Type  ","Suspected Treatment Failure","Last Viral Load Date  ","Value  "
 ,"Sample Type   ","Tested","Last Worksheet","Machine Type","Result","Date/Time Approved","Date/Time Rejected"
-,"Rejection Reason","Date/Time Added to Worksheet","Date/Time Latest Results Uploaded"
+,"Rejection Reason","Rejection Category","Date/Time Added to Worksheet","Date/Time Latest Results Uploaded"
 ,"Date/Time Results Printed","Date Received at CPHL","Date/Time First Printed","Date/Time Sample was Captured"];
 
 fputcsv($output, $headers);
+
+function rjctnRsnCase(){
+	$arr=[  
+			'eligibility'=>"outcomeReasonsID in (77,78,14,64,65,76) ",
+			'incomplete_form'=>"outcomeReasonsID in (4,71,72,69,70,67,68,79,80,87,88,86, 61,81,82)",
+			'quality_of_sample'=>"outcomeReasonsID in (9,60,74,10,59,8,63,75,2,7,85,1,5,62 ,3,15,83,84)"
+		];
+	
+	$ret="CASE ";
+	foreach ($arr as $k => $v) {
+		$ret.="WHEN $v THEN '$k' ";
+	}
+	$ret.=" END";
+	return $ret;
+}
 
 
 $fro_s=isset($fro_s)?$fro_s-(3*60*60):date("Y-m-01 00:00:00");
 $to_s=isset($to_s)?$to_s+(21*60*60)-1:date("Y-m-d 23:59:59");
 
+$rjctn_cat_case=rjctnRsnCase();
 $sql="  SELECT s.*,s.id AS s_id,facility,district,hub,ip,
 			s_type.appendix AS sample_type,
 			artNumber,otherID,gender,GROUP_CONCAT( ph.phone SEPARATOR ', ') AS phone,
@@ -43,8 +59,10 @@ $sql="  SELECT s.*,s.id AS s_id,facility,district,hub,ip,
 			r.machine,verify.outcome AS approval_status,verify.created AS approval_time,
 			rjct.appendix AS rejection_reason,
 			(UNIX_TIMESTAMP(s.created)-UNIX_TIMESTAMP(p.dateOfBirth))/31536000 AS age,
+			p.dateOfBirth,
 			s_regimen.otherRegimen,a_regimen.appendix AS trmt_line,
 			af_reason.appendix AS failure_reason,
+			$rjctn_cat_case AS rejection_category,
 			r.vlSampleID AS tested,print.created AS print_date,
 			wksht.created AS wksht_date,GROUP_CONCAT(wksht.worksheetID SEPARATOR ',') AS worksheetID,r.created AS res_date,
 			r.resultAlphanumeric
@@ -66,7 +84,7 @@ $sql="  SELECT s.*,s.id AS s_id,facility,district,hub,ip,
 		LEFT JOIN vl_samples_verify AS verify ON s.id=verify.sampleID
 		LEFT JOIN vl_appendix_samplerejectionreason AS rjct ON verify.outcomeReasonsID=rjct.id
 		LEFT JOIN vl_samples_otherregimen AS s_regimen ON s.id=s_regimen.sampleID
-		LEFT JOIN vl_appendix_regimen AS a_regimen ON s_regimen.currentRegimenID=a_regimen.id
+		LEFT JOIN vl_appendix_regimen AS a_regimen ON s.currentRegimenID=a_regimen.id
 		LEFT JOIN vl_appendix_failurereason AS af_reason ON s.reasonForFailureID=af_reason.id
 		LEFT JOIN vl_logs_printedresults AS print ON s.id=print.sampleID
 		LEFT JOIN vl_samples_worksheet AS wksht ON s.id=wksht.sampleID
@@ -92,13 +110,18 @@ $row2["Sample Type"]=$sample_type;
 $row2["Patient ART"]=$artNumber;
 $row2["Patient OtherID"]=$otherID;
 $row2["Gender"]=$gender;
+$row2["Date Of Birth"]=$dateOfBirth;
 $row2["Age (Years)"]=round($age,1);
 $row2["Phone Number"]=$phone;
 $row2["Has Patient Been on treatment for at least 6 months"]=$treatmentLast6Months;
 $row2["Date of Treatment Initiation"]=$treatmentInitiationDate;
 $row2["Current Regimen"]=$current_regimen;
-$row2["Indication for Treatment Initiation"]=!empty($treatment_indication)?$treatment_indication:$treatmentInitiationOther;
-$row2["Which Treatment Line is Patient on"]=!empty($trmt_line)?$trmt_line:$otherRegimen;
+$row2["Indication for Treatment Initiation"]=$treatment_indication;
+$row2["Other Indication"]=$treatmentInitiationOther;
+
+$row2["Which Treatment Line is Patient on"]=$trmt_line;
+$row2["Other Treatment Line"]=$otherRegimen;
+
 $row2["Reason for Failure"]=$failure_reason;
 $row2["Is Patient Pregnant"]=$pregnant;
 $row2["ANC Number"]=$pregnantANCNumber;
@@ -127,6 +150,7 @@ $row2["Result"]=$resultAlphanumeric;
 $row2["Date/Time Approved"]=$approval_status=='Accepted'?$approval_time:"";
 $row2["Date/Time Rejected"]=$approval_status=='Rejected'?$approval_time:"";
 $row2["Rejection Reason"]=$rejection_reason;
+$row2["Rejection Category"]=$rejection_category;
 $row2["Date/Time Added to Worksheet"]=$wksht_date;
 $row2["Date/Time Latest Results Uploaded"]=$res_date;
 $row2["Date/Time Results Printed"]=$print_date;
