@@ -14,7 +14,7 @@ $output = fopen('php://output', 'w');
 // output the column headings
 extract($_GET);
 
-$headers=["Form Number","Location ID","Sample ID","Facility","District","Hub","IP","Date of Collection"
+$headers=array("Form Number","Location ID","Sample ID","Facility","District","Hub","IP","Date of Collection"
 ,"Sample Type","Patient ART","Patient OtherID","Gender","Date Of Birth","Age (Years)","Phone Number","Has Patient Been on treatment for at least 6 months"
 ,"Date of Treatment Initiation","Current Regimen","Other Regimen","Indication for Treatment Initiation","Other Indication","Which Treatment Line is Patient on"
 ,"Reason for Failure","Is Patient Pregnant","ANC Number","Is Patient Breastfeeding","Patient has Active TB"
@@ -23,16 +23,16 @@ $headers=["Form Number","Location ID","Sample ID","Facility","District","Hub","I
 ,"Last Viral Load Date ","Value ","Sample Type  ","Suspected Treatment Failure","Last Viral Load Date  ","Value  "
 ,"Sample Type   ","Tested","Last Worksheet","Machine Type","Result","Date/Time Approved","Date/Time Rejected"
 ,"Rejection Reason","Rejection Category","Date/Time Added to Worksheet","Date/Time Latest Results Uploaded"
-,"Date/Time Results Printed","Date Received at CPHL","Date/Time First Printed","Date/Time Sample was Captured"];
+,"Date/Time Results Printed","Date Received at CPHL","Date/Time First Printed","Date/Time Sample was Captured");
 
 fputcsv($output, $headers);
 
 function rjctnRsnCase(){
-	$arr=[  
-			'eligibility'=>"outcomeReasonsID in (77,78,14,64,65,76) ",
-			'incomplete_form'=>"outcomeReasonsID in (4,71,72,69,70,67,68,79,80,87,88,86, 61,81,82)",
-			'quality_of_sample'=>"outcomeReasonsID in (9,60,74,10,59,8,63,75,2,7,85,1,5,62 ,3,15,83,84)"
-		];
+	$arr=array( 
+				'eligibility'=>"outcomeReasonsID in (77,78,14,64,65,76) ",
+				'incomplete_form'=>"outcomeReasonsID in (4,71,72,69,70,67,68,79,80,87,88,86, 61,81,82)",
+				'quality_of_sample'=>"outcomeReasonsID in (9,60,74,10,59,8,63,75,2,7,85,1,5,62 ,3,15,83,84)"
+			);
 	
 	$ret="CASE ";
 	foreach ($arr as $k => $v) {
@@ -97,7 +97,7 @@ $res = mysqlquery($sql);
 // loop over the rows, outputting them
 while($row=mysqlfetcharray($res)){
 	extract($row);
-	$row2=[];
+	$row2=array();
 
 $row2["Form Number"]=$formNumber;
 $row2["Location ID"]=$vlSampleID;
