@@ -24,7 +24,19 @@ $created=getDetailedTableInfo2("vl_samples_verify","sampleID='$id' limit 1","cre
 
 $createdby=0;
 $createdby=getDetailedTableInfo2("vl_samples_verify","sampleID='$id' limit 1","createdby");
+
+$other_rejection_reasons=getData(
+                          "GROUP_CONCAT(appendix SEPARATOR '<br>') AS other_reasons",
+                          "vl_samples_verify_reasons AS r",
+                          "LEFT JOIN vl_appendix_samplerejectionreason AS a ON r.reasonID=a.id WHERE sampleID=$id");
+$other_reasons=mysqlresult($other_rejection_reasons,0,"other_reasons");
 ?>
+<style type="text/css">
+ .cell_styl{
+  padding:4px 0px; 
+  border-bottom: 1px dashed #dfe6e6;
+ }
+</style>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td><table border="0" cellspacing="0" cellpadding="0" class="vl">
@@ -47,22 +59,31 @@ $createdby=getDetailedTableInfo2("vl_samples_verify","sampleID='$id' limit 1","c
                         <div style="padding:5px 0px 0px 0px">
 						<table width="100%" border="0" class="vl">
                             <tr>
-                              <td width="30%" style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6">Received&nbsp;Status</td>
-                              <td width="70%" style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6"><?=$outcome?></td>
+                              <td width="30%" class="cell_styl">Received&nbsp;Status</td>
+                              <td width="70%" class="cell_styl"> <?=$outcome?></td>
                             </tr>
                         <? if($outcomeReasons) { ?>
                         <tr>
-                          <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6">Reason</td>
-                          <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6"><?=$outcomeReasons?></td>
+                          <td class="cell_styl">Reason</td>
+                          <td class="cell_styl"><?=$outcomeReasons?></td>
                         </tr>
                         <? } ?>
+
+                        <? if($other_reasons) { ?>
                         <tr>
-                          <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6">Lab&nbsp;Comments</td>
-                          <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6"><?=$comments?></td>
+                          <td class="cell_styl" valign='top'>More Reasons</td>
+                          <td class="cell_styl"><?=$other_reasons?></td>
+                        </tr>
+                        <? } ?>
+
+                        <? ?>
+                        <tr>
+                          <td class="cell_styl">Lab&nbsp;Comments</td>
+                          <td class="cell_styl"><?=$comments?></td>
                         </tr>
                         <tr>
-                          <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6">Changed&nbsp;on</td>
-                          <td style="padding:4px 0px; border-bottom: 1px dashed #dfe6e6"><?=getFormattedDate($created)?></td>
+                          <td class="cell_styl">Changed&nbsp;on</td>
+                          <td class="cell_styl"><?=getFormattedDate($created)?></td>
                         </tr>
                         <tr>
                           <td style="padding:4px 0px">By</td>

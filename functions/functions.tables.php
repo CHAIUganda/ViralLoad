@@ -329,4 +329,24 @@ function matchData($table,$comparefields,$returnfield,$searchterm,$options) {
 		}
 	}
 }
+
+
+function insertData($data,$table){
+	$columns_str=$values_str="";
+	foreach ($data as $k => $v) {
+		$columns_str.="`$k`,";
+		$val=str_replace("'", "''", $v);
+		$values_str.="'$val',";	
+	}
+	$columns_str=rtrim($columns_str,",");
+	$values_str=rtrim($values_str,",");
+
+	$res=mysqlquery("INSERT INTO `$table` ($columns_str) VALUES ($values_str)");
+	$ret=$res?1:0;
+	return $ret;
+}
+
+function getData($cols="*",$table="",$others=""){
+	return mysqlquery("SELECT $cols FROM $table $others");
+}
 ?>

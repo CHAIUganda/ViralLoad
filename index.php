@@ -16,14 +16,18 @@ $searchFilter=getValidatedVariable("searchFilter");
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Viral Load</title>
+<link href="/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+
 <link href="/css/vl.css" rel="stylesheet" type="text/css">
+<link href="/css/vl2.css" rel="stylesheet" type="text/css">
 <link href="/css/jsdialog.css" rel="stylesheet" media="screen" type="text/css">
 <link href="/css/dhtmlxcombo.css" rel="stylesheet" type="text/css">
 <link href="/css/datepicker.jquery.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
 <? $vlDC->printJavascript(); ?>
 <? if($_SESSION["VLEMAIL"]) { ?>
-	<script src="/js/tooltip.js"></script>
+	<script src="/js/vl.custom.js"></script>
+    <script src="/js/tooltip.js"></script>
     <script src="/js/checkUncheck.js"></script>
     <script src="/js/loadField.js"></script>
     <script src="/js/limit.js"></script>

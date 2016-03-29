@@ -3,7 +3,6 @@
 if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 	die("<font face=arial size=2>You must be logged in to view this page.</font>");
 }
-
 //validation
 $id=validate($id);
 $pg=validate($pg);
@@ -56,10 +55,24 @@ if($saveChangesReturn || $saveChangesProceed) {
 	//input data
 	if(!$error) {
 		//log status
+
+    //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS .....STARTS HERE
 		mysqlquery("insert into vl_samples_verify 
 						(sampleID,outcome,outcomeReasonsID,comments,created,createdby) 
 						values 
 						('$id','$outcome','$outcomeReasonsID','$comments','$datetime','$trailSessionUser')");
+
+    if(isset($other_reasons)){
+      foreach ($other_reasons as $other_reason) {
+        $data=array();
+        $data['sampleID']=$id;
+        $data['reasonID']=$other_reason;
+        $data['created']=$datetime;
+        $data['createdby']=$trailSessionUser;
+        insertData($data,'vl_samples_verify_reasons').";";       
+      }
+    }
+     //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS ..... ENDS HERE
 		//redirect to home with updates on the tracking number
 		if($saveChangesProceed) {
 			//proceed to next sample within the search results
@@ -99,25 +112,38 @@ function validate(samples) {
 	return (true);
 }
 
+function reasonsDropDown(nme,id){
+    var outcome='';
+    outcome="<select name='"+nme+"' id='"+id+"' class='search'>";
+    outcome+='<option value="">Select Rejection Reason</option>';
+    <?
+    $query=0;
+    $query=mysqlquery("select * from vl_appendix_samplerejectionreason where sampleTypeID='".getDetailedTableInfo2("vl_samples","id='$id'","sampleTypeID")."' order by position");
+    if(mysqlnumrows($query)) {
+      while($q=mysqlfetcharray($query)) {
+        echo "outcome+='<option value=\"$q[id]\">".preg_replace("/'/s","\'",$q["appendix"])."</option>';";
+      }
+    }
+    ?>
+    outcome+='</select>';
+    return outcome;
+}
+
 function checkOutcome() {
 	if(document.samples.outcome.value=='Rejected') {
-		var outcome='';
-		outcome='<select name="outcomeReasonsID" id="outcomeReasonsID" class="search">';
-		outcome+='<option value="">Select Rejection Reason</option>';
-		<?
-		$query=0;
-		$query=mysqlquery("select * from vl_appendix_samplerejectionreason where sampleTypeID='".getDetailedTableInfo2("vl_samples","id='$id'","sampleTypeID")."' order by position");
-		if(mysqlnumrows($query)) {
-			while($q=mysqlfetcharray($query)) {
-				echo "outcome+='<option value=\"$q[id]\">".preg_replace("/'/s","\'",$q["appendix"])."</option>';";
-			}
-		}
-		?>
-		outcome+='</select>';
-		document.getElementById("outcomeID").innerHTML=outcome;
+    var primary_reason="<span class='sm_txt'>primary reason:</span><br>"+reasonsDropDown("outcomeReasonsID","outcomeReasonsID");
+		var other_reason="<br><br><span class='sm_txt'>more reasons:</span><div id='other_reasons'></div><span class='add_item' onclick='addOtherReasons()'>add<span>";
+		document.getElementById("outcomeID").innerHTML=primary_reason+other_reason;
+
+    //document.getElementById("outcomeID").innerHTML="<span class='sm_txt'>primary reason:<span><br>"+reasonsDropDown();
 	} else {
 		document.getElementById("outcomeID").innerHTML="";
 	}
+}
+
+function addOtherReasons(){
+  var reasons="<p>"+reasonsDropDown("other_reasons[]","")+" "+removeItemHTML()+"</p>";
+  $("#other_reasons").append(reasons);
 }
 //-->
 </script>

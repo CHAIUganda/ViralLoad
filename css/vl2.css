@@ -1,0 +1,22 @@
+.table-bordered{
+	border: 10px;
+}
+
+.sm_txt{
+	font-weight: bolder;
+	font-size: 11px;
+}
+
+.rm_item{
+	color: red;
+}
+
+.add_item{
+	color: green;
+}
+
+.rm_item,.add_item{
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 11px;
+}
