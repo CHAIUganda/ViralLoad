@@ -64,12 +64,13 @@ if($saveChangesReturn || $saveChangesProceed) {
 
     if(isset($other_reasons)){
       foreach ($other_reasons as $other_reason) {
-        $data=array();
-        $data['sampleID']=$id;
-        $data['reasonID']=$other_reason;
-        $data['created']=$datetime;
-        $data['createdby']=$trailSessionUser;
-        insertData($data,'vl_samples_verify_reasons').";";       
+        if(!empty($other_reason)){
+          $data=array("sampleID"=>$id,
+                      "reasonID"=>$other_reason,
+                      "created"=>$datetime,
+                      "createdby"=>$trailSessionUser);
+          insertData($data,'vl_samples_verify_reasons'); 
+        }      
       }
     }
      //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS ..... ENDS HERE
@@ -96,7 +97,23 @@ if($saveChangesReturn || $saveChangesProceed) {
 }
 ?>
 <script Language="JavaScript" Type="text/javascript">
-<!--
+var rejection_reasons={};
+$(function(){
+  <?
+    $rjctn_rsns=array();
+    $query=0;
+    $query=mysqlquery("select * from vl_appendix_samplerejectionreason where sampleTypeID='".getDetailedTableInfo2("vl_samples","id='$id'","sampleTypeID")."' order by position");
+    if(mysqlnumrows($query)) {
+      while($q=mysqlfetcharray($query)) {
+        $rjctn_rsns[$q['id']]=preg_replace("/'/s","\'",$q["appendix"]);
+      }
+    }
+  ?>
+  rejection_reasons=<?php echo json_encode($rjctn_rsns) ?>
+});
+
+
+
 function validate(samples) {
 	//check for missing information
 	if(!document.samples.outcome.value) {
@@ -112,21 +129,13 @@ function validate(samples) {
 	return (true);
 }
 
+function remRsn(that_val){
+  delete rejection_reasons[that_val];
+}
+
 function reasonsDropDown(nme,id){
-    var outcome='';
-    outcome="<select name='"+nme+"' id='"+id+"' class='search'>";
-    outcome+='<option value="">Select Rejection Reason</option>';
-    <?
-    $query=0;
-    $query=mysqlquery("select * from vl_appendix_samplerejectionreason where sampleTypeID='".getDetailedTableInfo2("vl_samples","id='$id'","sampleTypeID")."' order by position");
-    if(mysqlnumrows($query)) {
-      while($q=mysqlfetcharray($query)) {
-        echo "outcome+='<option value=\"$q[id]\">".preg_replace("/'/s","\'",$q["appendix"])."</option>';";
-      }
-    }
-    ?>
-    outcome+='</select>';
-    return outcome;
+  var other_options="id='"+id+"' class='search' onchange='remRsn(this.value)'";
+  return generalSelect(nme,rejection_reasons,"Select Rejection Reason","",other_options);
 }
 
 function checkOutcome() {
