@@ -1,0 +1,1 @@
+ALTER TABLE `vl_results_merged` ADD `suppressed` ENUM( 'YES', 'NO', 'UNKNOWN' ) NOT NULL DEFAULT 'UNKNOWN' AFTER `resultNumeric` ;
