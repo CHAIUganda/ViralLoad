@@ -283,29 +283,6 @@ function getVLNumericResultOnly($result) {
 	}
 }
 
-function isResultValid($result){
-	$ret="";
-	$invalid_cases=[
-		"Failed","Failed.","Invalid",
-		"Invalid test result. There is insufficient sample to repeat the assay.",
-		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.",
-		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."];
-
-	if(in_array($result, $invalid_cases)) $ret="NO";
-	else $ret="YES";
-	return $ret;
-}
-
-function isSuppressed($is_res_valid,$resultNumeric){
-	$ret="";
-	if($is_res_valid=='YES'){
-		$ret=$resultNumeric<=1000?"YES":"NO";
-	}else{
-		$ret="UNKNOWN";
-	}
-	return $ret;
-}
-
 /**
 * function to log whether this sample should be repeated
 */
@@ -520,5 +497,48 @@ function logResultOverride($sampleID,$worksheetID,$result) {
 		//update vl_results_override
 		mysqlquery("update vl_results_override set result='$result' where id='$id'");
 	}
+}
+
+
+function isResultValid($result){
+	$ret="";
+	$invalid_cases=[
+		"Failed","Failed.","Invalid",
+		"Invalid test result. There is insufficient sample to repeat the assay.",
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.",
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."];
+
+	if(in_array($result, $invalid_cases)) $ret="NO";
+	else $ret="YES";
+	return $ret;
+}
+
+function isSuppressed($is_res_valid,$resultNumeric){
+	$ret="";
+	if($is_res_valid=='YES'){
+		$ret=$resultNumeric<=1000?"YES":"NO";
+	}else{
+		$ret="UNKNOWN";
+	}
+	return $ret;
+}
+
+
+function getRecommendation($suppressed,$test_date,$sample_type){
+	$ret="";
+	$rec1="Below 1,000 copies/mL: Patient is suppressing their viral load. <br>Please continue adherence counseling. Do another viral load after 12 months.";
+	$rec2="Above 1,000 copies/mL: Patient has elevated viral load. <br>Please initiate intensive adherence counseling and conduct a repeat viral load test after six months.";
+	$rec3="Below 5,000 copies/mL: Patient is suppressing their viral load. <br>Please continue adherence counseling. Do another viral load after 12 months.";
+	$rec4="Above 5,000 copies/mL: Patient has elevated viral load. <br>Please initiate intensive adherence counseling and conduct a repeat viral load test after six months.";
+	if(strtotime($test_date)>=1459458000){ //after 2016-04-01 00:00:00
+		$ret=$suppressed=='YES'?$rec1:$rec2;
+	}else{ // before 2016-03-31 23:23:59
+		if($sample_type=='DBS'){
+			$ret=$suppressed=='YES'?$rec3:$rec4;
+		}else{
+			$ret=$suppressed=='YES'?$rec1:$rec2;
+		}
+	}
+	return $ret;
 }
 ?>
