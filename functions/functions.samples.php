@@ -502,11 +502,11 @@ function logResultOverride($sampleID,$worksheetID,$result) {
 
 function isResultValid($result){
 	$ret="";
-	$invalid_cases=[
+	$invalid_cases=array(
 		"Failed","Failed.","Invalid",
 		"Invalid test result. There is insufficient sample to repeat the assay.",
 		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.",
-		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."];
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.");
 
 	if(in_array($result, $invalid_cases)) $ret="NO";
 	else $ret="YES";

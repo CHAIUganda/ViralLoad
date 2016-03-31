@@ -10,13 +10,13 @@ updateSuppressionStatus();
 
 function validCases(){
 	$ret="";
-	$cases=[
+	$cases=array(
 		"Failed",
 		"Failed.",
 		"Invalid",
 		"Invalid test result. There is insufficient sample to repeat the assay.",
 		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.",
-		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."];
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.");
 
 	foreach ($cases as $v) {
 		$ret.=" resultAlphanumeric NOT LIKE '$v' AND";
