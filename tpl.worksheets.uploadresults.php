@@ -424,13 +424,18 @@ if($uploadResults) {
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
+									
+
 									//log into vl_results_merged
 									mysqlquery("insert ignore into vl_results_merged 
 													(machine,worksheetID,vlSampleID,resultAlphanumeric,
-														resultNumeric,created,createdby) 
+														resultNumeric,suppressed,created,createdby) 
 													values 
 													('roche','$worksheetID','$SampleID','$resultAlphanumeric',
-														'$resultNumeric','$datetime','$trailSessionUser')");
+														'$resultNumeric','$spprssn_status','$datetime','$trailSessionUser')");
 									
 									//log
 									$added+=1;
@@ -633,6 +638,9 @@ if($uploadResults) {
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the result
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
 									//update
 									$resultsMergedSampleID=0;
 									$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","vlSampleID='$SampleID' and worksheetID='$worksheetID' and machine='roche' limit 1","id");
@@ -642,7 +650,8 @@ if($uploadResults) {
 									//implement the changes
 									mysqlquery("update vl_results_merged set 
 													resultAlphanumeric='$resultAlphanumeric', 
-													resultNumeric='$resultNumeric' 
+													resultNumeric='$resultNumeric',
+													suppressed='$spprssn_status'
 													where 
 													id='$resultsMergedSampleID'");
 
@@ -788,13 +797,16 @@ if($uploadResults) {
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the result
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
 									//log into vl_results_merged
 									mysqlquery("insert ignore into vl_results_merged 
 													(machine,worksheetID,vlSampleID,resultAlphanumeric,
-														resultNumeric,created,createdby) 
+														resultNumeric,suppressed,created,createdby) 
 													values 
 													('abbott','$worksheetID','$sampleID','$resultAlphanumeric',
-														'$resultNumeric','$datetime','$trailSessionUser')");
+														'$resultNumeric','$spprssn_status','$datetime','$trailSessionUser')");
 									
 									//log
 									$added+=1;
@@ -867,6 +879,10 @@ if($uploadResults) {
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the result
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
+
 									//update
 									$resultsMergedSampleID=0;
 									$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","vlSampleID='$sampleID' and worksheetID='$worksheetID' and machine='abbott' limit 1","id");
@@ -876,7 +892,8 @@ if($uploadResults) {
 									//implement the changes
 									mysqlquery("update vl_results_merged set 
 													resultAlphanumeric='$resultAlphanumeric', 
-													resultNumeric='$resultNumeric' 
+													resultNumeric='$resultNumeric',
+													suppressed='$spprssn_status' 
 													where 
 													id='$resultsMergedSampleID'");
 

@@ -283,6 +283,29 @@ function getVLNumericResultOnly($result) {
 	}
 }
 
+function isResultValid($result){
+	$ret="";
+	$invalid_cases=[
+		"Failed","Failed.","Invalid",
+		"Invalid test result. There is insufficient sample to repeat the assay.",
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.",
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."];
+
+	if(in_array($result, $invalid_cases)) $ret="NO";
+	else $ret="YES";
+	return $ret;
+}
+
+function isSuppressed($is_res_valid,$resultNumeric){
+	$ret="";
+	if($is_res_valid=='YES'){
+		$ret=$resultNumeric<=1000?"YES":"NO";
+	}else{
+		$ret="UNKNOWN";
+	}
+	return $ret;
+}
+
 /**
 * function to log whether this sample should be repeated
 */
