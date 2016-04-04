@@ -523,6 +523,25 @@ function isSuppressed($is_res_valid,$resultNumeric){
 	return $ret;
 }
 
+function isSuppressed2($result,$sample_type,$test_date){
+	$ret="";
+	$valid=isResultValid($result);
+	$test_date_str=strtotime($test_date);	
+	if($valid=='YES'){
+		if($test_date_str<1459458000){//use previous suppression criteria if before 2016-04-01 00:00:00
+			if($sample_type=="DBS"){
+				$ret=$result>5000?"NO":"YES";
+			}else{
+				$ret=$result>1000?"NO":"YES";
+			}
+		}else{
+			$ret=$result<=1000?"YES":"NO";
+		}		
+	}else{
+		$ret="UNKNOWN";
+	}
+	return $ret;
+}
 
 function getRecommendation($suppressed,$test_date,$sample_type){
 	$ret="";
