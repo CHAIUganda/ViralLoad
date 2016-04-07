@@ -18,3 +18,13 @@
 	font-weight: bold;
 	font-size: 11px;
 }
+
+.app_sect table{
+	border: 0px;
+}
+
+.app_sect table td{
+	border: 1px solid #EAECEE;
+	border-spacing: 0px;
+	padding: 5px;
+}

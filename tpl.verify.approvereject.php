@@ -182,10 +182,10 @@ function addOtherReasons(){
             </tr>
             <tr>
                 <td>
-                  <fieldset style="width: 100%">
+                  <fieldset style="width: 100%" class="app_sect">
             <legend><strong>APPROVE/REJECT SAMPLE</strong></legend>
                         <div style="padding:5px 0px 0px 0px">
-						<table width="100%" border="0" class="vl">
+						<table cellspacing="0" class="vl">
                         <tr>
                           <td>Sample&nbsp;Reference&nbsp;#</td>
                           <td><?=getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")?></td>
@@ -294,7 +294,7 @@ function addOtherReasons(){
                           <td><?=getFormattedDate(getDetailedTableInfo2("vl_samples","id='$id' limit 1","created"))?></td>
                         </tr>
                         <tr>
-                          <td width="20%">Received&nbsp;Status</td>
+                          <td width="20%" valign="top">Received&nbsp;Status</td>
                           <td width="80%">
                           <select name="outcome" id="outcome" class="search" onchange="checkOutcome()">
 							<option value="">Select Outcome</option>
@@ -302,11 +302,9 @@ function addOtherReasons(){
 							<option value="Rejected">Rejected</option>
 							<!--<option value="Repeat">Repeat</option>-->
                           </select>
+                          <br><br>
+                          <div id="outcomeID"></div>
                           </td>
-                        </tr>
-                        <tr>
-                          <td></td>
-                          <td id="outcomeID"></td>
                         </tr>
                         <tr>
                           <td>Lab&nbsp;Comments</td>
