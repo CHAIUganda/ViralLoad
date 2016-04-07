@@ -20,7 +20,7 @@ if($encryptedSample) {
 	if($searchQueryCurrentPosition) {
 		$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and (formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $searchQueryCurrentPosition,1","id");
 		if(!$searchQueryNextPosition) {
-			$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and id!='$id' and (formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit 1","id");
+			$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and id!='$id' and (formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by lrNumericID asc limit 1","id");
 		}
 	}
 }
