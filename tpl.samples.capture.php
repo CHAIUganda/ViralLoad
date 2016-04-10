@@ -15,8 +15,10 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	
 	$formNumber=validate($formNumber);
 	$facilityID=validate($facilityID);
-	$hubID=validate($hubID);
-	$districtID=validate($districtID);
+	$f_res=mysqlquery("select hubID,districtID from vl_facilities where id='$facilityID' LIMIT 1");
+	$f_row=mysqlfetcharray($f_res);
+	$hubID= $f_row['hubID'];
+	$districtID=$f_row['districtID'];
 
 	$collectionDateDay=validate($collectionDateDay);
 	$collectionDateMonth=validate($collectionDateMonth);
@@ -942,10 +944,10 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                 </table>
                           </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                           <td>Hub</td>
                           <td><div class="vls_grey" style="padding:5px 0px" id="hubTextID"><?=($hubID?getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub"):"Input Form Number or Select Facility, First")?></div><input type="hidden" name="hubID" id="hubID" value="<?=($hubID?$hubID:"")?>" />
-                          <!--
+                         
                           <select name="hubID" id="hubID" class="search">
                                 <?
 								$query=0;
@@ -962,13 +964,14 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 								}
 								?>
                                 </select>
-                          -->
+                         
                           </td>
-                        </tr>
-                        <tr>
+                        </tr> -->
+
+                        <!-- <tr>
                           <td>District</td>
                           <td><div class="vls_grey" style="padding:5px 0px" id="districtTextID"><?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?></div><input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />
-                          <!--
+                         
                           <select name="districtID" id="districtID" class="search">
                                 <?
 								$query=0;
@@ -985,9 +988,9 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 								}
 								?>
                                 </select>
-                           -->
+                          
                           </td>
-                        </tr>
+                        </tr> -->
                       </table>
                         </div>
                   </fieldset>

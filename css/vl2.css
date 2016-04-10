@@ -27,4 +27,19 @@
 	border: 1px solid #EAECEE;
 	border-spacing: 0px;
 	padding: 5px;
+	vertical-align: middle;	
+}
+
+
+.check-boxes label {
+    display: block;
+    float: left;
+    white-space: nowrap;
+}
+.check-boxes input {
+    vertical-align: middle;
+}
+.check-boxes label span {
+    vertical-align: middle;
+    padding-right: 5px;
 }
