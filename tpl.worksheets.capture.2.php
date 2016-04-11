@@ -26,6 +26,18 @@ $worksheetReferenceNumber=getDetailedTableInfo2("vl_samples_worksheetcredentials
 
 //create worksheet
 if($proceed) {
+	if(count($no_spots_samples)>0){
+		define("NO_SPOTS_RES","Invalid test result. There is insufficient sample to repeat the assay");
+		foreach($no_spots_samples AS $s_id){
+			$data=array("sampleID"=>$s_id,
+						"worksheetID"=>$worksheetID,
+						"result"=>NO_SPOTS_RES,
+						"created"=>$datetime,
+						"createdby"=>$trailSessionUser);
+			insertData($data,"vl_results_override");
+		}
+	}
+
 	if(count($worksheetSamples)) {
 		//first delete all samples from this worksheet
 		mysqlquery("delete from vl_samples_worksheet where worksheetID='$worksheetID'");
@@ -119,7 +131,7 @@ if(mysqlnumrows($query)) {
 						".($locationID?"<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Location ID: $locationID</div> ":"")."
 						<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Form #: $formNumber</div> 
 						<div align=\"center\" style=\"padding:5px 0px\"><img src=\"/worksheets/image/".vlEncrypt($sampleNumber)."/\" /></div>
-						<div align=\"center\"><input type=\"checkbox\" name=\"worksheetSamples[]\" id=\"worksheetSamples[]\" value=\"$sampleID\" onclick=\"updateCounter(this)\" /></div>";
+						<div align=\"center\"><input type=\"checkbox\" class='samples' name=\"worksheetSamples[]\" id=\"worksheetSamples[]\" value=\"$sampleID\" onclick=\"updateCounter(this)\" /></div>";
 	}
 }
 
@@ -153,6 +165,10 @@ if(mysqlnumrows($query)) {
 		$formNumber=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","formNumber");
 		$patientART=0;
 		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");
+
+		$smpl_id=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
+		$stLikeRadio="setLikeRadioOldSmpls(\"$smpl_id\",\"n\")";
+		$stLikeRadio2="setLikeRadioOldSmpls(\"$smpl_id\",\"r\")";
 		
 		$failedcontents[]="<div align=\"center\" class=\"vls\">$i</div>
 						<div align=\"center\" class=\"vls\" style=\"padding:3px 0px 0px 0px\">Patient ART #: $patientART</div> 
@@ -160,7 +176,10 @@ if(mysqlnumrows($query)) {
 						".($locationID?"<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Location ID: $locationID</div> ":"")."
 						<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Form #: $formNumber</div> 
 						<div align=\"center\" style=\"padding:5px 0px\"><img src=\"/worksheets/image/".vlEncrypt($sampleNumber)."/\" /></div>
-						<div align=\"center\"><input type=\"checkbox\" name=\"worksheetSamples[]\" id=\"worksheetSamples[]\" value=\"".getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id")."\" onclick=\"updateCounter(this)\" /></div>";
+						<div align=\"center\" class='check-boxes'>
+							<label><input type=\"checkbox\" onchange='$stLikeRadio2' class='samples' name=\"worksheetSamples[]\" id=\"r$smpl_id\" value=\"".$smpl_id."\" onclick=\"updateCounter(this)\" /> <span>retest</span></label>
+							<label><input type='checkbox' onchange='$stLikeRadio' id='n$smpl_id' name='no_spots_samples[]' value='$smpl_id'> <span>no spots</span></label>
+						</div>";
 	}
 }
 ?>
@@ -229,13 +248,18 @@ function updateCounter(obj) {
 function checkFirstBoxes(numberBoxes) {
 	var theForm = document.worksheets, z = 0;
 	//first uncheck everything
-	for(z=0; z<theForm.length;z++){
+	/*for(z=0; z<theForm.length;z++){
 		if(theForm[z].type == 'checkbox') {
 			theForm[z].checked = false;
 			//update
 			updateCounter(theForm[z]);
 		}
-	}
+	}*/
+
+	$('.samples').each(function() { //loop through each checkbox
+        this.checked = false; //deselect all checkboxes with class "samples"   
+        updateCounter(this);                    
+     }); 
 	//then check the selected boxes
 	for(z=0; z<numberBoxes;z++){
 		if(theForm[z].type == 'checkbox') {
@@ -244,6 +268,23 @@ function checkFirstBoxes(numberBoxes) {
 			updateCounter(theForm[z]);
 		}
 	}
+}
+
+function setLikeRadioOldSmpls(nr,type){
+	var itemn=document.getElementById("n"+nr);
+	var itemr=document.getElementById("r"+nr);
+	if(type=='r'){
+		if(itemr.checked){
+			itemn.checked=false;
+		}
+	}else{
+		if(itemn.checked){
+			if(itemr.checked){
+				itemr.checked=false;
+				updateCounter(itemr);
+			}
+		}
+	}	 
 }
 
 //-->
@@ -414,7 +455,7 @@ if($machineType=="roche") {
 	<? if($modify) { ?>
 	<input type="submit" name="proceed" id="proceed" class="button" value="  Save Changes to Worksheet  " disabled="disabled" />
     <? } else { ?>
-    <input type="submit" name="proceed" id="proceed" class="button" value="  Save Samples and Proceed to Print Worksheet  " disabled="disabled" />
+    <input type="submit" name="proceed" id="proceed" class="button" value="  Save and Proceed to Print Worksheet  " disabled="disabled" />
     <? } ?>
     <input name="modify" type="hidden" id="modify" value="<?=$modify?>" />
     <input name="numberSamples" type="hidden" id="numberSamples" value="" />

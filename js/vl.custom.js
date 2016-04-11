@@ -22,3 +22,15 @@
   	}
   	return slct+"</select>";
   }
+
+
+  function setLikeRadio(item,clss){
+  if(item.checked){
+    items=document.querySelectorAll(clss);
+    for(var i in items){
+      if(items[i]!=item){
+        items[i].checked=false;
+        }
+      }
+    }
+}
