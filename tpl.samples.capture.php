@@ -921,7 +921,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                         <select name="facilityID" id="facilityID" class="search" onchange="checkForHubDistrict(), loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)">
                                             <?
                                             $query=0;
-                                            $query=mysqlquery("select * from vl_facilities where facility!='' order by facility");
+                                            $query=mysqlquery("select f.*,d.district from vl_facilities AS f left join vl_districts AS d on f.districtID=d.id where facility!='' order by facility");
                                             if($facilityID) {
                                                 echo "<option value=\"$facilityID\" selected=\"selected\">".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."</option>";
                                             } else {
@@ -929,7 +929,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                             }
                                             if(mysqlnumrows($query)) {
                                                 while($q=mysqlfetcharray($query)) {
-                                                    echo "<option value=\"$q[id]\">$q[facility]</option>";
+                                                    echo "<option value=\"$q[id]\">$q[facility] ($q[district] district)</option>";
                                                 }
                                             }
                                             ?>
