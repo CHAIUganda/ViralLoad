@@ -193,64 +193,7 @@ function addOtherReasons(){
             <legend><strong>APPROVE/REJECT SAMPLE</strong></legend>
                         <div style="padding:5px 0px 0px 0px">
 						      <table cellspacing="0" class="vl" width="60%">
-                        <tr>
-                          <td width="50%" class='info-sect'>
-                            <span class='hdg-sm'>Facility Details</span><br>
-                            <b>Name</b>: Manafwa HC III<br>
-                            <b>District</b>: Manafwa<br>
-                            <b>Hub</b>: Mbale Hub<br>
-                          </td>
-                          <td width="50%" class='info-sect'>
-                            <span class='hdg-sm'>Sample Details</span><br>
-                            <b>Form No.</b>: 0359749<br>
-                            <b>Date of Collection</b>: 30-May-2016<br>
-                            <b>Sample Type</b>: Plasma<br>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class='info-sect'>
-                            <span class='hdg-sm'>Patient Information</span><br>
-                            <b>Art No.</b>: 068<br>
-                            <b>Other ID</b>: xxx<br>
-                            <b>Gender</b>: Male<br>
-                          </td>
-                          <td class='info-sect'>                    
-                            <b>Date of Birth</b>: 30-May-2016<br>
-                            <b>Date of Treatment initiation</b>: 30-May-2016<br>                            
-                          </td>
-                        </tr>
-                        <tr class='info-sect'>
-                          <td colspan='2'>
-                            <b>Sample Reference No.</b>: <?=$smpl_arr['vlSampleID'] ?><br>
-                            <b>Location ID</b>: <?=$smpl_arr['lrNumericID'] ?><br>
-                          </td>
-                        </tr>
-
-                         <tr>
-                          <td width="50%" class='info-sect'>                            
-                            <b>Last Viral Load Date</b>: 30-May-2016<br>
-                            <b>Value</b>: <br>
-                          </td>
-                          <td width="50%" class='info-sect'>                            
-                            <b>Captured by</b>: Paul<br>
-                            <b>On</b>: 30-May-2016<br>
-                          </td>
-                        </tr>
-
-                        <tr class='info-sect'>
-                          <td colspan='2'>
-                            <span class='hdg-sm'>Received Status</span><br> 
-                            <select name="outcome" id="outcome" class="search" onchange="checkOutcome()">
-                                <option value="">Select Outcome</option>
-                                <option value="Accepted">Accepted</option>
-                                <option value="Rejected">Rejected</option>
-                            </select>
-
-                          <div id="outcomeID"></div>
-                          </td>
-                        </tr>
-
-
+                       
                         <tr>
                           <td>Sample&nbsp;Reference&nbsp;#</td>
                           <td><?=getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")?></td>

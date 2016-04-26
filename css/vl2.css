@@ -43,3 +43,16 @@
     vertical-align: middle;
     padding-right: 3px;
 }
+
+.info-sect{
+	font-size: 13px;
+	line-height: 20px;
+}
+
+.hdg-sm{
+	font-size: 14px;
+	color: #848484;
+	font-weight: bold;
+	line-height: 25px;
+}
+
