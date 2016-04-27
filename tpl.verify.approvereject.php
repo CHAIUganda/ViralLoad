@@ -96,7 +96,14 @@ if($saveChangesReturn || $saveChangesProceed) {
 	}
 }
 
-$smpl_res=mysqlquery("SELECT s.* FROM vl_samples AS s WHERE id=$id LIMIT 1");
+$smpl_res=mysqlquery("SELECT s.*,f.facility,d.district,h.hub,s_type.appendix AS sample_type,p.artNumber,p.otherID,p.gender,p.dateOfBirth
+                      FROM vl_samples AS s
+                      LEFT JOIN vl_facilities AS f ON s.facilityID=f.id
+                      LEFT JOIN vl_districts AS d ON f.districtID=d.id
+                      LEFT JOIN vl_hubs AS h ON f.hubID=h.id 
+                      LEFT JOIN vl_appendix_sampletype AS s_type ON s.sampleTypeID=s_type.id
+                      LEFT JOIN vl_patients AS p ON s.patientID=p.id
+                      WHERE s.id=$id LIMIT 1");
 
 $smpl_arr=mysqlfetcharray($smpl_res);
 
@@ -196,44 +203,44 @@ function addOtherReasons(){
                         <tr>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Facility Details</span><br>
-                            <b>Name</b>: Manafwa HC III<br>
-                            <b>District</b>: Manafwa<br>
-                            <b>Hub</b>: Mbale Hub<br>
+                            <b>Name</b>: <?=$smpl_arr['facility']?><br>
+                            <b>District</b>: <?=$smpl_arr['district']?><br>
+                            <b>Hub</b>: <?=$smpl_arr['hub']?><br>
                           </td>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Sample Details</span><br>
-                            <b>Form No.</b>: 0359749<br>
-                            <b>Date of Collection</b>: 30-May-2016<br>
-                            <b>Sample Type</b>: Plasma<br>
+                            <b>Form No.</b>: <?=$smpl_arr['formNumber']?><br>
+                            <b>Date of Collection</b>: <?=getFormattedDateLessDay($smpl_arr['collectionDate'])?><br>
+                            <b>Sample Type</b>: <?=$smpl_arr['sample_type']?><br>
                           </td>
                         </tr>
                         <tr>
                           <td class='info-sect'>
                             <span class='hdg-sm'>Patient Information</span><br>
-                            <b>Art No.</b>: 068<br>
-                            <b>Other ID</b>: xxx<br>
-                            <b>Gender</b>: Male<br>
+                            <b>Art No.</b>: <?=$smpl_arr['artNumber']?><br>
+                            <b>Other ID</b>: <?=$smpl_arr['otherID']?><br>
+                            <b>Gender</b>: <?=$smpl_arr['gender']?><br>
                           </td>
                           <td class='info-sect'>                    
-                            <b>Date of Birth</b>: 30-May-2016<br>
-                            <b>Date of Treatment initiation</b>: 30-May-2016<br>                            
+                            <b>Date of Birth</b>: <?=getFormattedDateLessDay($smpl_arr['dateOfBirth'])?><br>
+                            <b>Date of Treatment initiation</b>: <?=getFormattedDateLessDay($smpl_arr['treatmentInitiationDate'])?><br>                            
                           </td>
                         </tr>
                         <tr class='info-sect'>
-                          <td colspan='2'>
+                          <td colspan='2' id="hi-lite-sect">
                             <b>Sample Reference No.</b>: <?=$smpl_arr['vlSampleID'] ?><br>
-                            <b>Location ID</b>: <?=$smpl_arr['lrNumericID'] ?><br>
+                            <b>Location ID</b>: <?=$smpl_arr['lrCategory'].$smpl_arr['lrEnvelopeNumber']."/".$smpl_arr['lrNumericID'] ?><br>
                           </td>
                         </tr>
 
                          <tr>
                           <td width="50%" class='info-sect'>                            
-                            <b>Last Viral Load Date</b>: 30-May-2016<br>
-                            <b>Value</b>: <br>
+                            <b>Last Viral Load Date</b>: <?=getFormattedDateLessDay($smpl_arr['repeatVLTestLastVLDate'])?><br>
+                            <b>Value</b>: <?=$smpl_arr['repeatVLTestValue'] ?> <br>
                           </td>
                           <td width="50%" class='info-sect'>                            
-                            <b>Captured by</b>: Paul<br>
-                            <b>On</b>: 30-May-2016<br>
+                            <b>Captured by</b>: <?=$smpl_arr['createdby'] ?><br>
+                            <b>On</b>: <?=getFormattedDateLessDay($smpl_arr['created'])?><br>
                           </td>
                         </tr>
 
@@ -248,125 +255,6 @@ function addOtherReasons(){
 
                           <div id="outcomeID"></div>
                           </td>
-                        </tr>
-
-
-                        <tr>
-                          <td>Sample&nbsp;Reference&nbsp;#</td>
-                          <td><?=getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")?></td>
-                        </tr>
-                        <? if(getDetailedTableInfo2("vl_samples","id='$id'","lrNumericID")) { ?>
-                        <tr>
-                          <td><?=($lrCategory=="V"?"Location":"Rejection")?>&nbsp;ID</td>
-                          <td><?=getDetailedTableInfo2("vl_samples","id='$id'","lrCategory").getDetailedTableInfo2("vl_samples","id='$id'","lrEnvelopeNumber")."/".getDetailedTableInfo2("vl_samples","id='$id'","lrNumericID")?></td>
-                        </tr>
-                        <? } ?>
-                        <tr>
-                          <td>Form&nbsp;#</td>
-                          <td><?=getDetailedTableInfo2("vl_samples","id='$id'","formNumber")?></td>
-                        </tr>
-                        <tr>
-                          <td>Facility Name</td>
-                          <td><?=getDetailedTableInfo2("vl_facilities","id='".getDetailedTableInfo2("vl_samples","id='$id'","facilityID")."'","facility")?></td>
-                        </tr>
-                        <tr>
-                          <td>Collection&nbsp;Date</td>
-                          <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id'","collectionDate"))?></td>
-                        </tr>
-                        <tr>
-                          <td>Sample&nbsp;Type</td>
-                          <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id'","sampleTypeID")."' limit 1","appendix")?></td>
-                        </tr>
-                        <tr>
-                          <td>ART&nbsp;#</td>
-                          <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","artNumber")?></td>
-                        </tr>
-                        <tr>
-                          <td>Other&nbsp;ID</td>
-                          <td><?=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","otherID")?></td>
-                        </tr>
-                        <tr>
-                          <td>Date of Birth</td>
-                          <td>
-                            <? $dob=getDetailedTableInfo2("vl_patients","id='".getDetailedTableInfo2("vl_samples","id='$id'","patientID")."'","dateOfBirth") ?>
-                            <?=getFormattedDate($dob)?></td>
-                        </tr>
-                        <tr>
-                          <td>Treatment&nbsp;Initiation&nbsp;Date</td>
-                          <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id'","treatmentInitiationDate"))?></td>
-                        </tr>
-
-                        <? if(getDetailedTableInfo2("vl_samples","id='$id' limit 1","vlTestingRoutineMonitoring")) { ?>
-                            <tr>
-                              <td style="padding:5px 0px; border-bottom: 1px dashed #dfe6e6" colspan="2"><strong>Routine Monitoring</strong></td>
-                            </tr>
-                            <tr>
-                              <td>Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
-                              <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id' limit 1","routineMonitoringLastVLDate"))?></td>
-                            </tr>
-                            <tr>
-                              <td>Value:</td>
-                              <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","routineMonitoringValue")?></td>
-                            </tr>
-                            <tr>
-                              <td>Sample&nbsp;Type:</td>
-                              <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id' limit 1","routineMonitoringSampleTypeID")."' limit 1","appendix")?></td>
-                            </tr>
-                        <? } ?>
-
-                        <? if(getDetailedTableInfo2("vl_samples","id='$id' limit 1","vlTestingRepeatTesting")) { ?>
-                            <tr>
-                              <td style="padding:5px 0px; border-bottom: 1px dashed #dfe6e6" colspan="2"><strong>Repeat Viral Load Test after detectable viraemia and 6 months adherence counseling</strong></td>
-                            </tr>
-                            <tr>
-                              <td>Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
-                              <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id' limit 1","repeatVLTestLastVLDate"))?></td>
-                            </tr>
-                            <tr>
-                              <td>Value:</td>
-                              <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","repeatVLTestValue")?></td>
-                            </tr>
-                            <tr>
-                              <td>Sample&nbsp;Type:</td>
-                              <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id' limit 1","repeatVLTestSampleTypeID")."' limit 1","appendix")?></td>
-                            </tr>
-                        <? } ?>
-
-                        <? if(getDetailedTableInfo2("vl_samples","id='$id' limit 1","vlTestingSuspectedTreatmentFailure")) { ?>
-                            <tr>
-                              <td style="padding:5px 0px; border-bottom: 1px dashed #dfe6e6" colspan="2"><strong>Suspected Treatment Failure</strong></td>
-                            </tr>
-                            <tr>
-                              <td>Last&nbsp;Viral&nbsp;Load&nbsp;Date:</td>
-                              <td><?=getFormattedDateLessDay(getDetailedTableInfo2("vl_samples","id='$id' limit 1","suspectedTreatmentFailureLastVLDate"))?></td>
-                            </tr>
-                            <tr>
-                              <td>Value:</td>
-                              <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","suspectedTreatmentFailureValue")?></td>
-                            </tr>
-                            <tr>
-                              <td>Sample&nbsp;Type:</td>
-                              <td><?=getDetailedTableInfo2("vl_appendix_sampletype","id='".getDetailedTableInfo2("vl_samples","id='$id' limit 1","suspectedTreatmentFailureSampleTypeID")."' limit 1","appendix")?></td>
-                            </tr>
-                        <? } ?>
-
-                        <tr>
-                          <td>Captured&nbsp;By</td>
-                          <td><?=getDetailedTableInfo2("vl_samples","id='$id' limit 1","createdby")?></td>
-                        </tr>
-                        <tr>
-                          <td>On</td>
-                          <td><?=getFormattedDate(getDetailedTableInfo2("vl_samples","id='$id' limit 1","created"))?></td>
-                        </tr>
-                        <tr>
-                          <td width="20%" valign="top">Received&nbsp;Status</td>
-                          <td width="80%">
-                          
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Lab&nbsp;Comments</td>
-                          <td><textarea name="comments" id="comments" cols="40" rows="3" class="searchLarge"></textarea></td>
                         </tr>
                       </table>
                         </div>
