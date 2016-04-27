@@ -73,7 +73,17 @@ if($saveChangesReturn || $saveChangesProceed) {
         }      
       }
     }
-     //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS ..... ENDS HERE
+
+    $dateOfBirth=getFormattedDateCRB($dateOfBirth);
+    $collectionDate=getFormattedDateCRB($collectionDate);
+    $treatmentInitiationDate=getFormattedDateCRB($treatmentInitiationDate);
+    $repeatVLTestLastVLDate=getFormattedDateCRB($repeatVLTestLastVLDate);
+
+    $patient_data=compact('artNumber','otherID','gender','dateOfBirth');
+    $sample_data=compact('sampleTypeID','collectionDate','treatmentInitiationDate','repeatVLTestLastVLDate','repeatVLTestValue');
+    updateData($patient_data,"vl_patients","id=$pat_id");
+    updateData($sample_data,"vl_samples","id=$smpl_id"); 
+    //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS ..... ENDS HERE
 		//redirect to home with updates on the tracking number
 		if($saveChangesProceed) {
 			//proceed to next sample within the search results
@@ -96,7 +106,7 @@ if($saveChangesReturn || $saveChangesProceed) {
 	}
 }
 
-$smpl_res=mysqlquery("SELECT s.*,f.facility,d.district,h.hub,s_type.appendix AS sample_type,p.artNumber,p.otherID,p.gender,p.dateOfBirth
+$smpl_res=mysqlquery("SELECT s.*,f.facility,d.district,h.hub,s_type.appendix AS sample_type,p.artNumber,p.otherID,p.gender,p.dateOfBirth,p.id AS pat_id
                       FROM vl_samples AS s
                       LEFT JOIN vl_facilities AS f ON s.facilityID=f.id
                       LEFT JOIN vl_districts AS d ON f.districtID=d.id
@@ -106,6 +116,14 @@ $smpl_res=mysqlquery("SELECT s.*,f.facility,d.district,h.hub,s_type.appendix AS 
                       WHERE s.id=$id LIMIT 1");
 
 $smpl_arr=mysqlfetcharray($smpl_res);
+
+$gender_arr=['Female'=>'Female','Male'=>'Male','Left Blank'=>'Left Blank','Missing Gender'=>'Missing Gender'];
+
+$smpl_typ_res=mysqlquery("SELECT * FROM vl_appendix_sampletype");
+$sample_type_arr=array();
+while($st_row=mysqlfetcharray($smpl_typ_res)){
+  $sample_type_arr[$st_row['id']]=$st_row['appendix'];
+}
 
 ?>
 
@@ -199,7 +217,7 @@ function addOtherReasons(){
                   <fieldset style="width: 100%" class="app_sect">
             <legend><strong>APPROVE/REJECT SAMPLE</strong></legend>
                         <div style="padding:5px 0px 0px 0px">
-						      <table cellspacing="0" class="vl" width="60%">
+						      <table cellspacing="0" class="vl" width="65%">
                         <tr>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Facility Details</span><br>
@@ -210,20 +228,20 @@ function addOtherReasons(){
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Sample Details</span><br>
                             <b>Form No.</b>: <?=$smpl_arr['formNumber']?><br>
-                            <b>Date of Collection</b>: <?=getFormattedDateLessDay($smpl_arr['collectionDate'])?><br>
-                            <b>Sample Type</b>: <?=$smpl_arr['sample_type']?><br>
+                            <b>Date of Collection</b>: <span class='input-sect'><?=MyHTML::text('collectionDate',getFormattedDateLessDay($smpl_arr['collectionDate']),array('class'=>'sm_input date-picker')) ?></span><br>
+                            <b>Sample Type</b>: <span class='input-sect'><?=MyHTML::select("sampleTypeID",$smpl_arr['sampleTypeID'],$sample_type_arr,"none",array('class'=>'search'))?></span><br>
                           </td>
                         </tr>
                         <tr>
                           <td class='info-sect'>
                             <span class='hdg-sm'>Patient Information</span><br>
-                            <b>Art No.</b>: <?=$smpl_arr['artNumber']?><br>
-                            <b>Other ID</b>: <?=$smpl_arr['otherID']?><br>
-                            <b>Gender</b>: <?=$smpl_arr['gender']?><br>
+                            <b>Art No.</b>: <span class='input-sect'><?=MyHTML::text('artNumber',$smpl_arr['artNumber'],array('class'=>'sm_input')) ?></span><br>
+                            <b>Other ID</b>: <span class='input-sect'><?=MyHTML::text('otherID',$smpl_arr['otherID'],array('class'=>'sm_input')) ?></span><br> 
+                            <b>Gender</b>: <span class='input-sect'><?=MyHTML::select("gender",$smpl_arr['gender'],$gender_arr,"none",array('class'=>'search'))?></span><br>
                           </td>
                           <td class='info-sect'>                    
-                            <b>Date of Birth</b>: <?=getFormattedDateLessDay($smpl_arr['dateOfBirth'])?><br>
-                            <b>Date of Treatment initiation</b>: <?=getFormattedDateLessDay($smpl_arr['treatmentInitiationDate'])?><br>                            
+                            <b>Date of Birth</b>: <span class='input-sect'><?=MyHTML::text('dateOfBirth',getFormattedDateLessDay($smpl_arr['dateOfBirth']),array('class'=>'sm_input date-picker')) ?></span><br>
+                            <b>Date of Treatment initiation</b>: <span class='input-sect'><?=MyHTML::text('treatmentInitiationDate',getFormattedDateLessDay($smpl_arr['treatmentInitiationDate']),array('class'=>'sm_input date-picker')) ?></span><br>                            
                           </td>
                         </tr>
                         <tr class='info-sect'>
@@ -235,12 +253,12 @@ function addOtherReasons(){
 
                          <tr>
                           <td width="50%" class='info-sect'>                            
-                            <b>Last Viral Load Date</b>: <?=getFormattedDateLessDay($smpl_arr['repeatVLTestLastVLDate'])?><br>
-                            <b>Value</b>: <?=$smpl_arr['repeatVLTestValue'] ?> <br>
+                            <b>Last Viral Load Date</b>:<span class='input-sect'><?=MyHTML::text('repeatVLTestLastVLDate',getFormattedDateLessDay($smpl_arr['repeatVLTestLastVLDate']),array('class'=>'sm_input date-picker')) ?></span><br>
+                            <b>Value</b>: <span class='input-sect'><?=MyHTML::text('repeatVLTestValue',$smpl_arr['repeatVLTestValue'],array('class'=>'sm_input'))  ?></span> <br>
                           </td>
                           <td width="50%" class='info-sect'>                            
-                            <b>Captured by</b>: <?=$smpl_arr['createdby'] ?><br>
-                            <b>On</b>: <?=getFormattedDateLessDay($smpl_arr['created'])?><br>
+                            <b>Captured by</b>: <span class='input-sect'><?=$smpl_arr['createdby'] ?><br>
+                            <b>On</b>: <span class='input-sect'><?=getFormattedDateLessDay($smpl_arr['created'])?><br>
                           </td>
                         </tr>
 
@@ -268,6 +286,8 @@ function addOtherReasons(){
                 <input type="hidden" name="encryptedSample" id="encryptedSample" value="<?=$encryptedSample?>" />
                 <input type="hidden" name="envelopeNumberFrom" id="envelopeNumberFrom" value="<?=$envelopeNumberFrom?>" />
                 <input type="hidden" name="envelopeNumberTo" id="envelopeNumberTo" value="<?=$envelopeNumberTo?>" />
+                <?=MyHTML::hidden('pat_id',$smpl_arr['pat_id']) ?>
+                <?=MyHTML::hidden('smpl_id',$id) ?>
               </td>
             </tr>
             <tr>
@@ -275,3 +295,19 @@ function addOtherReasons(){
             </tr>
           </table>
 </form>
+<script type="text/javascript">
+$(document).ready(function() {  
+
+  $( ".date-picker" ).datepicker({
+     changeMonth: true,
+     changeYear: true,
+     maxDate: new Date(),
+     dateFormat: "dd-M-yy"
+  });
+
+  //console.log(new Date("2015-8-3"));
+
+ });
+
+
+</script>

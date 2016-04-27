@@ -346,6 +346,19 @@ function insertData($data,$table){
 	return $ret;
 }
 
+function updateData($data,$table,$cond=""){
+	$sql_str="";
+	foreach ($data as $k => $v) {
+		$val=str_replace("'", "''", $v);
+		$sql_str.="`$k`='$val',";
+	}
+	$sql_str=rtrim($sql_str,",");
+
+	$res=mysqlquery("UPDATE `$table` SET $sql_str WHERE $cond");
+	$ret=$res?1:0;
+	return $ret;
+}
+
 function getData($cols="*",$table="",$others=""){
 	return mysqlquery("SELECT $cols FROM $table $others");
 }

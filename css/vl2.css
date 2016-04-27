@@ -46,7 +46,7 @@
 
 .info-sect{
 	font-size: 13px;
-	line-height: 20px;
+	line-height: 25px;
 }
 
 .hdg-sm{
@@ -62,5 +62,14 @@
 	padding-bottom:20px;
 	color: #641E16;
 	text-align: center;
+}
+
+.sm_input{
+	width: 150px;
+}
+
+.input-sect{
+	float: right;
+	margin-right: 15%;
 }
 

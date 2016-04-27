@@ -46,7 +46,7 @@ $searchFilter=getValidatedVariable("searchFilter");
     <script src="/js/datepicker.jquery.js"></script>
 
     <script src="/js/jquery-2.1.3.min.js"></script>
-    <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/jquery-ui.js"></script>
     
     <script>
 	//image path
