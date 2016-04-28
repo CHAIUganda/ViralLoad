@@ -81,6 +81,9 @@ if($saveChangesReturn || $saveChangesProceed) {
 
     $patient_data=compact('artNumber','otherID','gender','dateOfBirth');
     $sample_data=compact('sampleTypeID','collectionDate','treatmentInitiationDate','repeatVLTestLastVLDate','repeatVLTestValue');
+    //$patient_data=compareUpdateInfo(json_decode($prev_smpl_data),$patient_data);
+    //$sample_data=compareUpdateInfo(json_decode($prev_smpl_data),$sample_data);
+
     updateData($patient_data,"vl_patients","id=$pat_id");
     updateData($sample_data,"vl_samples","id=$smpl_id"); 
     //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS ..... ENDS HERE
@@ -115,7 +118,9 @@ $smpl_res=mysqlquery("SELECT s.*,f.facility,d.district,h.hub,s_type.appendix AS 
                       LEFT JOIN vl_patients AS p ON s.patientID=p.id
                       WHERE s.id=$id LIMIT 1");
 
-$smpl_arr=mysqlfetcharray($smpl_res);
+$smpl_arr=mysqlfetchassoc($smpl_res);
+
+$prev_smpl_data=json_encode($smpl_arr);
 
 $gender_arr=['Female'=>'Female','Male'=>'Male','Left Blank'=>'Left Blank','Missing Gender'=>'Missing Gender'];
 
@@ -288,6 +293,7 @@ function addOtherReasons(){
                 <input type="hidden" name="envelopeNumberTo" id="envelopeNumberTo" value="<?=$envelopeNumberTo?>" />
                 <?=MyHTML::hidden('pat_id',$smpl_arr['pat_id']) ?>
                 <?=MyHTML::hidden('smpl_id',$id) ?>
+                <?=MyHTML::hidden('prev_smpl_data',$prev_smpl_data) ?>
               </td>
             </tr>
             <tr>
