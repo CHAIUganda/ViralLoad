@@ -122,7 +122,7 @@ $smpl_arr=mysqlfetchassoc($smpl_res);
 
 $prev_smpl_data=json_encode($smpl_arr);
 
-$gender_arr=['Female'=>'Female','Male'=>'Male','Left Blank'=>'Left Blank','Missing Gender'=>'Missing Gender'];
+$gender_arr=array('Female'=>'Female','Male'=>'Male','Left Blank'=>'Left Blank','Missing Gender'=>'Missing Gender');
 
 $smpl_typ_res=mysqlquery("SELECT * FROM vl_appendix_sampletype");
 $sample_type_arr=array();
