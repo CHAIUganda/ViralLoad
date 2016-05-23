@@ -683,17 +683,17 @@ function checkPregnancy(theField) {
 	}
 }
 
-/*
+
 function checkForHubDistrict(){
 	//facilityID
 	var theFacilityID=document.samples.facilityID.value;
 	
-	document.getElementById("checkHubDistrictID").innerHTML="loading hub and district ...";
+	document.getElementById("checkHubDistrictID").innerHTML=" ";
 	//get hub
 	vlDC_XloadHub('samples','checkHubDistrictID','hubID','hubTextID',theFacilityID);
 	//get district
 	vlDC_XloadDistrict('samples','checkHubDistrictID','districtID','districtTextID',theFacilityID);
-}*/
+}
 
 function checkMonthDay(theField) {
 	if(theField.value && !document.samples.dateOfBirthMonth.value && !document.samples.dateOfBirthDay.value) {
@@ -837,6 +837,7 @@ function disableEnableCollectionDate(checkedObject) {
 function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityIDField){
 	//get hub
 	vlDC_XloadFacilityFromFormName(formNumberObject.value,formName,fieldID,facilityIDField);
+	getHubDistrict();
 }
 //-->
 </script>
@@ -948,6 +949,8 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 
                                             function getHubDistrict(){
                                             	var theFacilityID=document.samples.facilityID.value;
+                                            	if(!theFacilityID) theFacilityID=$("#facilityID option:selected").val();
+                                            	console.log("attempting to get ...");
                                             	var f_obj=facilities_json[theFacilityID];
                                             	$("#hubTextID").html(f_obj.hub);
                                             	$("#districtTextID").html(f_obj.district);

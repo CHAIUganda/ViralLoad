@@ -732,7 +732,7 @@ function checkForHubDistrict(){
 	//facilityID
 	var theFacilityID=document.samples.facilityID.value;
 	
-	document.getElementById("checkHubDistrictID").innerHTML="loading hub and district ...";
+	document.getElementById("checkHubDistrictID").innerHTML=" ";
 	//get hub
 	vlDC_XloadHub('samples','checkHubDistrictID','hubID','hubTextID',theFacilityID);
 	//get district
@@ -844,6 +844,7 @@ function disableEnableCollectionDate(checkedObject) {
 function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityIDField){
 	//get hub
 	vlDC_XloadFacilityFromFormName(formNumberObject.value,formName,fieldID,facilityIDField);
+	getHubDistrict();
 }
 //-->
 </script>
@@ -922,18 +923,23 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                   <tr>
                                     <td width="20%" id="facilityIDField">
-                                        <select name="facilityID" id="facilityID" class="search" onchange="checkForHubDistrict(), loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)">
+                                        <select name="facilityID" id="facilityID" class="search" onchange="getHubDistrict(),checkForHubDistrict(), loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)">
                                             <?
                                             $query=0;
-                                            $query=mysqlquery("select * from vl_facilities where facility!='' order by facility");
+                                            $query=mysqlquery("select f.*,d.district,h.hub from vl_facilities AS f 
+                                            				  left join vl_districts AS d on f.districtID=d.id 
+                                            				  left join vl_hubs AS h on f.hubID=h.id
+                                            				  where facility!='' order by facility");
                                             if($facilityID) {
                                                 echo "<option value=\"$facilityID\" selected=\"selected\">".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."</option>";
                                             } else {
                                                 echo "<option value=\"\" selected=\"selected\">Select Facility</option>";
                                             }
+                                            $facilities_arr=array();
                                             if(mysqlnumrows($query)) {
                                                 while($q=mysqlfetcharray($query)) {
                                                     echo "<option value=\"$q[id]\">$q[facility]</option>";
+                                                    $facilities_arr[$q['id']]=array('district'=>$q['district'],'hub'=>$q['hub'],'hubID'=>$q['hubID'],'districtID'=>$q['districtID']);
                                                 }
                                             }
                                             ?>
@@ -941,6 +947,18 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                         <script>
                                             var z = dhtmlXComboFromSelect("facilityID");
                                             z.enableFilteringMode(true);
+                                            var facilities_json=<?php echo json_encode($facilities_arr) ?>;
+
+                                            function getHubDistrict(){
+                                            	var theFacilityID=document.samples.facilityID.value;
+                                            	if(!theFacilityID) theFacilityID=$("#facilityID option:selected").val();
+                                            	console.log("attempting to get ...");
+                                            	var f_obj=facilities_json[theFacilityID];
+                                            	$("#hubTextID").html(f_obj.hub);
+                                            	$("#districtTextID").html(f_obj.district);
+                                            	$("#hubID").val(f_obj.hubID);
+                                            	$("#districtID").val(f_obj.districtID);
+                                            }
                                         </script>
                                     </td>
                                     <td width="80%" style="padding:0px 0px 0px 10px" id="checkHubDistrictID">&nbsp;</td>
