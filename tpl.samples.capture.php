@@ -125,9 +125,9 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 	}
 
 	//ensure form number is numeric
-	if(!is_numeric($formNumber)) {
+	/*if(!is_numeric($formNumber)) {
 		$error.="<br /><strong>Form Number '$formNumber' is Not Numeric.</strong><br />The Form Number should be Numeric i.e it should not contain alphanumeric characters e.g A-Z.<br />";
-	}
+	}*/
 
 	//ensure form number is valid
 	if(!getDetailedTableInfo2("vl_forms_clinicalrequest","formNumber='$formNumber' or formNumber='".($formNumber/1)."' limit 1","id")) {
