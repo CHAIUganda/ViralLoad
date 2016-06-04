@@ -24,6 +24,10 @@ $searchFilter=getValidatedVariable("searchFilter");
 <link href="/css/dhtmlxcombo.css" rel="stylesheet" type="text/css">
 <link href="/css/datepicker.jquery.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
+
+<link   href="/css/select2.min.css" rel="stylesheet" />
+
+
 <? $vlDC->printJavascript(); ?>
 <? if($_SESSION["VLEMAIL"]) { ?>
 	<script src="/js/vl.custom.js"></script>
@@ -47,6 +51,7 @@ $searchFilter=getValidatedVariable("searchFilter");
 
     <script src="/js/jquery-2.1.3.min.js"></script>
     <script src="/js/jquery-ui.js"></script>
+    <script src="/js/select2.min.js" type="text/javascript"></script>
     
     <script>
 	//image path

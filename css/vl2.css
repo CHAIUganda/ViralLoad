@@ -64,6 +64,10 @@
 	text-align: center;
 }
 
+.ty_input{
+	width: 40px;
+}
+
 .sm_input{
 	width: 150px;
 }

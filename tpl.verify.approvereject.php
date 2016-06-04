@@ -80,7 +80,7 @@ if($saveChangesReturn || $saveChangesProceed) {
     $repeatVLTestLastVLDate=getFormattedDateCRB($repeatVLTestLastVLDate);
 
     $patient_data=compact('artNumber','otherID','gender','dateOfBirth');
-    $sample_data=compact('sampleTypeID','collectionDate','treatmentInitiationDate','repeatVLTestLastVLDate','repeatVLTestValue');
+    $sample_data=compact('sampleTypeID','collectionDate','treatmentInitiationDate','repeatVLTestLastVLDate','repeatVLTestValue','facilityID','districtID','hubID','formNumber','lrNumericID');
     //$patient_data=compareUpdateInfo(json_decode($prev_smpl_data),$patient_data);
     //$sample_data=compareUpdateInfo(json_decode($prev_smpl_data),$sample_data);
 
@@ -130,6 +130,20 @@ while($st_row=mysqlfetcharray($smpl_typ_res)){
   $sample_type_arr[$st_row['id']]=$st_row['appendix'];
 }
 
+
+$query=mysqlquery("select f.*,d.district,h.hub from vl_facilities AS f 
+                   left join vl_districts AS d on f.districtID=d.id 
+                   left join vl_hubs AS h on f.hubID=h.id
+                   where facility!='' order by facility");
+$facility_arr=array();
+$facility_arr2=array();
+
+if(mysqlnumrows($query)) {
+  while($q=mysqlfetcharray($query)) {
+    $facilities_arr[$q['id']]=$q['facility'];
+    $facilities_arr2[$q['id']]=array('district'=>$q['district'],'hub'=>$q['hub'],'hubID'=>$q['hubID'],'districtID'=>$q['districtID']);
+  }
+}
 ?>
 
 
@@ -222,17 +236,19 @@ function addOtherReasons(){
                   <fieldset style="width: 100%" class="app_sect">
             <legend><strong>APPROVE/REJECT SAMPLE</strong></legend>
                         <div style="padding:5px 0px 0px 0px">
-						      <table cellspacing="0" class="vl" width="65%">
+						      <table cellspacing="0" class="vl" width="80%">
                         <tr>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Facility Details</span><br>
-                            <b>Name</b>: <?=$smpl_arr['facility']?><br>
-                            <b>District</b>: <?=$smpl_arr['district']?><br>
-                            <b>Hub</b>: <?=$smpl_arr['hub']?><br>
+                            <b>Name</b>:<span ><?=MyHTML::select('facilityID',$smpl_arr['facilityID'],$facilities_arr,"",array("id"=>"fclty"))?></span><br>
+                            <b>District</b>: <span  id='district'><?=$smpl_arr['district']?></span><br>
+                            <b>Hub</b>: <span  id='hub'><?=$smpl_arr['hub']?></span><br>
+                            <?=MyHTML::hidden('districtID',$smpl_arr['districtID'],array('id'=>'districtID'))?>
+                            <?=MyHTML::hidden('hubID',$smpl_arr['hubID'],array('id'=>'hubID'))?>
                           </td>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Sample Details</span><br>
-                            <b>Form No.</b>: <?=$smpl_arr['formNumber']?><br>
+                            <b>Form No.</b>: <span class='input-sect'><?=MyHTML::text('formNumber',$smpl_arr['formNumber'],array('class'=>'sm_input')) ?></span><br>
                             <b>Date of Collection</b>: <span class='input-sect'><?=MyHTML::text('collectionDate',getFormattedDateLessDay($smpl_arr['collectionDate']),array('class'=>'sm_input date-picker')) ?></span><br>
                             <b>Sample Type</b>: <span class='input-sect'><?=MyHTML::select("sampleTypeID",$smpl_arr['sampleTypeID'],$sample_type_arr,"none",array('class'=>'search'))?></span><br>
                           </td>
@@ -252,7 +268,7 @@ function addOtherReasons(){
                         <tr class='info-sect'>
                           <td colspan='2' id="hi-lite-sect">
                             <b>Sample Reference No.</b>: <?=$smpl_arr['vlSampleID'] ?><br>
-                            <b>Location ID</b>: <?=$smpl_arr['lrCategory'].$smpl_arr['lrEnvelopeNumber']."/".$smpl_arr['lrNumericID'] ?><br>
+                            <b>Location ID</b>: <?=$smpl_arr['lrCategory'].$smpl_arr['lrEnvelopeNumber']." / " ?><?=MyHTML::text('lrNumericID',$smpl_arr['lrNumericID'],array('class'=>'ty_input')) ?><br>
                           </td>
                         </tr>
 
@@ -311,9 +327,21 @@ $(document).ready(function() {
      dateFormat: "dd-M-yy"
   });
 
+  $("#fclty").select2({placeholder:"Select Facility",allowClear:true,width:"250"});
+
   //console.log(new Date("2015-8-3"));
 
  });
 
+ var facilities_json=<?php echo json_encode($facilities_arr2) ?>;
 
+ $("#fclty").change(function(){
+  var theFacilityID=this.value;
+  var f_obj=facilities_json[theFacilityID];
+  console.log("we got this"+f_obj);
+  $("#hub").html(f_obj.hub);
+  $("#district").html(f_obj.district);
+  $("#hubID").val(f_obj.hubID);
+  $("#districtID").val(f_obj.districtID);
+ })
 </script>
