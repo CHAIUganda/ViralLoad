@@ -12,17 +12,18 @@ $comments=validate($comments);
 
 //encrypted samples
 $searchQuery=0;
-$searchQueryCurrentPosition=0;
-$searchQueryNextPosition=0;
-if($encryptedSample) {
+if($encryptedSample && !$saveChangesProceed) {
 	$searchQuery=validate(vlDecrypt($encryptedSample));
-	$searchQueryCurrentPosition=getDetailedTableInfo3("vl_samples y","y.vlSampleID='".getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")."'","(select count(x.id) from vl_samples x where (x.formNumber='$searchQuery' or x.vlSampleID='$searchQuery' or concat(x.lrCategory,x.lrEnvelopeNumber,'/',x.lrNumericID) like '$searchQuery%') and x.vlSampleID<=y.vlSampleID order by if(x.lrCategory='',1,0),x.lrCategory, if(x.lrEnvelopeNumber='',1,0),x.lrEnvelopeNumber, if(x.lrNumericID='',1,0),x.lrNumericID,x.created desc)","position");
-	if($searchQueryCurrentPosition) {
+
+	//$searchQueryCurrentPosition=getDetailedTableInfo3("vl_samples y","y.vlSampleID='".getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")."'","(select count(x.id) from vl_samples x where (x.formNumber='$searchQuery' or x.vlSampleID='$searchQuery' or concat(x.lrCategory,x.lrEnvelopeNumber,'/',x.lrNumericID) like '$searchQuery%') and x.vlSampleID<=y.vlSampleID order by if(x.lrCategory='',1,0),x.lrCategory, if(x.lrEnvelopeNumber='',1,0),x.lrEnvelopeNumber, if(x.lrNumericID='',1,0),x.lrNumericID,x.created desc)","position");
+	//$searchQueryCurrentPosition=getDetailedTableInfo3("vl_samples y","id='$id'","(select count(x.id) from vl_samples x where (concat(x.lrCategory,x.lrEnvelopeNumber,'/',x.lrNumericID) like '$searchQuery%') and x.vlSampleID<=y.vlSampleID order by if(x.lrCategory='',1,0),x.lrCategory, if(x.lrEnvelopeNumber='',1,0),x.lrEnvelopeNumber, if(x.lrNumericID='',1,0),x.lrNumericID,x.created desc)","position");
+
+  //if($searchQueryCurrentPosition) {
 		//$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and (formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $searchQueryCurrentPosition,1","id");
 		//if(!$searchQueryNextPosition) {
-			$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and id!='$id' and (formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by lrNumericID asc limit 1","id");
+			$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and id!='$id' and (concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by lrNumericID asc limit 1","id");
 		//}
-	}
+	//}
 }
 
 //envelope Number From
@@ -30,7 +31,7 @@ $searchQueryFrom=0;
 $searchQueryTo=0;
 //$searchQueryCurrentPosition=0;
 //$searchQueryNextPosition=0;
-if($envelopeNumberFrom && $envelopeNumberTo) {
+if($envelopeNumberFrom && $envelopeNumberTo && !$saveChangesProceed ) {
 	$searchQueryFrom=validate(vlDecrypt($envelopeNumberFrom));
 	$searchQueryTo=validate(vlDecrypt($envelopeNumberTo));
 	$searchQueryCurrentPosition=getDetailedTableInfo3("vl_samples y","y.vlSampleID='".getDetailedTableInfo2("vl_samples","id='$id'","vlSampleID")."'","(select count(x.id) from vl_samples x where concat(x.lrCategory,x.lrEnvelopeNumber)>='$searchQueryFrom' and concat(x.lrCategory,x.lrEnvelopeNumber)<='$searchQueryTo' and x.vlSampleID<=y.vlSampleID order by if(x.lrCategory='',1,0),x.lrCategory, if(x.lrEnvelopeNumber='',1,0),x.lrEnvelopeNumber, if(x.lrNumericID='',1,0),x.lrNumericID,x.created desc)","position");
@@ -89,11 +90,16 @@ if($saveChangesReturn || $saveChangesProceed) {
 		//redirect to home with updates on the tracking number
 		if($saveChangesProceed) {
 			//proceed to next sample within the search results
-			if($encryptedSample && $searchQueryCurrentPosition && $searchQueryNextPosition) {
+			if($encryptedSample && $searchQueryNextPosition) {
+        //echo "HERE ONE<br>$searchQueryCurrentPosition --- $searchQueryNextPosition";break;
 				go("/verify/approve.reject/$searchQueryNextPosition/$pg/search/$encryptedSample/1/");
 			} elseif($envelopeNumberFrom && $envelopeNumberTo && $searchQueryCurrentPosition && $searchQueryNextPosition) {
+        //echo "HERE TWO<br>";break;
 				go("/verify/approve.reject/$searchQueryNextPosition/$pg/search/$envelopeNumberFrom/$envelopeNumberTo/1/");
-			}
+			} else{
+        //echo "else<br> $searchQueryCurrentPosition ,,, $searchQueryNextPosition";break;
+        echo  "Error occurred.. please contact the system admin";
+      }
 		} elseif(!$searchQueryNextPosition || $saveChangesReturn) {
 			if($encryptedSample) {
 				go("/verify/search/$encryptedSample/pg/$pg/modified/");
@@ -304,6 +310,8 @@ function addOtherReasons(){
                 <input type="hidden" name="encryptedSample" id="encryptedSample" value="<?=$encryptedSample?>" />
                 <input type="hidden" name="envelopeNumberFrom" id="envelopeNumberFrom" value="<?=$envelopeNumberFrom?>" />
                 <input type="hidden" name="envelopeNumberTo" id="envelopeNumberTo" value="<?=$envelopeNumberTo?>" />
+                <?=MyHTML::hidden('searchQueryNextPosition',$searchQueryNextPosition)?>
+
                 <?=MyHTML::hidden('pat_id',$smpl_arr['pat_id']) ?>
                 <?=MyHTML::hidden('smpl_id',$id) ?>
                 
