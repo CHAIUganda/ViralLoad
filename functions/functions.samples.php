@@ -560,4 +560,10 @@ function getRecommendation($suppressed,$test_date,$sample_type){
 	}
 	return $ret;
 }
+
+
+function repairDate($date){
+	$ret=$date=='0000-00-00'?"":date("Ymd",strtotime($date));
+	return $ret;
+}
 ?>

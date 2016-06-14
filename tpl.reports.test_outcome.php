@@ -15,7 +15,7 @@ $output = fopen('php://output', 'w');
 extract($_GET);
 
 $headers=array("Form Number","Location ID","Sample ID","Facility","District","Hub","IP","Date of Collection"
-,"Sample Type","Patient ART","Patient OtherID","Gender","Date Of Birth","Age (Years)","Phone Number","Has Patient Been on treatment for at least 6 months"
+,"Sample Type","Patient ART","PID","Patient OtherID","Gender","Date Of Birth","Age (Years)","Phone Number","Has Patient Been on treatment for at least 6 months"
 ,"Date of Treatment Initiation","Current Regimen","Other Regimen","Indication for Treatment Initiation","Other Indication","Which Treatment Line is Patient on"
 ,"Reason for Failure","Is Patient Pregnant","ANC Number","Is Patient Breastfeeding","Patient has Active TB"
 ,"If Yes are they on","ARV Adherence","Routine Monitoring","Last Viral Load Date"
@@ -109,6 +109,7 @@ $row2["IP"]=$ip;
 $row2["Date of Collection"]=$collectionDate;
 $row2["Sample Type"]=$sample_type;
 $row2["Patient ART"]=$artNumber;
+$row2["PID"]="$facility $artNumber";
 $row2["Patient OtherID"]=$otherID;
 $row2["Gender"]=$gender;
 $row2["Date Of Birth"]=$dateOfBirth;

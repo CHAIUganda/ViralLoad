@@ -54,6 +54,7 @@ if($saveChangesReturn || $saveChangesProceed) {
 
 	//input data
 	if(!$error) {
+
 		//log status
 
     //MODEL:: WHERE THE DATABASE CAPTURES THE APPROVAL DETAILS .....STARTS HERE
@@ -74,15 +75,13 @@ if($saveChangesReturn || $saveChangesProceed) {
       }
     }
 
-    $dateOfBirth=getFormattedDateCRB($dateOfBirth);
-    $collectionDate=getFormattedDateCRB($collectionDate);
-    $treatmentInitiationDate=getFormattedDateCRB($treatmentInitiationDate);
-    $repeatVLTestLastVLDate=getFormattedDateCRB($repeatVLTestLastVLDate);
+    $pat['dateOfBirth']=getFormattedDateCRB($pat['dateOfBirth']);
+    $smpl['collectionDate']=getFormattedDateCRB($smpl['collectionDate']);
+    $smpl['treatmentInitiationDate']=getFormattedDateCRB($smpl['treatmentInitiationDate']);
+    $smpl['repeatVLTestLastVLDate']=getFormattedDateCRB($smpl['repeatVLTestLastVLDate']);
 
-    $patient_data=compact('artNumber','otherID','gender','dateOfBirth');
-    $sample_data=compact('sampleTypeID','collectionDate','treatmentInitiationDate','repeatVLTestLastVLDate','repeatVLTestValue','facilityID','districtID','hubID','formNumber','lrNumericID');
-    //$patient_data=compareUpdateInfo(json_decode($prev_smpl_data),$patient_data);
-    //$sample_data=compareUpdateInfo(json_decode($prev_smpl_data),$sample_data);
+    $patient_data=array_diff($pat, $prev_pat);
+    $sample_data=array_diff($smpl, $prev_smpl);
 
     updateData($patient_data,"vl_patients","id=$pat_id");
     updateData($sample_data,"vl_samples","id=$smpl_id"); 
@@ -119,8 +118,6 @@ $smpl_res=mysqlquery("SELECT s.*,f.facility,d.district,h.hub,s_type.appendix AS 
                       WHERE s.id=$id LIMIT 1");
 
 $smpl_arr=mysqlfetchassoc($smpl_res);
-
-$prev_smpl_data=json_encode($smpl_arr);
 
 $gender_arr=array('Female'=>'Female','Male'=>'Male','Left Blank'=>'Left Blank','Missing Gender'=>'Missing Gender');
 
@@ -240,42 +237,42 @@ function addOtherReasons(){
                         <tr>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Facility Details</span><br>
-                            <b>Name</b>:<span ><?=MyHTML::select('facilityID',$smpl_arr['facilityID'],$facilities_arr,"",array("id"=>"fclty"))?></span><br>
+                            <b>Name</b>:<span ><?=MyHTML::select('smpl[facilityID]',$smpl_arr['facilityID'],$facilities_arr,"",array("id"=>"fclty"))?></span><br>
                             <b>District</b>: <span  id='district'><?=$smpl_arr['district']?></span><br>
                             <b>Hub</b>: <span  id='hub'><?=$smpl_arr['hub']?></span><br>
-                            <?=MyHTML::hidden('districtID',$smpl_arr['districtID'],array('id'=>'districtID'))?>
-                            <?=MyHTML::hidden('hubID',$smpl_arr['hubID'],array('id'=>'hubID'))?>
+                            <?=MyHTML::hidden('smpl[districtID]',$smpl_arr['districtID'],array('id'=>'districtID'))?>
+                            <?=MyHTML::hidden('smpl[hubID]',$smpl_arr['hubID'],array('id'=>'hubID'))?>
                           </td>
                           <td width="50%" class='info-sect'>
                             <span class='hdg-sm'>Sample Details</span><br>
-                            <b>Form No.</b>: <span class='input-sect'><?=MyHTML::text('formNumber',$smpl_arr['formNumber'],array('class'=>'sm_input')) ?></span><br>
-                            <b>Date of Collection</b>: <span class='input-sect'><?=MyHTML::text('collectionDate',getFormattedDateLessDay($smpl_arr['collectionDate']),array('class'=>'sm_input date-picker')) ?></span><br>
-                            <b>Sample Type</b>: <span class='input-sect'><?=MyHTML::select("sampleTypeID",$smpl_arr['sampleTypeID'],$sample_type_arr,"none",array('class'=>'search'))?></span><br>
+                            <b>Form No.</b>: <span class='input-sect'><?=MyHTML::text('smpl[formNumber]',$smpl_arr['formNumber'],array('class'=>'sm_input')) ?></span><br>
+                            <b>Date of Collection</b>: <span class='input-sect'><?=MyHTML::text('smpl[collectionDate]',getFormattedDateLessDay($smpl_arr['collectionDate']),array('class'=>'sm_input date-picker')) ?></span><br>
+                            <b>Sample Type</b>: <span class='input-sect'><?=MyHTML::select("smpl[sampleTypeID]",$smpl_arr['sampleTypeID'],$sample_type_arr,"none",array('class'=>'search'))?></span><br>
                           </td>
                         </tr>
                         <tr>
                           <td class='info-sect'>
                             <span class='hdg-sm'>Patient Information</span><br>
-                            <b>Art No.</b>: <span class='input-sect'><?=MyHTML::text('artNumber',$smpl_arr['artNumber'],array('class'=>'sm_input')) ?></span><br>
-                            <b>Other ID</b>: <span class='input-sect'><?=MyHTML::text('otherID',$smpl_arr['otherID'],array('class'=>'sm_input')) ?></span><br> 
-                            <b>Gender</b>: <span class='input-sect'><?=MyHTML::select("gender",$smpl_arr['gender'],$gender_arr,"none",array('class'=>'search'))?></span><br>
+                            <b>Art No.</b>: <span class='input-sect'><?=MyHTML::text('pat[artNumber]',$smpl_arr['artNumber'],array('class'=>'sm_input')) ?></span><br>
+                            <b>Other ID</b>: <span class='input-sect'><?=MyHTML::text('pat[otherID]',$smpl_arr['otherID'],array('class'=>'sm_input')) ?></span><br> 
+                            <b>Gender</b>: <span class='input-sect'><?=MyHTML::select("pat[gender]",$smpl_arr['gender'],$gender_arr,"none",array('class'=>'search'))?></span><br>
                           </td>
                           <td class='info-sect'>                    
-                            <b>Date of Birth</b>: <span class='input-sect'><?=MyHTML::text('dateOfBirth',getFormattedDateLessDay($smpl_arr['dateOfBirth']),array('class'=>'sm_input date-picker')) ?></span><br>
-                            <b>Date of Treatment initiation</b>: <span class='input-sect'><?=MyHTML::text('treatmentInitiationDate',getFormattedDateLessDay($smpl_arr['treatmentInitiationDate']),array('class'=>'sm_input date-picker')) ?></span><br>                            
+                            <b>Date of Birth</b>: <span class='input-sect'><?=MyHTML::text('pat[dateOfBirth]',getFormattedDateLessDay($smpl_arr['dateOfBirth']),array('class'=>'sm_input date-picker')) ?></span><br>
+                            <b>Date of Treatment initiation</b>: <span class='input-sect'><?=MyHTML::text('smpl[treatmentInitiationDate]',getFormattedDateLessDay($smpl_arr['treatmentInitiationDate']),array('class'=>'sm_input date-picker')) ?></span><br>                            
                           </td>
                         </tr>
                         <tr class='info-sect'>
                           <td colspan='2' id="hi-lite-sect">
                             <b>Sample Reference No.</b>: <?=$smpl_arr['vlSampleID'] ?><br>
-                            <b>Location ID</b>: <?=$smpl_arr['lrCategory'].$smpl_arr['lrEnvelopeNumber']." / " ?><?=MyHTML::text('lrNumericID',$smpl_arr['lrNumericID'],array('class'=>'ty_input')) ?><br>
+                            <b>Location ID</b>: <?=$smpl_arr['lrCategory'].$smpl_arr['lrEnvelopeNumber']." / " ?><?=MyHTML::text('smpl[lrNumericID]',$smpl_arr['lrNumericID'],array('class'=>'ty_input')) ?><br>
                           </td>
                         </tr>
 
                          <tr>
                           <td width="50%" class='info-sect'>                            
-                            <b>Last Viral Load Date</b>:<span class='input-sect'><?=MyHTML::text('repeatVLTestLastVLDate',getFormattedDateLessDay($smpl_arr['repeatVLTestLastVLDate']),array('class'=>'sm_input date-picker')) ?></span><br>
-                            <b>Value</b>: <span class='input-sect'><?=MyHTML::text('repeatVLTestValue',$smpl_arr['repeatVLTestValue'],array('class'=>'sm_input'))  ?></span> <br>
+                            <b>Last Viral Load Date</b>:<span class='input-sect'><?=MyHTML::text('smpl[repeatVLTestLastVLDate]',getFormattedDateLessDay($smpl_arr['repeatVLTestLastVLDate']),array('class'=>'sm_input date-picker')) ?></span><br>
+                            <b>Value</b>: <span class='input-sect'><?=MyHTML::text('smpl[repeatVLTestValue]',$smpl_arr['repeatVLTestValue'],array('class'=>'sm_input'))  ?></span> <br>
                           </td>
                           <td width="50%" class='info-sect'>                            
                             <b>Captured by</b>: <span class='input-sect'><?=$smpl_arr['createdby'] ?><br>
@@ -309,7 +306,22 @@ function addOtherReasons(){
                 <input type="hidden" name="envelopeNumberTo" id="envelopeNumberTo" value="<?=$envelopeNumberTo?>" />
                 <?=MyHTML::hidden('pat_id',$smpl_arr['pat_id']) ?>
                 <?=MyHTML::hidden('smpl_id',$id) ?>
-                <?=MyHTML::hidden('prev_smpl_data',$prev_smpl_data) ?>
+                
+                <?=MyHTML::hidden('prev_pat[artNumber]',$smpl_arr['artNumber']) ?>
+                <?=MyHTML::hidden('prev_pat[otherID]',$smpl_arr['otherID']) ?>
+                <?=MyHTML::hidden('prev_pat[gender]',$smpl_arr['gender']) ?>
+                <?=MyHTML::hidden('prev_pat[dateOfBirth]',repairDate($smpl_arr['dateOfBirth'])) ?>
+
+                <?=MyHTML::hidden('prev_smpl[sampleTypeID]',$smpl_arr['sampleTypeID']) ?>
+                <?=MyHTML::hidden('prev_smpl[collectionDate]',repairDate($smpl_arr['collectionDate']))?>
+                <?=MyHTML::hidden('prev_smpl[treatmentInitiationDate]',repairDate($smpl_arr['treatmentInitiationDate'])) ?>
+                <?=MyHTML::hidden('prev_smpl[repeatVLTestLastVLDate]',repairDate($smpl_arr['repeatVLTestLastVLDate'])) ?>
+                <?=MyHTML::hidden('prev_smpl[repeatVLTestValue]',$smpl_arr['repeatVLTestValue']) ?>
+                <?=MyHTML::hidden('prev_smpl[facilityID]',$smpl_arr['facilityID']) ?>
+                <?=MyHTML::hidden('prev_smpl[districtID]',$smpl_arr['districtID']) ?>
+                <?=MyHTML::hidden('prev_smpl[hubID]',$smpl_arr['hubID']) ?>
+                <?=MyHTML::hidden('prev_smpl[formNumber]',$smpl_arr['formNumber']) ?>
+                <?=MyHTML::hidden('prev_smpl[lrNumericID]',$smpl_arr['lrNumericID']) ?>
               </td>
             </tr>
             <tr>
