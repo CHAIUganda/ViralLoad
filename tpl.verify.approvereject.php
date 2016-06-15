@@ -29,12 +29,19 @@ if($encryptedSample && !$saveChangesProceed) {
       $p_result=mysqlquery($p_sql);
       //var_dump($p_result);
       $p_rw=mysqlfetchassoc($p_result);
-      //ALTER TABLE `vl_samples` ADD `verified` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `suspectedTreatmentFailureSampleTypeID` ;
       $searchQueryNextPosition=$p_rw["id"];
       //echo microtime()."\n";
     //}
 	//}
 }
+
+/*
+SOLUTION TO SLOW MOVE TO NEXT SAMPLE
+
+1. ALTER TABLE `vl_samples` ADD `verified` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `suspectedTreatmentFailureSampleTypeID` ;
+2. UPDATE `vl_samples` AS s SET `verified` =1 WHERE s.id IN (SELECT sampleID FROM vl_samples_verify)
+
+*/
 
 //envelope Number From
 $searchQueryFrom=0;
