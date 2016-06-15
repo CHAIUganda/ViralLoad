@@ -21,8 +21,18 @@ if($encryptedSample && !$saveChangesProceed) {
   //if($searchQueryCurrentPosition) {
 		//$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and (formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $searchQueryCurrentPosition,1","id");
 		//if(!$searchQueryNextPosition) {
-			$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id not in (select sampleID from vl_samples_verify) and id!='$id' and (concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by lrNumericID asc limit 1","id");
-		//}
+      //echo microtime()."\n";
+			//$searchQueryNextPosition=getDetailedTableInfo2("vl_samples","id!='$id' and id not in (select sampleID from vl_samples_verify) and (concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%') order by lrNumericID asc limit 1","id");
+      $p_sql="SELECT id FROM vl_samples WHERE id!=$id AND verified=0 AND (concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) 
+              LIKE '$searchQuery%') ORDER BY lrNumericID ASC LIMIT 1";	
+      //echo $p_sql."<br>";	  
+      $p_result=mysqlquery($p_sql);
+      //var_dump($p_result);
+      $p_rw=mysqlfetchassoc($p_result);
+      //ALTER TABLE `vl_samples` ADD `verified` TINYINT( 1 ) UNSIGNED NOT NULL AFTER `suspectedTreatmentFailureSampleTypeID` ;
+      $searchQueryNextPosition=$p_rw["id"];
+      //echo microtime()."\n";
+    //}
 	//}
 }
 
@@ -83,6 +93,7 @@ if($saveChangesReturn || $saveChangesProceed) {
 
     $patient_data=array_diff($pat, $prev_pat);
     $sample_data=array_diff($smpl, $prev_smpl);
+    $sample_data['verified']=1;
 
     updateData($patient_data,"vl_patients","id=$pat_id");
     updateData($sample_data,"vl_samples","id=$smpl_id"); 
@@ -310,7 +321,7 @@ function addOtherReasons(){
                 <input type="hidden" name="encryptedSample" id="encryptedSample" value="<?=$encryptedSample?>" />
                 <input type="hidden" name="envelopeNumberFrom" id="envelopeNumberFrom" value="<?=$envelopeNumberFrom?>" />
                 <input type="hidden" name="envelopeNumberTo" id="envelopeNumberTo" value="<?=$envelopeNumberTo?>" />
-                <?=MyHTML::hidden('searchQueryNextPosition',$searchQueryNextPosition)?>
+                <?=MyHTML::hidden('searchQueryNextPosition',$searchQueryNextPosition)?> 
 
                 <?=MyHTML::hidden('pat_id',$smpl_arr['pat_id']) ?>
                 <?=MyHTML::hidden('smpl_id',$id) ?>
