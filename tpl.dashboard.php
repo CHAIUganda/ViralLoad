@@ -107,11 +107,11 @@ function hideMessage() {
             <div><img src="/images/spacer.gif" width="10" height="10" /></div>
             <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples in Database (Total): <?=number_format((float)getDetailedTableInfo3("vl_samples","id>0","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
-            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Pending Samples (All): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0","count(id)","num"))?></div>
+            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples pending approval (All): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
-            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Pending Samples (DBS): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0 and sampleTypeID='".getDetailedTableInfo2("vl_appendix_sampletype","appendix='DBS' limit 1","id")."'","count(id)","num"))?></div>
+            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples Pending approval (DBS): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0 and sampleTypeID=1","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
-            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Pending Samples (Plasma): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0 and sampleTypeID='".getDetailedTableInfo2("vl_appendix_sampletype","appendix='Plasma' limit 1","id")."'","count(id)","num"))?></div>
+            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples Pending approval (Plasma): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0 and sampleTypeID=2","count(id)","num"))?></div>
            <div><img src="/images/spacer.gif" width="3" height="3" /></div>
             <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Printed Worksheets: <?=number_format((float)getDetailedTableInfo3("vl_logs_worksheetsamplesprinted,vl_samples_worksheetcredentials","vl_logs_worksheetsamplesprinted.worksheetID=vl_samples_worksheetcredentials.id","count(distinct vl_logs_worksheetsamplesprinted.worksheetID)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
