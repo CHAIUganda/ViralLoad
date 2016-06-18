@@ -196,29 +196,50 @@ if($reverseApprovalRejection) {
                 //proceed with query
                 $query=0;
                 $xquery=0;
-                if($searchQuery) {
+        /*if($searchQuery) {
 					if($approvedstatus=="search") {
-						$query=mysqlquery("select * from vl_samples where formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
+						$query=mysqlquery("select * from vl_samples where  order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
 						$xquery=mysqlquery("select * from vl_samples where formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
 					} elseif($approvedstatus=="reverse") {
-						$query=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
-						$xquery=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
+						$query=mysqlquery("select * from vl_samples where verified=1 and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
+						$xquery=mysqlquery("select * from vl_samples where verified=1 and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
 					}
 				} elseif($searchQueryFrom && $searchQueryTo) {
 					$query=mysqlquery("select * from vl_samples where concat(lrCategory,lrEnvelopeNumber)>='$searchQueryFrom' and concat(lrCategory,lrEnvelopeNumber)<='$searchQueryTo' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
 					$xquery=mysqlquery("select * from vl_samples where concat(lrCategory,lrEnvelopeNumber)>='$searchQueryFrom' and concat(lrCategory,lrEnvelopeNumber)<='$searchQueryTo' order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
 				} else {
-                    if(!$approvedstatus || $approvedstatus=="pending") {
-                        $query=mysqlquery("select * from vl_samples where id not in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
-                        $xquery=mysqlquery("select * from vl_samples where id not in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
-                    } elseif($approvedstatus=="processed" || $approvedstatus=="reverse") {
-                        $query=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
-                        $xquery=mysqlquery("select * from vl_samples where id in (select sampleID from vl_samples_verify) order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
-                    }
-                }
+           if(!$approvedstatus || $approvedstatus=="pending") {
+             $query=mysqlquery("select * from vl_samples where verified=0 order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
+             $xquery=mysqlquery("select * from vl_samples where verified=0 order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
+           } elseif($approvedstatus=="processed" || $approvedstatus=="reverse") {
+             $query=mysqlquery("select * from vl_samples where verified=1 order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc limit $offset, $rowsToDisplay");
+              $xquery=mysqlquery("select * from vl_samples where verified=1 order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,created desc");
+           }
+        }*/
+
+
+        if($searchQuery) {
+          if($approvedstatus=="search") {
+             $condns="formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%'";
+          } elseif($approvedstatus=="reverse") {
+            $condns="verified=1 and formNumber='$searchQuery' or vlSampleID='$searchQuery' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID) like '$searchQuery%'";
+          }
+        } elseif($searchQueryFrom && $searchQueryTo) {
+          $condns="concat(lrCategory,lrEnvelopeNumber)>='$searchQueryFrom' and concat(lrCategory,lrEnvelopeNumber)<='$searchQueryTo'";
+        } else {
+           if(!$approvedstatus || $approvedstatus=="pending") {
+            $condns="verified=0";
+          } elseif($approvedstatus=="processed" || $approvedstatus=="reverse") {
+            $condns="verified=1";
+          }
+        }
+
                 //number pages
                 $numberPages=0;
-                $numberPages=ceil(mysqlnumrows($xquery)/$rowsToDisplay);
+                $query=myQuery($condns,$offset,$rowsToDisplay);
+                $the_count=mysqlquery("SELECT count(id) AS num FROM vl_samples WHERE $condns LIMIT 1");
+                $num_rows=mysqlfetcharray($the_count)['num'];
+                $numberPages=ceil($num_rows/$rowsToDisplay);
                 
                 if(mysqlnumrows($query)) {
                     //how many pages are there?
@@ -227,13 +248,13 @@ if($reverseApprovalRejection) {
                     }
                     
                     $numberOfRelevantSamples=0;
-                    $numberOfRelevantSamples=getDetailedTableInfo3("vl_samples","id not in (select sampleID from vl_samples_verify)","count(id)","num");
+                    $numberOfRelevantSamples=getDetailedTableInfo3("vl_samples","verified=0","count(id)","num");
                     
                     $resultsPending=0;
                     $resultsPending=$numberOfRelevantSamples;
                     
                     $resultsProcessed=0;
-                    $resultsProcessed=getDetailedTableInfo3("vl_samples","id in (select sampleID from vl_samples_verify)","count(id)","num");
+                    $resultsProcessed=getDetailedTableInfo3("vl_samples"," verified=1","count(id)","num");
                     
                     $resultsSearch=0;
                     $resultsSearch=mysqlnumrows($query);
@@ -259,7 +280,7 @@ if($reverseApprovalRejection) {
                                   <? } ?>
                                   <td bgcolor="#C4CCCC"><img src="/images/spacer.gif" width="1" height="1" /></td>
                                   <? if($approvedstatus=="search") { ?>
-                                  <td class="bluetab_active"><?="Search&nbsp;Results&nbsp;(".number_format((float)mysqlnumrows($xquery)).")"?></td>
+                                  <td class="bluetab_active"><?="Search&nbsp;Results&nbsp;(".number_format((float)$num_rows).")"?></td>
                                   <td bgcolor="#C4CCCC"><img src="/images/spacer.gif" width="1" height="1" /></td>
                                   <? } ?>
                                   <? 
@@ -315,25 +336,29 @@ if($reverseApprovalRejection) {
                                     <tr onMouseover="this.bgColor='#f0e6dd'" onMouseout="this.bgColor='#FFFFFF'">
                                         <? 
                                         if($approvedstatus=="reverse") { 
-                                            echo "<td class=\"".($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")."\"><input name=\"sampleVerifyCheckbox[]\" type=\"checkbox\" id=\"sampleVerifyCheckbox[]\" value=\"$q[id]\"></td>";
+                                            echo "<td class=\"".($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")."\"><input name=\"sampleVerifyCheckbox[]\" type=\"checkbox\" id=\"sampleVerifyCheckbox[]\" value=\"$q[id]\"></td>";
                                         } else {
-                                            echo "<td class=\"".($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")."\">$count</td>";
+                                            echo "<td class=\"".($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")."\">$count</td>";
                                         }
                                         ?>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')"><?=$q["formNumber"]?></a></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["lrNumericID"]?$q["lrCategory"].$q["lrEnvelopeNumber"]."/".$q["lrNumericID"]:"&nbsp;")?></td>
-                                        <!--<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["vlSampleID"]?></td>-->
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_appendix_sampletype","id='$q[sampleTypeID]'","appendix")?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["collectionDate"])?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["treatmentInitiationDate"])?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["receiptDate"])?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber"))?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_patients","id='$q[patientID]'","otherID"))?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_districts","id='$q[districtID]'","district"))?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","facility"))?></td>
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><?=($status?"<a href=\"#\" onclick=\"iDisplayMessage('/verify/status/$q[id]/$status/')\">$status</a>":"Pending")?></td>
-                                        <!--<td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')">Approve</a></div></td>-->
-                                        <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a <?=(!getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]'","outcome")?"href=\"/verify/approve.reject/$q[id]/$pg/".($encryptedSample?"search/$encryptedSample/":($envelopeNumberFrom && $envelopeNumberTo?"search/$envelopeNumberFrom/$envelopeNumberTo/":""))."\"":"href=\"#\" onclick=\"iDisplayMessage('/verify/preview/$q[id]/$pg/".($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))."')\"")?>>Approve</a></div></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')"><?=$q["formNumber"]?></a></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=($q["lrNumericID"]?$q["lrCategory"].$q["lrEnvelopeNumber"]."/".$q["lrNumericID"]:"&nbsp;")?></td>
+                                        <!--<td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=$q["vlSampleID"]?></td>-->
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=getDetailedTableInfo2("vl_appendix_sampletype","id='$q[sampleTypeID]'","appendix")?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["collectionDate"])?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["treatmentInitiationDate"])?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=getFormattedDateLessDay($q["receiptDate"])?></td>
+                                        <!-- <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_patients","id='$q[patientID]'","artNumber"))?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_patients","id='$q[patientID]'","otherID"))?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_districts","id='$q[districtID]'","district"))?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=preg_replace("/\s/s","&nbsp;",getDetailedTableInfo2("vl_facilities","id='$q[facilityID]'","facility"))?></td> -->
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?= $q['artNumber'] ?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?= $q['otherID'] ?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?= $q['district'] ?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?= $q['facility'] ?></td>
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><?=($status?"<a href=\"#\" onclick=\"iDisplayMessage('/verify/status/$q[id]/$status/')\">$status</a>":"Pending")?></td>
+                                        <!--<td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="#" onclick="iDisplayMessage('/verify/preview/<?=$q["id"]?>/<?=$pg?>/<?=($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))?>')">Approve</a></div></td>-->
+                                        <td class="<?=($count<$num_rows?"vl_tdstandard":"vl_tdnoborder")?>"><div class="vls_grey" style="padding:3px 0px 0px 0px"><a <?=(!getDetailedTableInfo2("vl_samples_verify","sampleID='$q[id]'","outcome")?"href=\"/verify/approve.reject/$q[id]/$pg/".($encryptedSample?"search/$encryptedSample/":($envelopeNumberFrom && $envelopeNumberTo?"search/$envelopeNumberFrom/$envelopeNumberTo/":""))."\"":"href=\"#\" onclick=\"iDisplayMessage('/verify/preview/$q[id]/$pg/".($status?"noedit/":($approvedstatus=="search"?"search/$encryptedSample/":""))."')\"")?>>Approve</a></div></td>
                                     </tr>
                                 <? } ?>
                            </table>
@@ -365,3 +390,20 @@ if($reverseApprovalRejection) {
 				</td>
             </tr>
           </table>
+
+
+          <?php
+        function myQuery($condns,$offset,$rowsToDisplay){
+          $query=" 
+                SELECT s.*,artNumber,otherID,facility,district FROM vl_samples AS s 
+                LEFT JOIN vl_patients AS p ON s.patientID=p.id
+                LEFT JOIN vl_facilities AS f ON s.facilityID=f.id
+                LEFT JOIN vl_districts AS d ON f.districtID=d.id
+                WHERE $condns
+                order by if(lrCategory='',1,0),lrCategory, if(lrEnvelopeNumber='',1,0),lrEnvelopeNumber, if(lrNumericID='',1,0),lrNumericID,s.created desc limit $offset, $rowsToDisplay
+                ";
+
+          //var_dump($query);
+          return mysqlquery($query);
+        }
+         ?>
