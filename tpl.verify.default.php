@@ -238,7 +238,9 @@ if($reverseApprovalRejection) {
                 $numberPages=0;
                 $query=myQuery($condns,$offset,$rowsToDisplay);
                 $the_count=mysqlquery("SELECT count(id) AS num FROM vl_samples WHERE $condns LIMIT 1");
-                $num_rows=mysqlfetcharray($the_count)['num'];
+                $num_res=mysqlfetcharray($the_count);
+                $num_rows=$num_res['num'];
+
                 $numberPages=ceil($num_rows/$rowsToDisplay);
                 
                 if(mysqlnumrows($query)) {
