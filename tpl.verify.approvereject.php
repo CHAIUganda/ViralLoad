@@ -289,7 +289,10 @@ function addOtherReasons(){
                         <tr class='info-sect'>
                           <td colspan='2' id="hi-lite-sect">
                             <b>Sample Reference No.</b>: <?=$smpl_arr['vlSampleID'] ?><br>
-                            <b>Location ID</b>: <?=$smpl_arr['lrCategory'].$smpl_arr['lrEnvelopeNumber']." / " ?><?=MyHTML::text('smpl[lrNumericID]',$smpl_arr['lrNumericID'],array('class'=>'ty_input')) ?><br>
+                            <b>Location ID</b>: 
+                            <?=$smpl_arr['lrCategory'] ?>
+                            <?=MyHTML::text('smpl[lrEnvelopeNumber]',$smpl_arr['lrEnvelopeNumber'],array('class'=>'ty_input')) ?> / 
+                            <?=MyHTML::text('smpl[lrNumericID]',$smpl_arr['lrNumericID'],array('class'=>'ty_input')) ?><br>
                           </td>
                         </tr>
 
@@ -347,6 +350,7 @@ function addOtherReasons(){
                 <?=MyHTML::hidden('prev_smpl[districtID]',$smpl_arr['districtID']) ?>
                 <?=MyHTML::hidden('prev_smpl[hubID]',$smpl_arr['hubID']) ?>
                 <?=MyHTML::hidden('prev_smpl[formNumber]',$smpl_arr['formNumber']) ?>
+                <?=MyHTML::hidden('prev_smpl[lrEnvelopeNumber]',$smpl_arr['lrEnvelopeNumber']) ?>
                 <?=MyHTML::hidden('prev_smpl[lrNumericID]',$smpl_arr['lrNumericID']) ?>
               </td>
             </tr>
