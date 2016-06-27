@@ -197,6 +197,9 @@ $searchFilter=getValidatedVariable("searchFilter");
       <tr>
         <td bgcolor="#cccccc" style="padding:10px 10px 10px 130px" class="vll_grey">
         <a href="/dashboard/" class="vll_grey">Home</a> 
+         <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        :: <a href="/samples/capture/" class="vll_grey">New Sample</a> 
+        <? } ?>
         <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
         :: <a href="/samples/" class="vll_grey">Samples</a> 
         <? } ?>
