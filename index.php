@@ -330,6 +330,10 @@ $searchFilter=getValidatedVariable("searchFilter");
                             case reports:
                                 include "tpl.reports.php";
                             break;
+
+                            case 'facilityID':
+                                echo "1000000000000000000000000";
+                            break;
                             case logout:
                                 //kill session
                                 session_start();

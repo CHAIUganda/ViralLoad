@@ -204,4 +204,6 @@ RewriteRule ^support/$ index.php?option=support
 
 RewriteRule ^index/(.*)/(.*)/ index.php?view=$1&option=$2 
 
+RewriteRule ^get_facility_id/([0-9\-]+)/$ index.facility_id.php?formNumber=$1 
+
 ErrorDocument 404 /index.404.htm

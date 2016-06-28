@@ -923,36 +923,32 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                   <tr>
                                     <td width="20%" id="facilityIDField">
-                                        <select name="facilityID" id="facilityID" class="search" onchange="getHubDistrict(),checkForHubDistrict(), loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)">
                                             <?
                                             $query=0;
                                             $query=mysqlquery("select f.*,d.district,h.hub from vl_facilities AS f 
                                             				  left join vl_districts AS d on f.districtID=d.id 
                                             				  left join vl_hubs AS h on f.hubID=h.id
-                                            				  where facility!='' order by facility");
-                                            if($facilityID) {
-                                                echo "<option value=\"$facilityID\" selected=\"selected\">".getDetailedTableInfo2("vl_facilities","id='$facilityID' limit 1","facility")."</option>";
-                                            } else {
-                                                echo "<option value=\"\" selected=\"selected\">Select Facility</option>";
-                                            }
+                                            				  where facility!='' order by facility");                                           
                                             $facilities_arr=array();
+                                            $facilities_arr2=array();
                                             if(mysqlnumrows($query)) {
                                                 while($q=mysqlfetcharray($query)) {
-                                                    echo "<option value=\"$q[id]\">$q[facility]</option>";
-                                                    $facilities_arr[$q['id']]=array('district'=>$q['district'],'hub'=>$q['hub'],'hubID'=>$q['hubID'],'districtID'=>$q['districtID']);
+                                                	$facilities_arr[$q['id']]=array('district'=>$q['district'],'hub'=>$q['hub'],'hubID'=>$q['hubID'],'districtID'=>$q['districtID']);
+                                                    $facilities_arr2[$q['id']]=$q['facility'];
                                                 }
                                             }
-                                            ?>
-                                        </select>
+                                            ?>                                        
+                                        <?=MyHTML::select('facilityID',$facilityID,$facilities_arr2,"select facility",array("id"=>"fclty","onchange"=>"getHubDistrict(),loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)"))?>
+
                                         <script>
-                                            var z = dhtmlXComboFromSelect("facilityID");
-                                            z.enableFilteringMode(true);
+                                            // var z = dhtmlXComboFromSelect("facilityID");
+                                            // z.enableFilteringMode(true);
                                             var facilities_json=<?php echo json_encode($facilities_arr) ?>;
 
                                             function getHubDistrict(){
                                             	var theFacilityID=document.samples.facilityID.value;
                                             	if(!theFacilityID) theFacilityID=$("#facilityID option:selected").val();
-                                            	console.log("attempting to get ...");
+                                            	//console.log("attempting to get ...");
                                             	var f_obj=facilities_json[theFacilityID];
                                             	$("#hubTextID").html(f_obj.hub);
                                             	$("#districtTextID").html(f_obj.district);
@@ -968,48 +964,20 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                         </tr>
                         <tr>
                           <td>Hub</td>
-                          <td><div class="vls_grey" style="padding:5px 0px" id="hubTextID"><?=($hubID?getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub"):"Input Form Number or Select Facility, First")?></div><input type="hidden" name="hubID" id="hubID" value="<?=($hubID?$hubID:"")?>" />
-                          <!--
-                          <select name="hubID" id="hubID" class="search">
-                                <?
-								$query=0;
-								$query=mysqlquery("select * from vl_hubs order by hub");
-								if($hubID) {
-									echo "<option value=\"$hubID\" selected=\"selected\">".getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub")."</option>";
-								} else {
-									echo "<option value=\"\" selected=\"selected\">Select Hub</option>";
-								}
-								if(mysqlnumrows($query)) {
-									while($q=mysqlfetcharray($query)) {
-										echo "<option value=\"$q[id]\">$q[hub]</option>";
-									}
-								}
-								?>
-                                </select>
-                          -->
+                          <td>
+                          	<div class="vls_grey" style="padding:5px 0px" id="hubTextID">
+                          		<?=($hubID?getDetailedTableInfo2("vl_hubs","id='$hubID' limit 1","hub"):"Input Form Number or Select Facility, First")?>
+                          	</div>
+                          	<input type="hidden" name="hubID" id="hubID" value="<?=($hubID?$hubID:"")?>" />                         
                           </td>
                         </tr>
                         <tr>
                           <td>District</td>
-                          <td><div class="vls_grey" style="padding:5px 0px" id="districtTextID"><?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?></div><input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />
-                          <!--
-                          <select name="districtID" id="districtID" class="search">
-                                <?
-								$query=0;
-								$query=mysqlquery("select * from vl_districts order by district");
-								if($districtID) {
-									echo "<option value=\"$districtID\" selected=\"selected\">".getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district")."</option>";
-								} else {
-									echo "<option value=\"\" selected=\"selected\">Select District</option>";
-								}
-								if(mysqlnumrows($query)) {
-									while($q=mysqlfetcharray($query)) {
-										echo "<option value=\"$q[id]\">$q[district]</option>";
-									}
-								}
-								?>
-                                </select>
-                           -->
+                          <td>
+                          	<div class="vls_grey" style="padding:5px 0px" id="districtTextID">
+                          		<?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?>
+                          	</div>
+                          	<input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />                         
                           </td>
                         </tr>
                       </table>
@@ -1828,3 +1796,31 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
             </tr>
           </table>
 </form>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $("#fclty").select2({placeholder:"Select facility",allowClear:true,width:"250"});
+  var f_number=$("#formNumber").val();
+  if(f_number!=""){
+  	fetchFacilityID(f_number);
+  }
+});
+
+function fetchFacilityID(formNumber){
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari 
+		xmlhttp=new XMLHttpRequest();
+	}else{// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	xmlhttp.onreadystatechange=function(){
+		if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			$("#fclty").select2('val',xmlhttp.responseText);
+		}
+	}
+
+	xmlhttp.open("GET","/get_facility_id/"+formNumber+"/",true);
+	xmlhttp.send();
+}
+
+</script>
