@@ -35,6 +35,9 @@ function showMessage(icon) {
 		case "generateforms":
 			var message = "Generate Clinical Requisition Forms";
 		break;
+    case "new_sample":
+      var message = "Capture new sample data";
+    break;
 	}
 	document.getElementById('messageID').innerHTML=message;
 }
@@ -47,10 +50,13 @@ function hideMessage() {
 <table width="70%" border="0" cellspacing="0" cellpadding="0" class="vl">
   <tr>
     <td style="border-bottom: 1px dashed #e7e7e7; padding:10px 20px 30px 20px">
-     <table width="10%" border="0" cellspacing="0" cellpadding="0">
+     <table border="0" cellspacing="0" cellpadding="0">
       <tr>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        <td align="center" onmouseover="showMessage('new_sample')" onmouseout="hideMessage()"><a href="/samples/capture/" class="vll_grey"><img src="/images/add_icon.png" border="0" /></a></td>
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
-        <td width="15%" align="center" onmouseover="showMessage('samples')" onmouseout="hideMessage()"><a href="/samples/" class="vll_grey"><img src="/images/icon.samples.gif" border="0" /></a></td>
+        <td width="10%" align="center" onmouseover="showMessage('samples')" onmouseout="hideMessage()"><a href="/samples/" class="vll_grey"><img src="/images/icon.samples.gif" border="0" /></a></td>
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='verifySamples' limit 1","id")) { ?>
         <td width="15%" align="center" onmouseover="showMessage('verifysamples')" onmouseout="hideMessage()"><a href="/verify/" class="vll_grey"><img src="/images/icon.samples.verify.gif" border="0" /></a></td>
@@ -69,6 +75,9 @@ function hideMessage() {
         <? } ?>
       </tr>
       <tr>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        <td align="center" class="vll_grey" onmouseover="showMessage('new_sample')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/samples/capture/" class="vll_grey">New&nbsp;Sample</a></td>
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
         <td align="center" class="vll_grey" onmouseover="showMessage('samples')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/samples/" class="vll_grey">Samples</a></td>
         <? } ?>
