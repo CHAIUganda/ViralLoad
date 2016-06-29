@@ -1801,7 +1801,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
 $(document).ready(function() {
   $("#fclty").select2({placeholder:"Select facility",allowClear:true,width:"250"});
   var f_number=$("#formNumber").val();
-  if(f_number!=""){
+  if(f_number!="" && $("#fclty").val()==""){
   	fetchFacilityID(f_number);
   }
 });
