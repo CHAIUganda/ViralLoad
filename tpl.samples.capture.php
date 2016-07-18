@@ -923,6 +923,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                   <tr>
                                     <td width="20%" id="facilityIDField">                                 
                                             <?
+                                            $facilityID=$facilityID?$facilityID:"";
                                             $query=0;
                                             $query=mysqlquery("select f.*,d.district,h.hub from vl_facilities AS f 
                                             				  left join vl_districts AS d on f.districtID=d.id 
@@ -938,7 +939,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                                             }
                                             ?>
                        
-                                        <?=MyHTML::select('facilityID',"",$facilities_arr2,"select facility",array("id"=>"fclty","onchange"=>"getHubDistrict(),loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)"))?>
+                                        <?=MyHTML::select('facilityID',$facilityID,$facilities_arr2,"select facility",array("id"=>"fclty","onchange"=>"getHubDistrict(),loadArtHistory(document.samples.artNumber,document.samples.facilityID.value)"))?>
                                         <script>
                                            /* var z = dhtmlXComboFromSelect("facilityID");
                                             z.enableFilteringMode(true);*/

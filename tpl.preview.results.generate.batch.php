@@ -152,7 +152,7 @@ if(count($sampleResultCheckbox)) {
 			$recommendation=0;
 
 			//$suppressed=getDetailedTableInfo2("vl_results_merged","vlSampleID='$vlSampleID'","suppressed");//suppression status
-			$suppressed=isSuppressed2($numericVLResult,$$sampleType,$sampleVLTestDate);
+			$suppressed=isSuppressed2($numericVLResult,$sampleType,$sampleVLTestDate);
 			switch ($suppressed) {
 				case 'YES': // patient suppressed, according to the guidlines at that time
 					$smiley="<img src=\"$system_default_path"."images/smiley.smile.gif\" />";
