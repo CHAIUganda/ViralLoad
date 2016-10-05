@@ -178,7 +178,7 @@ if(mysqlnumrows($query)) {
 						<div align=\"center\" style=\"padding:5px 0px\"><img src=\"/worksheets/image/".vlEncrypt($sampleNumber)."/\" /></div>
 						<div align=\"center\" class='check-boxes'>
 							<label><input type=\"checkbox\" onchange='$stLikeRadio2' class='samples' name=\"worksheetSamples[]\" id=\"r$smpl_id\" value=\"".$smpl_id."\" onclick=\"updateCounter(this)\" /> <span>retest</span></label>
-							<label><input type='checkbox' onchange='$stLikeRadio' id='n$smpl_id' name='no_spots_samples[]' value='$smpl_id'> <span>no spots</span></label>
+							<label><input type='checkbox' onchange='$stLikeRadio' id='n$smpl_id' name='no_spots_samples[]' value='$sampleID'> <span>no spots</span></label>
 						</div>";
 	}
 }
