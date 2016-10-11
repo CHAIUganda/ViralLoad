@@ -1,7 +1,0 @@
-sample with id 41443 and 447886 moved from facility id 2346 of 2863
-
-
-290515, 294132, 381449, 414284 moved to 2341 from 2432
-
-
-update vl_samples set facilityID = 2341 where id in (290515, 294132, 381449, 414284)
