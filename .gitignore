@@ -1,0 +1,11 @@
+/automation.migration
+/downloads.forms
+/downloads.reports
+/worksheets
+/admin/php.ini
+php.ini
+conf.db.php
+conf.variables.php
+/admin/conf.db.php
+/admin/conf.php
+.env.php

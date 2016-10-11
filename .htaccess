@@ -1,0 +1,209 @@
+php_value auto_prepend_file ./conf.globals.php
+
+RewriteEngine On
+
+RewriteRule ^bye/$ index.php 
+
+RewriteRule ^help/$ index.php?option=help 
+RewriteRule ^sendreminder/([a-zA-Z0-9\.\@\_\-]+)/$ index.php?remindEmail=$1 
+RewriteRule ^sentreminder/([a-zA-Z0-9\.\@\_\-]+)/$ index.php?sentTo=$1 
+
+RewriteRule ^download/$ tpl.downloads.php 
+
+RewriteRule ^download/samples.received.excel/$ tpl.downloads.php?options=samplesreceivedexcel 
+RewriteRule ^download/samples.received.csv/$ tpl.downloads.php?options=samplesreceivedcsv 
+RewriteRule ^download/facilities.excel/$ tpl.downloads.php?options=facilitiesexcel 
+RewriteRule ^download/patients.multiple.results.excel/$ tpl.downloads.php?options=multipleresultsexcel 
+RewriteRule ^download/clinical.request.forms.excel/$ tpl.downloads.php?options=clinicalrequestformsexcel 
+
+RewriteRule ^download/samples.received/$ tpl.downloads.php?options=samplesreceived 
+
+RewriteRule ^dashboard/$ index.php 
+RewriteRule ^dashboard/welcome/$ index.php?directlogin=1 
+RewriteRule ^dashboard/welcome/first-time/$ index.php?directlogin=1&firstTime=1 
+
+RewriteRule ^login/in/$ index.php?inactive=1 
+RewriteRule ^login/er/$ index.php?fail=1 
+RewriteRule ^login/er/([a-zA-Z0-9\=]+)/$ index.php?fail=1&redirect=$1 
+RewriteRule ^logout/$ index.php?option=logout 
+RewriteRule ^logout/instructions/$ tpl.logout.instructions.php 
+
+RewriteRule ^reports/$ index.php?option=reports 
+RewriteRule ^reports/(national|district|downloads)/$ index.php?option=reports&statisticsType=$1 
+
+RewriteRule ^reports/(national|district|downloads)/success/([a-zA-Z0-9\.=]+)/$ index.php?option=reports&statisticsType=$1&success=1&pathtofile=$2 
+
+
+RewriteRule ^envelopes/$ index.php?option=envelopes 
+RewriteRule ^envelopes/capture/$ index.php?option=envelopes&sub=capture 
+RewriteRule ^envelopes/success/$ index.php?option=envelopes&success=1 
+RewriteRule ^envelopes/success/([0-9]+)/([0-9]+)/$ index.php?option=envelopes&success=1&addedItems=$1&modifiedItems=$2 
+RewriteRule ^envelopes/modified/$ index.php?option=envelopes&modified=1 
+RewriteRule ^envelopes/manage/$ index.php?option=envelopes&sub=manage 
+RewriteRule ^envelopes/manage/([0-9]+)/$ index.php?option=envelopes&sub=manage&pg=$1 
+RewriteRule ^envelopes/manage/remove/([0-9]+)/$ index.php?option=envelopes&sub=manage&remove=$1 
+RewriteRule ^envelopes/manage/modify/([0-9]+)/$ index.php?option=envelopes&sub=modify&modify=$1 
+RewriteRule ^envelopes/search/$ index.php?option=envelopes&sub=search 
+RewriteRule ^envelopes/search/([0-9]+)/$ index.php?option=envelopes&sub=search&pg=$1 
+RewriteRule ^envelopes/search/([a-zA-Z0-9\=]+)/([0-9]+)/$ index.php?option=envelopes&sub=search&searchQueryURL=$1&pg=$2 
+
+RewriteRule ^json/([a-zA-Z0-9]+)/([a-zA-Z0-9\=]+)/$ index.json.php?option=$1&token=$2 
+
+RewriteRule ^samples/$ index.php?option=samples 
+RewriteRule ^samples/capture/$ index.php?option=samples&sub=capture 
+RewriteRule ^samples/success/$ index.php?option=samples&success=1 
+RewriteRule ^samples/success/([a-zA-Z0-9\=]+)/$ index.php?option=samples&success=1&sampleReferenceNumber=$1 
+RewriteRule ^samples/incorrect/$ index.php?option=samples&incorrect=1 
+RewriteRule ^samples/modified/$ index.php?option=samples&modified=1 
+RewriteRule ^samples/find.and.edit/$ index.php?option=samples&sub=findedit 
+RewriteRule ^samples/find.and.edit/search/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=findedit&encryptedSample=$1 
+
+RewriteRule ^samples/find.and.edit/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=findedit&envelopeNumberFrom=$1&envelopeNumberTo=$2 
+
+RewriteRule ^samples/manage.patients/$ index.php?option=samples&sub=managepatients 
+RewriteRule ^samples/manage.patients/pg/([0-9]+)/$ index.php?option=samples&sub=managepatients&pg=$1 
+RewriteRule ^samples/manage.patients/remove/([0-9]+)/$ index.php?option=samples&sub=managepatients&remove=$1 
+RewriteRule ^samples/manage.patients/modify/([0-9]+)/$ index.php?option=samples&sub=modifypatients&modify=$1 
+RewriteRule ^samples/manage.patients/search/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=managepatients&encryptedSample=$1  
+
+RewriteRule ^samples/manage.patients/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=managepatients&envelopeNumberFrom=$1&envelopeNumberTo=$2 
+RewriteRule ^samples/preview/([0-9]+)/$ tpl.preview.samples.php?patientID=$1 
+
+RewriteRule ^verify/$ index.php?option=verify 
+RewriteRule ^verify/(pending|processed|reverse)/$ index.php?option=verify&approvedstatus=$1  
+
+RewriteRule ^verify/(pending|processed)/$ index.php?option=verify&approvedstatus=$1 
+
+RewriteRule ^verify/([0-9]+)/capture/$ index.php?option=verify&sub=capture&pg=$1 
+RewriteRule ^verify/([0-9]+)/success/$ index.php?option=verify&success=1&pg=$1 
+RewriteRule ^verify/([0-9]+)/incorrect/$ index.php?option=verify&incorrect=1&pg=$1 
+RewriteRule ^verify/([0-9]+)/modified/$ index.php?option=verify&modified=1&pg=$1 
+RewriteRule ^verify/find.and.edit/([0-9]+)/([0-9]+)/$ index.php?option=verify&sub=findedit&modify=$1&pg=$2 
+RewriteRule ^verify/preview/([0-9]+)/([0-9]+)/$ tpl.preview.verify.php?id=$1&pg=$2 
+RewriteRule ^verify/preview/([0-9]+)/([0-9]+)/noedit/$ tpl.preview.verify.php?id=$1&pg=$2&noedit=1 
+
+RewriteRule ^verify/preview/([0-9]+)/([0-9]+)/search/([a-zA-Z0-9\=]+)/$ tpl.preview.verify.php?id=$1&pg=$2&encryptedSample=$3 
+RewriteRule ^verify/status/([0-9]+)/([a-zA-Z0-9]+)/$ tpl.preview.status.php?id=$1&status=$2 
+RewriteRule ^verify/approve.reject/([0-9]+)/([0-9]+)/$ index.php?option=verify&sub=approvereject&id=$1&pg=$2 
+RewriteRule ^verify/approve.reject/([0-9]+)/([0-9]+)/search/([a-zA-Z0-9\=]+)/$ index.php?option=verify&sub=approvereject&id=$1&pg=$2&encryptedSample=$3 
+RewriteRule ^verify/approve.reject/([0-9]+)/([0-9]+)/search/([a-zA-Z0-9\=]+)/1/$ index.php?option=verify&sub=approvereject&id=$1&pg=$2&encryptedSample=$3&success=1 
+RewriteRule ^verify/approve.reject/([0-9]+)/([0-9]+)/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=verify&sub=approvereject&id=$1&pg=$2&envelopeNumberFrom=$3&envelopeNumberTo=$4 
+RewriteRule ^verify/approve.reject/([0-9]+)/([0-9]+)/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/1/$ index.php?option=verify&sub=approvereject&id=$1&pg=$2&envelopeNumberFrom=$3&envelopeNumberTo=$4&success=1 
+RewriteRule ^verify/(abbott|roche|rejected)/pg/([0-9]+)/$ index.php?option=verify&machineType=$1&pg=$2
+RewriteRule ^verify/pg/([0-9]+)/$ index.php?option=verify&pg=$1
+RewriteRule ^verify/(pending|processed|reverse)/pg/([0-9]+)/$ index.php?option=verify&approvedstatus=$1&pg=$2
+RewriteRule ^verify/search/([a-zA-Z0-9\=]+)/$ index.php?option=verify&encryptedSample=$1 
+RewriteRule ^verify/search/([a-zA-Z0-9\=]+)/pg/([0-9]+)/$ index.php?option=verify&encryptedSample=$1&pg=$2 
+RewriteRule ^verify/search/([a-zA-Z0-9\=]+)/pg/([0-9]+)/modified/$ index.php?option=verify&encryptedSample=$1&pg=$2&modified=1 
+RewriteRule ^verify/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=verify&envelopeNumberFrom=$1&envelopeNumberTo=$2 
+RewriteRule ^verify/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/pg/([0-9]+)/$ index.php?option=verify&envelopeNumberFrom=$1&envelopeNumberTo=$2&pg=$3 
+RewriteRule ^verify/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/pg/([0-9]+)/modified/$ index.php?option=verify&envelopeNumberFrom=$1&envelopeNumberTo=$2&pg=$3&modified=1 
+RewriteRule ^verify/search.unverified/([a-zA-Z0-9\=]+)/$ index.php?option=verify&encryptedSampleUnverified=$1 
+RewriteRule ^verify/search.unverified/([a-zA-Z0-9\=]+)/$ index.php?option=verify&envelopeNumberFrom=$1&envelopeNumberTo=$2 
+
+RewriteRule ^verify/(pending|processed)/pg/([0-9]+)/$ index.php?option=verify&approvedstatus=$1&pg=$2
+
+RewriteRule ^worksheets/$ index.php?option=worksheets 
+RewriteRule ^worksheets/image/([a-zA-Z0-9\=]+)/$ img.worksheet.php?sampleID=$1
+RewriteRule ^worksheets/type/(abbott|roche|rejected)/$ index.php?option=worksheets&type=$1 
+RewriteRule ^worksheets/type/(abbott|roche|rejected)/pg/([0-9]+)/$ index.php?option=worksheets&type=$1&pg=$2 
+RewriteRule ^worksheets/type/(abbott|roche|rejected)/print/([0-9]+)/$ index.php?option=worksheets&type=$1&print=1&printID=$2 
+RewriteRule ^worksheets/pg/([0-9]+)/$ index.php?option=worksheets&pg=$1 
+RewriteRule ^worksheets/view.detail/([0-9]+)/$ index.php?option=worksheets&sub=viewdetail&worksheetID=$1 
+RewriteRule ^worksheets/print.detail/([0-9]+)/$ tpl.preview.print.worksheets.php?worksheetID=$1 
+RewriteRule ^worksheets/upload.results/([0-9]+)/$ index.php?option=worksheets&sub=uploadresults&worksheetID=$1 
+RewriteRule ^worksheets/capture.1.abbott/$ index.php?option=worksheets&sub=capture1abbott 
+RewriteRule ^worksheets/capture.1.roche/$ index.php?option=worksheets&sub=capture1roche 
+RewriteRule ^worksheets/capture.2/([0-9]+)/$ index.php?option=worksheets&sub=capture2&worksheetID=$1 
+RewriteRule ^worksheets/capture.2/([0-9]+)/1/$ index.php?option=worksheets&sub=capture2&worksheetID=$1&modify=1 
+RewriteRule ^worksheets/modified/$ index.php?option=worksheets&modified=1 
+RewriteRule ^worksheets/manage/$ index.php?option=worksheets&sub=manage 
+RewriteRule ^worksheets/manage/search/([a-zA-Z0-9\=]+)/$ index.php?option=worksheets&sub=manage&encryptedSample=$1 
+
+RewriteRule ^worksheets/manage/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=worksheets&sub=manage&envelopeNumberFrom=$1&envelopeNumberTo=$2 
+
+RewriteRule ^worksheets/manage/changed/$ index.php?option=worksheets&sub=manage&changed=1 
+RewriteRule ^worksheets/manage/print/([0-9]+)/$ index.php?option=worksheets&sub=manage&print=1&worksheetID=$1 
+RewriteRule ^worksheets/manage/([0-9]+)/$ index.php?option=worksheets&sub=manage&pg=$1 
+RewriteRule ^worksheets/manage/remove/([0-9]+)/$ index.php?option=worksheets&sub=manage&remove=$1 
+RewriteRule ^worksheets/manage/modify/([0-9]+)/$ index.php?option=worksheets&sub=modify&modify=$1 
+RewriteRule ^worksheets/search/$ index.php?option=worksheets&sub=search 
+RewriteRule ^worksheets/search/([0-9]+)/$ index.php?option=worksheets&sub=search&pg=$1 
+RewriteRule ^worksheets/search/([a-zA-Z0-9\=]+)/([0-9]+)/$ index.php?option=worksheets&sub=search&searchQueryURL=$1&pg=$2 
+RewriteRule ^worksheets/success/([0-9]+)/([0-9]+)/$ index.php?option=worksheets&success=1&addedSamples=$1&modifiedSamples=$2 
+
+RewriteRule ^generateforms/$ index.php?option=generateforms 
+RewriteRule ^generateforms/execute/$ index.php?option=generateforms&sub=execute 
+RewriteRule ^generateforms/executesingular/([0-9\-]+)/$ tpl.preview.generateforms.executesingular.php?formNumber=$1 
+RewriteRule ^generateforms/download/$ index.php?option=generateforms&sub=download 
+RewriteRule ^generateforms/download/pg/([0-9]+)/$ index.php?option=generateforms&sub=download&pg=$1 
+RewriteRule ^generateforms/download/log/([0-9]+)/$ index.php?option=generateforms&sub=logdownload&refNumber=$1 
+RewriteRule ^generateforms/dispatch/$ index.php?option=generateforms&sub=dispatch 
+RewriteRule ^generateforms/dispatch/([0-9]+)/$ index.php?option=generateforms&sub=dispatchadd&refNumber=$1 
+RewriteRule ^generateforms/dispatch/pg/([0-9]+)/$ index.php?option=generateforms&sub=dispatchadd&pg=$1 
+RewriteRule ^generateforms/dispatch/success/$ index.php?option=generateforms&sub=dispatch&success=1 
+RewriteRule ^generateforms/dispatch/new/$ index.php?option=generateforms&sub=dispatchnew 
+RewriteRule ^generateforms/manage/$ index.php?option=generateforms&sub=manage 
+RewriteRule ^generateforms/manage/([0-9]+)/$ index.php?option=generateforms&sub=manage&pg=$1 
+RewriteRule ^generateforms/manage/remove/([0-9]+)/$ index.php?option=generateforms&sub=manage&remove=$1 
+RewriteRule ^generateforms/manage/modify/([0-9]+)/$ index.php?option=generateforms&sub=modify&modify=$1 
+RewriteRule ^generateforms/generated/([0-9]+)/$ index.php?option=generateforms&generated=1&refNumber=$1 
+RewriteRule ^generateforms/preview/([0-9]+)/$ tpl.preview.generateforms.php?refNumber=$1 
+RewriteRule ^generateforms/success/$ index.php?option=generateforms&success=1 
+RewriteRule ^generateforms/search/$ index.php?option=generateforms&sub=search 
+RewriteRule ^generateforms/search/([0-9]+)/$ index.php?option=generateforms&sub=search&pg=$1 
+RewriteRule ^generateforms/search/([a-zA-Z0-9\=]+)/([0-9]+)/$ index.php?option=generateforms&sub=search&searchQueryURL=$1&pg=$2 
+
+
+RewriteRule ^generateforms/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/([0-9]+)/$ index.php?option=generateforms&sub=search&envelopeNumberFrom=$1&envelopeNumberTo=$2&pg=$3 
+
+RewriteRule ^results/$ index.php?option=results&machineType=abbott 
+RewriteRule ^results/printed/$ index.php?option=results&machineType=abbott&showPrinted=1 
+RewriteRule ^results/(abbott|roche|rejected|all)/$ index.php?option=results&machineType=$1 
+RewriteRule ^results/(abbott|roche|rejected|all)/printed/$ index.php?option=results&machineType=$1&showPrinted=1 
+RewriteRule ^results/(abbott|roche|rejected|all)/find.and.edit/([0-9]+)/([0-9]+)/$ index.php?option=results&sub=findedit&machineType=$1&modify=$2&pg=$3 
+RewriteRule ^results/(abbott|roche|rejected|all)/pg/([0-9]+)/$ index.php?option=results&machineType=$1&pg=$2
+RewriteRule ^results/(abbott|roche|rejected|all)/printed/pg/([0-9]+)/$ index.php?option=results&machineType=$1&pg=$2&showPrinted=1
+RewriteRule ^results/print/([0-9]+)/([0-9]+)/(abbott|roche|rejected)/$ tpl.preview.results.generate.php?sampleID=$1&worksheetID=$2&machineType=$3 
+RewriteRule ^results/print.rejected/([0-9]+)/$ tpl.preview.results.generate.rejected.php?sampleID=$1 
+RewriteRule ^results/print/batch/(abbott|roche|rejected|all)/$ tpl.preview.results.generate.batch.php?machineType=$1 
+RewriteRule ^results/print.rejected/batch/$ tpl.preview.results.generate.batch.rejected.php 
+RewriteRule ^results/(abbott|roche|rejected|all)/pg/([0-9]+)/([0-9]+)/$ index.php?option=results&machineType=$1&pg=$2&worksheetID=$3
+RewriteRule ^results/(abbott|roche|rejected|all)/pg/([0-9]+)/([0-9]+)/([0-9]+)/$ index.php?option=results&machineType=$1&pg=$2&worksheetID=$3&facilityID=$4
+RewriteRule ^results/(abbott|roche|rejected|all)/([0-9]+)/([0-9]+)/pg/([0-9]+)/$ index.php?option=results&machineType=$1&worksheetID=$2&facilityID=$3&pg=$4
+RewriteRule ^results/(abbott|roche|rejected|all)/([0-9]+)/([0-9]+)/printed/pg/([0-9]+)/$ index.php?option=results&machineType=$1&worksheetID=$2&facilityID=$3&pg=$4&showPrinted=1
+RewriteRule ^results/search/([a-zA-Z0-9\=]+)/$ index.php?option=results&encryptedSample=$1 
+RewriteRule ^results/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=results&envelopeNumberFrom=$1&envelopeNumberTo=$2 
+RewriteRule ^results/dispatch/$ index.php?option=results&sub=dispatch 
+RewriteRule ^results/dispatch/all/$ index.php?option=results&sub=dispatch&all=1 
+
+RewriteRule ^results/(abbott|roche|rejected)/$ index.php?option=results&machineType=$1 
+RewriteRule ^results/(abbott|roche|rejected)/find.and.edit/([0-9]+)/([0-9]+)/$ index.php?option=results&sub=findedit&machineType=$1&modify=$2&pg=$3 
+RewriteRule ^results/(abbott|roche|rejected)/pg/([0-9]+)/$ index.php?option=results&machineType=$1&pg=$2
+
+
+RewriteRule ^results/print/batch/(abbott|roche|rejected)/$ tpl.preview.results.generate.batch.php?machineType=$1 
+RewriteRule ^results/(abbott|roche|rejected)/pg/([0-9]+)/([0-9]+)/$ index.php?option=results&machineType=$1&pg=$2&worksheetID=$3
+
+RewriteRule ^results/dispatch/([0-9]+)/([0-9]+)/$ index.php?option=results&sub=dispatch&sampleID=$1&worksheetID=$2 
+RewriteRule ^results/dispatched/([0-9]+)/([0-9]+)/(abbott|roche|rejected)/$ index.php?option=results&dispatchedSamples=1&added=$1&modified=$2&machineType=$3 
+RewriteRule ^results/preview.dispatched/([0-9]+)/([0-9]+)/$ tpl.preview.results.dispatched.php?sampleID=$1&worksheetID=$2 
+RewriteRule ^results/repeat/$ index.php?option=results&sub=repeat 
+RewriteRule ^results/repeat/([0-9]+)/([0-9]+)/$ index.php?option=results&sub=repeat&sampleID=$1&worksheetID=$2 
+RewriteRule ^results/repeated/([0-9]+)/(abbott|roche|rejected)/$ index.php?option=results&repeatedSamples=1&added=$1&machineType=$2 
+RewriteRule ^results/preview.repeat.scheduled/([0-9]+)/([0-9]+)/$ tpl.preview.results.repeat.scheduled.php?sampleID=$1&worksheetID=$2 
+RewriteRule ^results/preview.repeat.repeated/([0-9]+)/([0-9]+)/$ tpl.preview.results.repeat.repeated.php?sampleID=$1&worksheetID=$2 
+
+RewriteRule ^search/$ index.php?option=search 
+
+RewriteRule ^search.advanced/$ index.php?option=search&searchFilter=advanced 
+
+RewriteRule ^attachment/([0-9]+)/([a-zA-Z0-9\=]+)/$ index.php?option=attachment&issueID=$1&email=$2 
+RewriteRule ^test_outcome_report/([0-9]+)/([0-9]+)$ tpl.reports.test_outcome.php?fro_s=$1&to_s=$2
+RewriteRule ^support/$ index.php?option=support 
+
+RewriteRule ^index/(.*)/(.*)/ index.php?view=$1&option=$2 
+
+RewriteRule ^get_facility_id/([0-9\-]+)/$ index.facility_id.php?formNumber=$1 
+
+ErrorDocument 404 /index.404.htm
