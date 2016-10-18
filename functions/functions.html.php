@@ -41,5 +41,16 @@ class MyHTML
 		}
 		return $tabs;
 	}
+
+	public static function boolean_draw($arr,$val){
+		$ret="";
+		$checked="<span class='glyphicon glyphicon-check print-check'></span>";
+		$unchecked="<span class='glyphicon glyphicon-unchecked print-uncheck'></span>";
+		foreach ($arr as $x => $label) {
+			$prefix = $x==$val?$checked:$unchecked;
+			$ret .= "$prefix $label &nbsp;&nbsp; ";		
+		}
+		return $ret;
+	}
 }
 ?>

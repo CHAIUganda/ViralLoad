@@ -215,6 +215,9 @@ $searchFilter=getValidatedVariable("searchFilter");
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
         :: <a href="/results/" class="vll_grey">Results</a> 
         <? } ?>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
+        :: <a href="/results_new/" class="vll_grey">Results (Browser Printing)</a> 
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reports' limit 1","id") || 
 				getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reportsQC' limit 1","id")) { ?>
         :: <a href="/reports/" class="vll_grey">Reports</a></td>
@@ -306,6 +309,9 @@ $searchFilter=getValidatedVariable("searchFilter");
 							case reports:
                                 include "tpl.reports.php";
                             break;
+                            case 'results_new':
+                                include "tpl.results_new.php";
+                                break;
 							case results:
                                 include "tpl.results.php";
                             break;

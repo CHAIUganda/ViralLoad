@@ -34,3 +34,12 @@
       }
     }
 }
+
+
+function showClass(clss){
+  document.querySelector(clss).style.display="block";
+}
+
+function hideClass(clss){
+  document.querySelector(clss).style.display="none";
+}
