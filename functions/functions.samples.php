@@ -566,4 +566,15 @@ function repairDate($date){
 	$ret=$date=='0000-00-00'?"":date("Ymd",strtotime($date));
 	return $ret;
 }
+
+function getNumericalResult($result=""){
+	$numericVLResult = 0;
+	$numericVLResult = preg_replace("/Copies \/ mL/s","",$result);
+	$numericVLResult = preg_replace("/,/s","",$numericVLResult);
+	$numericVLResult = preg_replace("/\</s","",$numericVLResult);
+	$numericVLResult = preg_replace("/\&lt;/s","",$numericVLResult);
+	$numericVLResult = preg_replace("/\&gt;/s","",$numericVLResult);
+	$numericVLResult = trim($numericVLResult);
+	return $numericVLResult;
+}
 ?>
