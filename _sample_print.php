@@ -205,7 +205,7 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 			Lab Manager: 
 		</div>
 		<div class="col-xs-3">
-			<img src="/images/signatures/signature.14.png" height="50" width="100">
+			<img src="/images/signatures/signature.14.gif" height="50" width="100">
 			<hr>
 		</div>
 		<div class="col-xs-2"><img src="/images/qr_code.png" height="75" width="75"></div>
