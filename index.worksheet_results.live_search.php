@@ -3,7 +3,7 @@ $GLOBALS['vlDC']=true;
 include "conf.php";
 
 $sql=" SELECT id,worksheetReferenceNumber FROM vl_samples_worksheetcredentials
-	   WHERE worksheetReferenceNumber LIKE '$q%' LIMIT 10";
+	   WHERE worksheetReferenceNumber LIKE '%$q%' LIMIT 10";
 
 $res=mysqlquery($sql);
 $str = "";
