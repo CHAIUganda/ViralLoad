@@ -71,6 +71,10 @@ $location_id = "$row_lrCategory$row_lrEnvelopeNumber/$row_lrNumericID";
 $signature = end(explode("/", $wrksht_row['signaturePATH']));
 
 $now_s = strtotime(date("Y-m-d"));
+
+$repeated = !empty($row_repeated)?1:2;
+
+$rejected = $row_verify_outcome=="Rejected"?1:2;
  ?>
 <page size="A4">
 <!-- <div class="print-container"> -->
@@ -185,18 +189,18 @@ $now_s = strtotime(date("Y-m-d"));
 				<table>
 					<tr>
 						<td>Repeat Test:  &nbsp; </td>
-						<td><?=MyHTML::boolean_draw($yes_no, 2)?></td>
+						<td><?=MyHTML::boolean_draw($yes_no, $repeated)?></td>
 					</tr>
 					<tr>
 						<td>Sample Rejected:  &nbsp; </td>
-						<td><?=MyHTML::boolean_draw($yes_no, 2)?></td>
+						<td><?=MyHTML::boolean_draw($yes_no, $rejected)?></td>
 					</tr>
 				</table>
 				
 			</div>
 
 		</div>
-			If rejected Reason: 
+			If rejected Reason: <?=$row_rejection_reason ?>
 	</div>
 	<div class="print-ttl">viral load results</div>
 	<div class="print-sect">

@@ -207,6 +207,7 @@ RewriteRule ^index/(.*)/(.*)/ index.php?view=$1&option=$2
 RewriteRule ^get_facility_id/([0-9\-]+)/$ index.facility_id.php?formNumber=$1 
 
 RewriteRule ^worksheet_results/live_search/([a-zA-Z0-9\=]+)/$ index.worksheet_results.live_search.php?q=$1
+
 RewriteRule ^results_new/$ index.php?option=results_new
 
 RewriteRule ^worksheet_results/print/([0-9]+)/$ tpl.worksheets.results.print.php?id=$1

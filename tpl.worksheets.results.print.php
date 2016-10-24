@@ -14,9 +14,12 @@ $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
 		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, 
 		GROUP_CONCAT(res_r.Result, '|||', res_r.created SEPARATOR '::') AS roche_result,
 		GROUP_CONCAT(res_a.result, '|||', res_a.created SEPARATOR '::') AS abbott_result,
-		GROUP_CONCAT(res_o.result, '|||', res_o.created SEPARATOR '::') AS override_result
+		GROUP_CONCAT(res_o.result, '|||', res_o.created SEPARATOR '::') AS override_result,
+		log_s.id AS repeated, v.outcome AS verify_outcome, reason.appendix AS rejection_reason
 		FROM vl_samples_worksheet AS sw
 		LEFT JOIN vl_samples AS s ON sw.sampleID=s.id
+		LEFT JOIN vl_samples_verify AS v ON s.id=v.sampleID
+		LEFT JOIN vl_appendix_samplerejectionreason AS reason ON v.outcomeReasonsID=reason.id
 		LEFT JOIN vl_facilities AS f ON s.facilityID=f.id
 		LEFT JOIN vl_districts AS d ON f.districtID=d.id
 		LEFT JOIN vl_patients As p ON s.patientID=p.id
@@ -24,6 +27,7 @@ $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
 		LEFT JOIN vl_results_roche AS res_r ON s.vlSampleID = res_r.SampleID
 		LEFT JOIN vl_results_abbott AS res_a ON s.vlSampleID = res_a.SampleID
 		LEFT JOIN vl_results_override AS res_o ON s.vlSampleID = res_o.sampleID
+		LEFT JOIN vl_logs_samplerepeats AS log_s ON s.id = log_s.sampleID
 		WHERE sw.worksheetID=$id GROUP BY s.id																																																												
 		";
 //echo $sql;
@@ -45,10 +49,18 @@ $results = mysqlquery($sql);
 	<body>
 	
 		<?php 
+		$print_log_sql="";
 		while($row=mysqlfetcharray($results)){
 			extract($row, EXTR_PREFIX_ALL, "row");
 			include "_sample_print.php";
+			$print_log_sql.="('$row_sampleID','$id','$datetime','$trailSessionUser'),";
 		}
+
+		$print_log_sql = trim($print_log_sql, ",");
+		mysqlquery("insert into vl_logs_printedresults 
+					(sampleID,worksheetID,created,createdby) 
+					values $print_log_sql;");
+		//mysqlquery("START TRANSACTION; $print_log_sql COMMIT;");
 		?>
 
 		<script type="text/javascript">
