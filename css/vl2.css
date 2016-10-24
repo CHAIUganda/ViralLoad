@@ -114,19 +114,26 @@
 .print-ttl{
 	font-weight: bolder;
 	text-transform: uppercase;
-	background-color: #D8D8D8;
+	/*background-color: #D8D8D8;*/
 	padding: 5px;
 	font-size: 16px;
 	width: 100%;
+	margin-top: 10px;
 }
 
 .print-sect{
 	font-size: 14px;
 	padding: 5px;
+	border: 2px solid #E8E8E8;
+	min-height: 75px;
 }
 
 .print-sect>table{
 	min-width: 60%;
+}
+
+.print-sect table td{
+	padding: 4px;
 }
 
 

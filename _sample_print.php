@@ -48,17 +48,17 @@ $numerical_result = getNumericalResult($result);
 $suppressed=isSuppressed2($numerical_result, $sample_type, $test_date);
 switch ($suppressed) {
 	case 'YES': // patient suppressed, according to the guidlines at that time
-		$smiley="<img src='/images/smiley.smile.gif' />";
+		$smiley="smiley.smile.gif";
 		$recommendation=getRecommendation($suppressed,$sampleVLTestDate,$sampleType);
 		break;
 
 	case 'NO': // patient suppressed, according to the guidlines at that time
-		$smiley="<img src='/images/smiley.sad.gif' />";
+		$smiley="smiley.sad.gif";
 		$recommendation=getRecommendation($suppressed,$sampleVLTestDate,$sampleType);					
 		break;
 	
 	default:
-		$smiley="<img src='/images/smiley.sad.gif' />";
+		$smiley="smiley.sad.gif";
 		$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
 		break;
 }
@@ -75,8 +75,8 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 		</div>
 
 	central public health laboratories<br>
-	<hr>
-	viral load test results<br>
+	
+	<u>viral load test results</u><br>
 	</div>
 	<div class="row">
 		<div class="col-xs-6" >
@@ -100,7 +100,7 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 			<div class="print-sect">
 				<table>
 					<tr>
-						<td>Form #:</td>
+						<td>Form #: </td>
 						<td class="print-val"><?=$row_formNumber?></td>
 					</tr>
 					<tr>
@@ -114,10 +114,9 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 	</div>
 
 	<div class="print-ttl">patient information</div>
-
-	<div class="row">
-		<div class="col-xs-6" >
-			<div class="print-sect">
+	<div class="print-sect">
+		<div class="row">
+			<div class="col-xs-6" >				
 				<table>
 					<tr>
 						<td>ART Number: &nbsp;</td>
@@ -125,18 +124,17 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 					</tr>
 					<tr>
 						<td>Other ID:</td>
-						<td class="print-val"><?=$row_otherID ?>&nbsp;</td>
+						<td class="print-val"><?=$row_otherID ?></td>
 					</tr>
 					<tr>
 						<td>Gender:</td>
 						<td class="print-val-check"><?=MyHTML::boolean_draw($genders, $row_gender)?></td>
 					</tr>
 				</table>
+				
 			</div>
-			
-		</div>
-		<div class="col-xs-6">
-			<div class="print-sect">
+			<div class="col-xs-6">
+				
 				<table>
 					<tr>
 						<td>Date of Birth:</td>
@@ -147,52 +145,94 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 						<td class="print-val-"><?=$phone?></td>
 					</tr>
 				</table>
+				
 			</div>
-		</div>
 
+		</div>
 	</div>
 	<div class="print-ttl">sample test information</div>
 	<div class="print-sect">
 		<div class="row">
-			<div class="col-xs-4">Sample Collection Date: <?=getFormattedDateLessDay($row_collectionDate) ?></div>
-			<div class="col-xs-4">Reception Date: <?=getFormattedDateLessDay($row_receiptDate) ?></div>
-			<div class="col-xs-4">Test Date: <?=getFormattedDateLessDay($test_date) ?></div>
-		</div>
-		<hr>
-		Repeat Test: <?=MyHTML::tabs(9)?><?=MyHTML::boolean_draw($yes_no, 2)?>
-		<hr>
-		Sample Rejected: &nbsp;<?=MyHTML::boolean_draw($yes_no, 2)?>
-		<hr>
-		if rejected Reason: 
+			<div class="col-xs-6">
+				
+				<table>
+					<tr>
+						<td>Sample Collection Date: &nbsp; </td>
+						<td class="print-val"><?=getFormattedDateLessDay($row_collectionDate) ?></td>
+					</tr>
+					<tr>
+						<td>Reception Date: &nbsp; </td>
+						<td class="print-val"><?=getFormattedDateLessDay($row_receiptDate) ?></td>
+					</tr>
+					<tr>
+						<td>Test Date: &nbsp; </td>
+						<td class="print-val"><?=getFormattedDateLessDay($test_date) ?></td>
+					</tr>
 
+				</table>
+				
+			</div>
+
+			<div class="col-xs-6">
+				
+				<table>
+					<tr>
+						<td>Repeat Test:  &nbsp; </td>
+						<td><?=MyHTML::boolean_draw($yes_no, 2)?></td>
+					</tr>
+					<tr>
+						<td>Sample Rejected:  &nbsp; </td>
+						<td><?=MyHTML::boolean_draw($yes_no, 2)?></td>
+					</tr>
+				</table>
+				
+			</div>
+
+		</div>
+			If rejected Reason: 
 	</div>
 	<div class="print-ttl">viral load results</div>
 	<div class="print-sect">
 		<div class="row">
-			<div class="col-xs-8">
-				Method Used:  <?=MyHTML::tabs(12)?> <?=$method ?>
-				<hr>
-				Location ID:  <?=MyHTML::tabs(15)?>
-				<?="$row_lrCategory$row_lrEnvelopeNumber/$row_lrNumericID" ?>
-				<hr>
-				Viral Load Testing #: &nbsp; <?=$row_vlSampleID ?>
-				<hr>
-				Result of Viral Load: &nbsp; <?=$result ?>
+			<div class="col-xs-9">
+				<table colspan="2">
+					<tr>
+						<td width="27%">Method Used: </td>
+						<td class="print-val"><?=$method ?></td>
+					</tr>
+
+					<tr>
+						<td>Location ID: </td>
+						<td class="print-val"><?="$row_lrCategory$row_lrEnvelopeNumber/$row_lrNumericID" ?></td>
+					</tr>
+
+					<tr>
+						<td>Viral Load Testing #: &nbsp;</td>
+						<td class="print-val"><?=$row_vlSampleID ?></td>
+					</tr>
+
+					<tr>
+						<td valign="top">Result of Viral Load: &nbsp; </td>
+						<td class="print-val"><?=$result ?></td>
+					</tr>
+				</table>		
+				
 			</div>
-			<div class="col-xs-4">
-				<?=$smiley ?>
+			<div class="col-xs-3">
+				<img src="/images/<?=$smiley ?>" height="150" width="150">
 			</div>
 
-		</div>
-				
+		</div>		 				
 
 	</div>
 
 	<div class="print-ttl">recommendations</div>
-	Suggested Clinical Action based on National Guidelines:<br>
+	<div class="print-sect">
+		Suggested Clinical Action based on National Guidelines:<br>
+		<div style="margin-left:10px"><?=$recommendation ?></div>
+	</div>
 
-	<?=$recommendation ?>
-
+	<br>
 	<div class="row">
 		<div class="col-xs-2">
 			Lab Technologist: 
