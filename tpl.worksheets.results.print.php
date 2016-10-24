@@ -40,14 +40,33 @@ $results = mysqlquery($sql);
 
 		<script src="/js/jquery-2.1.3.min.js"></script>
 		<script src="/bootstrap/js/bootstrap.min.js"></script>
+		<script src="/js/jquery.qrcode.min.js" type="text/javascript"></script>
 	</head>
 	<body>
+	
 		<?php 
 		while($row=mysqlfetcharray($results)){
 			extract($row, EXTR_PREFIX_ALL, "row");
 			include "_sample_print.php";
 		}
 		?>
+
+		<script type="text/javascript">
+		jQuery(function(){
+			jQuery('.qrcode-output').each(function (index){
+				var val = $(this).attr("value");
+				$(this).qrcode({
+					text: val,
+					width: 75,
+					height:75
+				});
+			});			
+		});
+
+		</script>
+
+
+		
 	</body>
 </html>
 	

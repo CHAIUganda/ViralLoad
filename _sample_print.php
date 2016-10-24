@@ -37,7 +37,10 @@ switch ($wrksht_row['machineType']) {
 
 $result = "";
 if(!empty($row_override_result)){
-	$result = end(explode("::", $row_override_result));
+	$or = end(explode("::", $row_override_result));
+	$or = explode("|||", $or);
+	$result = $or[0];
+	$test_date = "";
 }else{
 	$result = $machine_result;
 }
@@ -63,7 +66,11 @@ switch ($suppressed) {
 		break;
 }
 
+$location_id = "$row_lrCategory$row_lrEnvelopeNumber/$row_lrNumericID";
+
 $signature = end(explode("/", $wrksht_row['signaturePATH']));
+
+$now_s = strtotime(date("Y-m-d"));
  ?>
 <page size="A4">
 <!-- <div class="print-container"> -->
@@ -203,7 +210,7 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 
 					<tr>
 						<td>Location ID: </td>
-						<td class="print-val"><?="$row_lrCategory$row_lrEnvelopeNumber/$row_lrNumericID" ?></td>
+						<td class="print-val"><?=$location_id ?></td>
 					</tr>
 
 					<tr>
@@ -248,7 +255,9 @@ $signature = end(explode("/", $wrksht_row['signaturePATH']));
 			<img src="/images/signatures/signature.14.gif" height="50" width="100">
 			<hr>
 		</div>
-		<div class="col-xs-2"><img src="/images/qr_code.png" height="75" width="75"></div>
+		<div class="col-xs-2">
+			<div class="qrcode-output" value="<?="VL,$location_id,$suppressed,$now_s" ?>"></div>
+		</div>
 	</div>
 </page>
 <!-- </div> -->
