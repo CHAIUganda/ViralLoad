@@ -286,8 +286,12 @@ function getVLNumericResultOnly($result) {
 /**
 * function to log whether this sample should be repeated
 */
+
 function logRepeat($machineType,$sampleID,$worksheetID,$result,$flags) {
 	global $datetime,$trailSessionUser;
+
+	$repeat_sql = "";
+	$init_result = $result;
 	
 	//result and flags should all be lower caps for easier comparison
 	$result=trim(strtolower($result));
@@ -299,12 +303,12 @@ function logRepeat($machineType,$sampleID,$worksheetID,$result,$flags) {
 	if(!$id) {
 		//first time, and sample qualifies for an automatic repeat?
 
-		if(($machineType=="roche" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID"))) || 
-				($machineType=="abbott" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID")))) {
-			mysqlquery("insert into vl_logs_samplerepeats 
+		if(isResultFailed2($machineType,$init_result,$flags)) {
+			$repeat_sql = "('$sampleID','$worksheetID','$datetime','$trailSessionUser'),";
+			/*mysqlquery("insert into vl_logs_samplerepeats 
 							(sampleID,oldWorksheetID,created,createdby) 
 							values 
-							('$sampleID','$worksheetID','$datetime','$trailSessionUser')");
+							('$sampleID','$worksheetID','$datetime','$trailSessionUser')");*/
 		}
 	} else {
 		//get last worksheetID this sample was entered with
@@ -332,15 +336,17 @@ function logRepeat($machineType,$sampleID,$worksheetID,$result,$flags) {
 			| 40 |     4794 |            193 | 2014-11-18 10:07:59 |             203 |
 			+----+----------+----------------+---------------------+-----------------+
 			*/
-			if(($machineType=="roche" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID"))) || 
-				($machineType=="abbott" && isResultFailed($machineType,($worksheetID?$worksheetID:""),getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","vlSampleID")))) {
-					mysqlquery("insert into vl_logs_samplerepeats 
+			if(isResultFailed2($machineType,$init_result,$flags)) {
+					$repeat_sql = "('$sampleID','$worksheetID','$datetime','$trailSessionUser'),";
+					/*mysqlquery("insert into vl_logs_samplerepeats 
 									(sampleID,oldWorksheetID,created,createdby) 
 									values 
-									('$sampleID','$worksheetID','$datetime','$trailSessionUser')");
+									('$sampleID','$worksheetID','$datetime','$trailSessionUser')");*/
 			}
 		}
 	}
+
+	return $repeat_sql;
 }
 
 /**
@@ -430,6 +436,49 @@ function fixDuplicateSampleIDs() {
 * @param: $worksheetID
 * @param: $sampleID
 */
+
+function isResultFailed2($machineType,$result,$flag){
+	$check = false;
+
+	if($machineType=='abbott'){
+		$abbott_result_fails = array(
+			"-1.00",
+			"3153 There is insufficient volume in the vessel to perform an aspirate or dispense operation.",
+			"3109 A no liquid detected error was encountered by the Liquid Handler.",
+			"A no liquid detected error was encountered by the Liquid Handler.",
+			"Unable to process result, instrument response is invalid.",
+			"3118 A clot limit passed error was encountered by the Liquid Handler.",
+			"3119 A no clot exit detected error was encountered by the Liquid Handler.",
+			"3130 A less liquid than expected error was encountered by the Liquid Handler.",
+			"3131 A more liquid than expected error was encountered by the Liquid Handler.",
+			"3152 The specified submerge position for the requested liquid volume exceeds the calibrated Z bottom",
+			"4455 Unable to process result, instrument response is invalid.",
+			"A no liquid detected error was encountered by the Liquid Handler.",
+			"Failed          Internal control cycle number is too high. Valid range is [18.48, 22.48].",
+			"Failed          Failed            Internal control cycle number is too high. Valid range is [18.48,",
+			"Failed          Failed          Internal control cycle number is too high. Valid range is [18.48, 2",
+			"OPEN",
+			"There is insufficient volume in the vessel to perform an aspirate or dispense operation.",
+			"Unable to process result, instrument response is invalid.",
+			);
+		$abbott_flags = array(
+			"4442 Internal control cycle number is too high.",
+			"4450 Normalized fluorescence too low.",
+			"4447 Insufficient level of Assay reference dye.",
+			"4457 Internal control failed.",
+		);
+		if(in_array($result, $abbott_result_fails) || in_array($flag, $abbott_flags)){
+			$check = 1;
+		}
+	}elseif($machineType=='roche'){
+		if(trim($result) == 'Failed' || trim($result) == 'Invalid'){
+			$check = 1;
+		}
+	}
+
+	return $check;
+		
+}
 function isResultFailed($machineType,$worksheetID,$sampleID) {
 	switch(strtolower($machineType)) {
 		case "abot":
