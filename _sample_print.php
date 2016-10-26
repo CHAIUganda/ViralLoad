@@ -45,8 +45,9 @@ if(!empty($row_override_result)){
 	$result = $machine_result;
 }
 
-$numerical_result = getNumericalResult($result);
+$result = getVLNumericResult($result,$wrksht_row['machineType'],$factor);
 
+$numerical_result = getNumericalResult($result);
 
 $suppressed=isSuppressed2($numerical_result, $sample_type, $test_date);
 switch ($suppressed) {

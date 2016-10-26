@@ -3,12 +3,14 @@
 $GLOBALS['vlDC']=true;
 include "conf.php";
 
-$sql0 = "SELECT signaturePATH, machineType FROM vl_samples_worksheetcredentials AS w 
+$sql0 = "SELECT signaturePATH, machineType, factor FROM vl_samples_worksheetcredentials AS w 
 		 LEFT JOIN vl_users AS u ON w.createdby = u.email
+		 LEFT JOIN vl_results_multiplicationfactor AS fctr ON w.id=fctr.worksheetID
 		 WHERE w.id= $id";
 
 $results0 = mysqlquery($sql0);
 $wrksht_row = mysqlfetcharray($results0);
+$factor = $wrksht_row['factor'];
 
 $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
 		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, 
