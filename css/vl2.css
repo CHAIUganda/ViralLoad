@@ -139,8 +139,6 @@
 
 .print-val{
 	text-decoration: underline;
-	font-weight: bold;
-	min-width: 100px;
 }
 
 .print-check,.print-uncheck{

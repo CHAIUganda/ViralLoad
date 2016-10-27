@@ -77,6 +77,8 @@ $repeated = !empty($row_repeated)?1:2;
 
 $rejected = $row_verify_outcome=="Rejected"?1:2;
  ?>
+
+ 
 <page size="A4">
 <!-- <div class="print-container"> -->
 	<div class="print-header">
@@ -101,7 +103,7 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 					</tr>
 					<tr>
 						<td>District:</td>
-						<td class="print-val"><?=$row_district?></td>
+						<td class="print-val"><?=$row_district?> | Hub: <?=$row_hub_name?></td>
 					</tr>
 				</table>
 			</div>
@@ -209,23 +211,23 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 			<div class="col-xs-9">
 				<table colspan="2">
 					<tr>
-						<td width="27%">Method Used: </td>
-						<td class="print-val"><?=$method ?></td>
+						<td width="40%">Method Used: </td>
+						<td ><?=$method ?></td>
 					</tr>
 
 					<tr>
 						<td>Location ID: </td>
-						<td class="print-val"><?=$location_id ?></td>
+						<td ><?=$location_id ?></td>
 					</tr>
 
 					<tr>
-						<td>Viral Load Testing #: &nbsp;</td>
-						<td class="print-val"><?=$row_vlSampleID ?></td>
+						<td>Viral Load Testing #: </td>
+						<td ><?=$row_vlSampleID ?></td>
 					</tr>
 
 					<tr>
-						<td valign="top">Result of Viral Load: &nbsp; </td>
-						<td class="print-val"><?=$result ?></td>
+						<td valign="top">Result of Viral Load: </td>
+						<td ><?=$result ?></td>
 					</tr>
 				</table>		
 				

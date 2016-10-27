@@ -13,7 +13,7 @@ $wrksht_row = mysqlfetcharray($results0);
 $factor = $wrksht_row['factor'];
 
 $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
-		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, 
+		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, h.hub AS hub_name, 
 		GROUP_CONCAT(res_r.Result, '|||', res_r.created SEPARATOR '::') AS roche_result,
 		GROUP_CONCAT(res_a.result, '|||', res_a.created SEPARATOR '::') AS abbott_result,
 		GROUP_CONCAT(res_o.result, '|||', res_o.created SEPARATOR '::') AS override_result,
@@ -24,6 +24,7 @@ $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
 		LEFT JOIN vl_appendix_samplerejectionreason AS reason ON v.outcomeReasonsID=reason.id
 		LEFT JOIN vl_facilities AS f ON s.facilityID=f.id
 		LEFT JOIN vl_districts AS d ON f.districtID=d.id
+		LEFT JOIN vl_hubs AS h ON f.hubID=h.id
 		LEFT JOIN vl_patients As p ON s.patientID=p.id
 		LEFT JOIN vl_patients_phone As ph ON p.id = ph.patientID
 		LEFT JOIN vl_results_roche AS res_r ON s.vlSampleID = res_r.SampleID
