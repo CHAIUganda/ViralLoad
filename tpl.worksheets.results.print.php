@@ -31,7 +31,7 @@ $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
 		LEFT JOIN vl_results_abbott AS res_a ON s.vlSampleID = res_a.SampleID
 		LEFT JOIN vl_results_override AS res_o ON s.vlSampleID = res_o.sampleID
 		LEFT JOIN vl_logs_samplerepeats AS log_s ON s.id = log_s.sampleID
-		WHERE sw.worksheetID=$id GROUP BY s.id																																																												
+		WHERE sw.worksheetID=$id GROUP BY s.id	ORDER BY lrEnvelopeNumber,lrNumericID																																																											
 		";
 //echo $sql;
 $results = mysqlquery($sql);
