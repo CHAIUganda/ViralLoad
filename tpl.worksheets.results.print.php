@@ -10,7 +10,10 @@ $sql0 = "SELECT signaturePATH, machineType, factor FROM vl_samples_worksheetcred
 
 $results0 = mysqlquery($sql0);
 $wrksht_row = mysqlfetcharray($results0);
+
+$machine_type = $wrksht_row['machineType'];
 $factor = $wrksht_row['factor'];
+$signature_path = $wrksht_row['signaturePATH'];
 
 $sql = "SELECT sw.sampleID, s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
 		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, h.hub AS hub_name, 

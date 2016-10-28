@@ -11,7 +11,7 @@ $yes_no = array(1=>"Yes", 2=>"No");
 $method="";
 $machine_result = "";
 $test_date = "";
-switch ($wrksht_row['machineType']) {
+switch ($machine_type) {
 	case 'abbott':
 		$method = "Abbott Real time HIV-1 PCR";
 		$mr = end(explode("::", $row_abbott_result));
@@ -45,7 +45,7 @@ if(!empty($row_override_result)){
 	$result = $machine_result;
 }
 
-$result = getVLNumericResult($result,$wrksht_row['machineType'],$factor);
+$result = getVLNumericResult($result, $machine_type, $factor);
 
 $numerical_result = getNumericalResult($result);
 
@@ -69,7 +69,7 @@ switch ($suppressed) {
 
 $location_id = "$row_lrCategory$row_lrEnvelopeNumber/$row_lrNumericID";
 
-$signature = end(explode("/", $wrksht_row['signaturePATH']));
+$signature = end(explode("/", $signature_path));
 
 $now_s = strtotime(date("Y-m-d"));
 
@@ -78,7 +78,7 @@ $repeated = !empty($row_repeated)?1:2;
 $rejected = $row_verify_outcome=="Rejected"?1:2;
  ?>
 
- 
+
 <page size="A4">
 <!-- <div class="print-container"> -->
 	<div class="print-header">
@@ -205,6 +205,7 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 		</div>
 			If rejected Reason: <?=$row_rejection_reason ?>
 	</div>
+	<?php if ($row_verify_outcome!="Rejected"){ ?>
 	<div class="print-ttl">viral load results</div>
 	<div class="print-sect">
 		<div class="row">
@@ -240,14 +241,17 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 
 	</div>
 
+
 	<div class="print-ttl">recommendations</div>
 	<div class="print-sect">
 		Suggested Clinical Action based on National Guidelines:<br>
 		<div style="margin-left:10px"><?=$recommendation ?></div>
 	</div>
+	<?php } ?>
 
 	<br>
 	<div class="row">
+		<?php if ($row_verify_outcome!="Rejected"){ ?>
 		<div class="col-xs-2">
 			Lab Technologist: 
 		</div>
@@ -255,6 +259,7 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 			<img src="/images/signatures/<?=$signature ?>" height="50" width="100">
 			<hr>
 		</div>
+		<?php } ?>
 		<div class="col-xs-2">
 			Lab Manager: 
 		</div>
@@ -262,9 +267,11 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 			<img src="/images/signatures/signature.14.gif" height="50" width="100">
 			<hr>
 		</div>
+		<?php if ($row_verify_outcome!="Rejected"){ ?>
 		<div class="col-xs-2">
 			<div class="qrcode-output" value="<?="VL,$location_id,$suppressed,$now_s" ?>"></div>
 		</div>
+		<?php } ?>
 	</div>
 </page>
 <!-- </div> -->
