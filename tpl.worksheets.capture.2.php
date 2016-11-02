@@ -41,14 +41,17 @@ if($proceed) {
 	if(count($worksheetSamples)) {
 		//first delete all samples from this worksheet
 		mysqlquery("delete from vl_samples_worksheet where worksheetID='$worksheetID'");
+		$insert_sql = "";
 		foreach($worksheetSamples as $ws) {
 			$ws=validate($ws);
-			mysqlquery("insert into vl_samples_worksheet 
-							(worksheetID,sampleID,created,createdby) 
-							values 
-							('$worksheetID','$ws','$datetime','$trailSessionUser')");
+			$insert_sql .= "('$worksheetID','$ws','$datetime','$trailSessionUser'),";
 		}
+		$insert_sql = trim($insert_sql, ",");
 		
+		mysqlquery("insert into vl_samples_worksheet 
+							(worksheetID,sampleID,created,createdby) 
+							values $insert_sql
+							");
 		//redirect
 		if($modify) {
 			go("/worksheets/manage/changed/");
@@ -103,14 +106,23 @@ if($includeCalibrators) {
 
 //eligible samples
 $query=0;
-$query=mysqlquery("select distinct sampleID from vl_samples_verify,vl_samples where vl_samples.id=vl_samples_verify.sampleID and vl_samples.sampleTypeID='$worksheetType' and vl_samples_verify.sampleID not in (select distinct sampleID from vl_samples_worksheet) and vl_samples_verify.outcome='Accepted' order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
+//$query=mysqlquery("select distinct sampleID from vl_samples_verify,vl_samples where vl_samples.id=vl_samples_verify.sampleID and vl_samples.sampleTypeID='$worksheetType' and vl_samples_verify.sampleID not in (select distinct sampleID from vl_samples_worksheet) and vl_samples_verify.outcome='Accepted' order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
+$sql = "SELECT s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID
+		FROM vl_samples AS s
+		LEFT JOIN vl_patients AS p ON s.patientID=p.id
+		LEFT JOIN vl_samples_verify AS v ON s.id=v.sampleID 
+		LEFT JOIN vl_samples_worksheet AS sw ON s.id=sw.sampleID
+		WHERE v.outcome='Accepted' AND sw.id IS NULL AND s.sampleTypeID='$worksheetType'
+		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
+		LIMIT 100";
+$query = mysqlquery($sql);
 if(mysqlnumrows($query)) {
 	$i=count($contents);
 	while($q=mysqlfetcharray($query)) {
 		//controls
 		$i+=1;
 		//key variables
-		$sampleID=0;
+		/*$sampleID=0;
 		$sampleID=$q["sampleID"];
 		$patientID=0;
 		$patientID=getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","patientID");
@@ -123,7 +135,13 @@ if(mysqlnumrows($query)) {
 		$formNumber=0;
 		$formNumber=getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","formNumber");
 		$patientART=0;
-		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");
+		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");*/
+
+		$sampleID = $q['id'];
+		$sampleNumber = $q['vlSampleID'];
+		$locationID = $q['lrCategory'].$q['lrEnvelopeNumber'].'/'.$q['lrNumericID'];
+		$formNumber = $q['formNumber'];
+		$patientART = $q['artNumber'];
 		
 		$contents[]="<div align=\"center\" class=\"vls\">$i</div>
 						<div align=\"center\" class=\"vls\" style=\"padding:3px 0px 0px 0px\">Patient ART #: $patientART</div> 
@@ -137,13 +155,24 @@ if(mysqlnumrows($query)) {
 
 //rejected samples that have never been accepted in subsequent runs
 $query=0;
-$query=mysqlquery("select vl_logs_samplerepeats.* from 
+/*$query=mysqlquery("select vl_logs_samplerepeats.* from 
 							vl_logs_samplerepeats,vl_samples where 
 								vl_logs_samplerepeats.sampleID=vl_samples.id and 
 									vl_samples.sampleTypeID='$worksheetType' and 
 										vl_logs_samplerepeats.withWorksheetID='' and 
 											vl_samples.vlSampleID not in (select distinct sampleID from vl_results_override) 
 												order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
+*/
+
+$sql = "SELECT s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID
+		FROM vl_logs_samplerepeats AS rpt
+		LEFT JOIN vl_samples AS s ON rpt.sampleID = s.id
+		LEFT JOIN vl_patients AS p ON s.patientID=p.id
+		LEFT JOIN vl_results_override AS ovr ON s.vlSampleID=ovr.sampleID
+		WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL
+		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
+		LIMIT 100";
+$query = mysqlquery($sql);
 
 if(mysqlnumrows($query)) {
 	$i=0;
@@ -151,7 +180,7 @@ if(mysqlnumrows($query)) {
 		//controls
 		$i+=1;
 		//key variables
-		$sampleID=0;
+		/*$sampleID=0;
 		$sampleID=getDetailedTableInfo2("vl_samples","id='$q[sampleID]' limit 1","vlSampleID");
 		$patientID=0;
 		$patientID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","patientID");
@@ -166,7 +195,14 @@ if(mysqlnumrows($query)) {
 		$patientART=0;
 		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");
 
-		$smpl_id=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
+		$smpl_id=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");*/
+
+		$smpl_id = $q['id'];
+		$sampleNumber = $q['vlSampleID'];
+		$locationID = $q['lrCategory'].$q['lrEnvelopeNumber'].'/'.$q['lrNumericID'];
+		$formNumber = $q['formNumber'];
+		$patientART = $q['artNumber'];
+
 		$stLikeRadio="setLikeRadioOldSmpls(\"$smpl_id\",\"n\")";
 		$stLikeRadio2="setLikeRadioOldSmpls(\"$smpl_id\",\"r\")";
 		
@@ -178,7 +214,7 @@ if(mysqlnumrows($query)) {
 						<div align=\"center\" style=\"padding:5px 0px\"><img src=\"/worksheets/image/".vlEncrypt($sampleNumber)."/\" /></div>
 						<div align=\"center\" class='check-boxes'>
 							<label><input type=\"checkbox\" onchange='$stLikeRadio2' class='samples' name=\"worksheetSamples[]\" id=\"r$smpl_id\" value=\"".$smpl_id."\" onclick=\"updateCounter(this)\" /> <span>retest</span></label>
-							<label><input type='checkbox' onchange='$stLikeRadio' id='n$smpl_id' name='no_spots_samples[]' value='$sampleID'> <span>no spots</span></label>
+							<label><input type='checkbox' onchange='$stLikeRadio' id='n$smpl_id' name='no_spots_samples[]' value='$sampleNumber'> <span>no spots</span></label>
 						</div>";
 	}
 }
