@@ -77,8 +77,6 @@ $repeated = !empty($row_repeated)?1:2;
 
 $rejected = $row_verify_outcome=="Rejected"?1:2;
  ?>
-
-
 <page size="A4">
 <!-- <div class="print-container"> -->
 	<div class="print-header">

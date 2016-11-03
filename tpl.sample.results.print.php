@@ -46,6 +46,7 @@ $results = mysqlquery($sql);
 		<script src="/js/jquery.qrcode.min.js" type="text/javascript"></script>
 	</head>
 	<body>
+		<div id="print-btn-div" style='text-align:center; padding:20px;'><button id="print-btn" class='btn btn-primary' >PRINT</button></div>
 	
 		<?php 
 		$row = mysqlfetcharray($results);
@@ -82,6 +83,11 @@ $results = mysqlquery($sql);
 					height:75
 				});
 			});			
+		});
+
+		$('#print-btn').click(function(){
+			$('#print-btn-div').hide();
+			window.print();
 		});
 
 		</script>
