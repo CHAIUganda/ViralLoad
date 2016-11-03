@@ -107,14 +107,23 @@ if($includeCalibrators) {
 //eligible samples
 $query=0;
 //$query=mysqlquery("select distinct sampleID from vl_samples_verify,vl_samples where vl_samples.id=vl_samples_verify.sampleID and vl_samples.sampleTypeID='$worksheetType' and vl_samples_verify.sampleID not in (select distinct sampleID from vl_samples_worksheet) and vl_samples_verify.outcome='Accepted' order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
-$sql = "SELECT s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID
-		FROM vl_samples AS s
-		LEFT JOIN vl_patients AS p ON s.patientID=p.id
-		LEFT JOIN vl_samples_verify AS v ON s.id=v.sampleID 
-		LEFT JOIN vl_samples_worksheet AS sw ON s.id=sw.sampleID
-		WHERE v.outcome='Accepted' AND sw.id IS NULL AND s.sampleTypeID='$worksheetType'
+
+$cols = "s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID";
+
+$more_sql ="FROM vl_samples AS s
+			LEFT JOIN vl_patients AS p ON s.patientID=p.id
+			LEFT JOIN vl_samples_verify AS v ON s.id=v.sampleID 
+			LEFT JOIN vl_samples_worksheet AS sw ON s.id=sw.sampleID
+			WHERE v.outcome='Accepted' AND sw.id IS NULL AND s.sampleTypeID='$worksheetType'";
+
+$num_pending_testing = 0;
+
+$num_pending_result0 = mysqlquery("SELECT count(s.id) AS c $more_sql");
+if(mysqlnumrows($num_pending_result0)) $num_pending_testing =  mysqlfetcharray($num_pending_result0)['c']." samples pending testing";
+
+$sql = "SELECT $cols $more_sql 		
 		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
-		LIMIT 100";
+		LIMIT 200";
 $query = mysqlquery($sql);
 if(mysqlnumrows($query)) {
 	$i=count($contents);
@@ -164,14 +173,21 @@ $query=0;
 												order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
 */
 
-$sql = "SELECT s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID
-		FROM vl_logs_samplerepeats AS rpt
-		LEFT JOIN vl_samples AS s ON rpt.sampleID = s.id
-		LEFT JOIN vl_patients AS p ON s.patientID=p.id
-		LEFT JOIN vl_results_override AS ovr ON s.vlSampleID=ovr.sampleID
-		WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL
+$cols = "s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID";
+
+$more_sql ="FROM vl_logs_samplerepeats AS rpt
+			LEFT JOIN vl_samples AS s ON rpt.sampleID = s.id
+			LEFT JOIN vl_patients AS p ON s.patientID=p.id
+			LEFT JOIN vl_results_override AS ovr ON s.vlSampleID=ovr.sampleID
+			WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL";
+
+$num_pending_retesting = 0;
+$num_pending_result1 = mysqlquery("SELECT count(s.id) AS c $more_sql");
+if(mysqlnumrows($num_pending_result1)) $num_pending_retesting =  mysqlfetcharray($num_pending_result1)['c']." samples pending retesting";
+
+$sql = "SELECT $cols $more_sql		
 		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
-		LIMIT 100";
+		LIMIT 150";
 $query = mysqlquery($sql);
 
 if(mysqlnumrows($query)) {
@@ -388,7 +404,7 @@ function setLikeRadioOldSmpls(nr,type){
       <? } ?>
     </table>
 </div>
-<div style="padding:10px 0px 0px 0px"><strong>Quick Select Options</strong></div>
+<div style="padding:10px 0px 0px 0px"><strong>Quick Select Options <span class="pending-stat">(<?=$num_pending_testing ?>)</span></strong> </div>
 <? 
 if($machineType=="roche") { 
 	$numberCheckBoxes1=21;
@@ -440,7 +456,7 @@ if($machineType=="roche") {
     </table>
 </div>
 <? if(count($failedcontents)) { ?>
-<div style="padding:20px 0px 10px 0px; border-bottom: 1px dashed #cccccc"><strong>Failed Samples from Previous Runs</strong></div>
+<div style="padding:20px 0px 10px 0px; border-bottom: 1px dashed #cccccc"><strong>Failed Samples from Previous Runs <span class="pending-stat">(<?=$num_pending_retesting ?>)</span></strong></div>
 <br />
 <div style="height: 350px; width: 100%; overflow: auto; padding:5px; border: 1px solid #d5e6cf">
     <table width="100%" border="0" class="vl">
@@ -497,3 +513,9 @@ if($machineType=="roche") {
     <input name="numberSamples" type="hidden" id="numberSamples" value="" />
 </div>
 </form>
+<style type="text/css">
+.pending-stat{
+	font-size: 14px;
+	color: #AA9933;
+}
+</style>
