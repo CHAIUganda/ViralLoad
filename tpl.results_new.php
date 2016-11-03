@@ -22,6 +22,16 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 		<div class='live_drpdwn'id="sample_dropdown" style='display:none'></div>
 	</div>
 </div>
+<br>
+<div class="row">
+	<div class="form-inline col-lg-4" >
+		<label>Rejected Samples</label><br>
+		<input type="text" id="date_rejected" class="form-control input-sm pick_date">
+		<button id="rjct_such" class="btn btn-primary btn-sm">Search</button>
+	</div>
+</div>
+	
+
 
 <script type="text/javascript">
 $(function(){
@@ -57,6 +67,20 @@ $(function(){
 	$(".drop_down_container").mouseover(function(){ drpdwn.show(); });
 
 	$(".drop_down_container").mouseout(function(){ drpdwn.hide(); });
+
+ 	$(".pick_date" ).datepicker({
+		 	 changeMonth: true,
+	 		 changeYear: true,
+	 		 maxDate: new Date(),
+	 		 dateFormat: "yy-mm-dd",
+	 		}); 
+ 	$(".pick_date" ).datepicker("setDate", new Date());
+
+ 	$("#rjct_such").click(function(){
+ 		var rjct_date = $("#date_rejected").val();
+ 		windPop('/samples/print_rejected/'+rjct_date+'/');
+ 	});
+
 });
 
 function windPop(link) {
