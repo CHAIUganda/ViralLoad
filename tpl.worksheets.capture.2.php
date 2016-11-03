@@ -118,12 +118,14 @@ $more_sql ="FROM vl_samples AS s
 
 $num_pending_testing = 0;
 
-$num_pending_result0 = mysqlquery("SELECT count(s.id) AS c $more_sql");
+$num_pending_result0 = mysqlquery("SELECT count( DISTINCT s.id) AS c $more_sql");
 if(mysqlnumrows($num_pending_result0)) $num_pending_testing =  mysqlfetcharray($num_pending_result0)['c']." samples pending testing";
 
 $sql = "SELECT $cols $more_sql 		
+		GROUP BY s.id
 		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
 		LIMIT 200";
+		
 $query = mysqlquery($sql);
 if(mysqlnumrows($query)) {
 	$i=count($contents);
@@ -181,10 +183,10 @@ $more_sql ="FROM vl_logs_samplerepeats AS rpt
 			LEFT JOIN vl_results_override AS ovr ON s.vlSampleID=ovr.sampleID
 			WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL";
 
-$num_pending_retesting = 0;
-$num_pending_result1 = mysqlquery("SELECT count(s.id) AS c $more_sql");
+/*$num_pending_retesting = 0;
+$num_pending_result1 = mysqlquery("SELECT count(DISTINCT s.id) AS c $more_sql");
 if(mysqlnumrows($num_pending_result1)) $num_pending_retesting =  mysqlfetcharray($num_pending_result1)['c']." samples pending retesting";
-
+*/
 $sql = "SELECT $cols $more_sql		
 		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
 		LIMIT 150";
@@ -456,7 +458,7 @@ if($machineType=="roche") {
     </table>
 </div>
 <? if(count($failedcontents)) { ?>
-<div style="padding:20px 0px 10px 0px; border-bottom: 1px dashed #cccccc"><strong>Failed Samples from Previous Runs <span class="pending-stat">(<?=$num_pending_retesting ?>)</span></strong></div>
+<div style="padding:20px 0px 10px 0px; border-bottom: 1px dashed #cccccc"><strong>Failed Samples from Previous Runs </strong></div>
 <br />
 <div style="height: 350px; width: 100%; overflow: auto; padding:5px; border: 1px solid #d5e6cf">
     <table width="100%" border="0" class="vl">
