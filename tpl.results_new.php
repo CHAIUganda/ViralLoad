@@ -21,15 +21,14 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 		<?=MyHTML::text('sample','',array('class'=>'form-control input-sm input_md', 'id'=>'s', 'autocomplete'=>'off')) ?>
 		<div class='live_drpdwn'id="sample_dropdown" style='display:none'></div>
 	</div>
-</div>
-<br>
-<div class="row">
+
 	<div class="form-inline col-lg-4" >
 		<label>Rejected Samples</label><br>
 		<input type="text" id="date_rejected" class="form-control input-sm pick_date">
 		<button id="rjct_such" class="btn btn-primary btn-sm">Search</button>
 	</div>
 </div>
+
 	
 
 
