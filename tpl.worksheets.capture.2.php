@@ -119,13 +119,16 @@ $more_sql ="FROM vl_samples AS s
 $num_pending_testing = 0;
 
 $num_pending_result0 = mysqlquery("SELECT count( DISTINCT s.id) AS c $more_sql");
-if(mysqlnumrows($num_pending_result0)) $num_pending_testing =  mysqlfetcharray($num_pending_result0)['c']." samples pending testing";
+if(mysqlnumrows($num_pending_result0)){
+	$n_row = mysqlfetcharray($num_pending_result0);
+	$num_pending_testing = $n_row['c'] ." samples pending testing";
+}
 
 $sql = "SELECT $cols $more_sql 		
 		GROUP BY s.id
 		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
 		LIMIT 200";
-		
+
 $query = mysqlquery($sql);
 if(mysqlnumrows($query)) {
 	$i=count($contents);
