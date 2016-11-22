@@ -78,6 +78,7 @@ $repeated = !empty($row_repeated)?1:2;
 $rejected = $row_verify_outcome=="Rejected"?1:2;
  ?>
 <page size="A4">
+	<div style="height:95%">
 <!-- <div class="print-container"> -->
 	<div class="print-header">
 		<img src="/images/uganda.emblem.gif">
@@ -271,5 +272,8 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 		</div>
 		<?php } ?>
 	</div>
+	</div>
+	<footer style='float:right'>1 of 1</footer>
 </page>
+
 <!-- </div> -->
