@@ -182,6 +182,8 @@ function vlDecrypt($string) {
 	}
 }
 
+//function dec($string){ $xstring=base64_decode($string); $first3=substr($xstring,0,3); $last3=substr($xstring,3,(strlen($xstring)-3)); return base64_decode($last3.$first3); }
+
 /**
 * function to randomly encrypt a string
 * generate random string

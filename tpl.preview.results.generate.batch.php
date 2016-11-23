@@ -91,7 +91,7 @@ if(count($sampleResultCheckbox)) {
 			$sampleTypeID=getDetailedTableInfo2("vl_samples","id='$sampleID'","sampleTypeID");
 			$sampleType=0;
 			$sampleType=getDetailedTableInfo2("vl_appendix_sampletype","id='$sampleTypeID'","appendix");
-			
+
 			$patientID=0;
 			$patientID=getDetailedTableInfo2("vl_samples","id='$sampleID'","patientID");
 			$artNumber=0;
@@ -150,7 +150,27 @@ if(count($sampleResultCheckbox)) {
 			//$numericVLResult*=2;
 			$smiley=0;
 			$recommendation=0;
-			if($sampleType=="DBS") {
+
+			//$suppressed=getDetailedTableInfo2("vl_results_merged","vlSampleID='$vlSampleID'","suppressed");//suppression status
+			$suppressed=isSuppressed2($numericVLResult,$sampleType,$sampleVLTestDate);
+			switch ($suppressed) {
+				case 'YES': // patient suppressed, according to the guidlines at that time
+					$smiley="<img src=\"$system_default_path"."images/smiley.smile.gif\" />";
+					$recommendation=getRecommendation($suppressed,$sampleVLTestDate,$sampleType);
+					break;
+
+				case 'NO': // patient suppressed, according to the guidlines at that time
+					$smiley="<img src=\"$system_default_path"."images/smiley.sad.gif\" />";
+					$recommendation=getRecommendation($suppressed,$sampleVLTestDate,$sampleType);					
+					break;
+				
+				default:
+					$smiley="<img src=\"$home_url/images/smiley.sad.gif\" />";
+					$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
+					break;
+			}
+
+			/*if($sampleType=="DBS") {
 				if(is_numeric($numericVLResult)) {
 					if($numericVLResult<5000) {
 						$smiley="<img src=\"$system_default_path"."images/smiley.smile.gif\" />";
@@ -160,7 +180,7 @@ if(count($sampleResultCheckbox)) {
 						$recommendation="Above 5,000 copies/mL: Patient has elevated viral load. <br>Please initiate intensive adherence counseling and conduct a repeat viral load test after six months.";
 					}
 				} else {
-					if($vlResult=="Failed.") {
+					if($vlResult=="Failed.") { 
 						$smiley="<img src=\"$home_url/images/smiley.sad.gif\" />";
 						$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
 					} else {
@@ -186,7 +206,7 @@ if(count($sampleResultCheckbox)) {
 						$recommendation="Below 1,000 copies/mL: Patient is suppressing their viral load. <br>Please continue adherence counseling. Do another viral load after 12 months.";
 					}
 				}
-			}
+			}*/
 	
 			//was this sample overridden?
 			if(getDetailedTableInfo2("vl_results_override","sampleID='$vlSampleID'","id")) {

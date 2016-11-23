@@ -210,7 +210,8 @@ if(!$GLOBALS['vlDC']) {
 																								trim(result)='OPEN' or 
 																									trim(result)='There is insufficient volume in the vessel to perform an aspirate or dispense operation.' or 
 																										trim(result)='Unable to process result, instrument response is invalid.' or 
-																											trim(substr(flags,1,47))='4442 Internal control cycle number is too high.'");
+																											trim(substr(flags,1,47))='4442 Internal control cycle number is too high.' or
+																											   trim(result)='4459 Assay normalized fluorescence too high'");
 
 		if(mysqlnumrows($query)) {
 			while($q=mysqlfetcharray($query)) {

@@ -120,8 +120,10 @@ function validate(envelopes) {
                           <td>Number&nbsp;of&nbsp;Forms&nbsp;<font class="vl_red">*</font></td>
                           <td>
 							<select name="serialNumberEnd" id="serialNumberEnd" class="search">
+                <option value="49">49</option>
+                <option value="50">50</option>
 							<?
-							echo "<option value=\"50\" selected=\"selected\">50</option>";
+							//echo "<option value=\"50\" selected=\"selected\">50</option>";
 							//echo "<option value=\"".($serialNumberEnd?$serialNumberEnd:1)."\" selected=\"selected\">".($serialNumberEnd?$serialNumberEnd:1)."</option>";
 							/*
 							for($j=1;$j<=$default_formsPerBook;$j++) {

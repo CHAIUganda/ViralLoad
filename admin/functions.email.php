@@ -22,6 +22,7 @@ function queMail($fromName,$from,$to,$subject,$message,$html) {
 					(fromName,fromAddress,toAddress,subject,message,html,created,createdby) 
 					values 
 					('$fromName','$from','$to','".preg_replace("/'/s","\'",$subject)."','".preg_replace("/'/s","\'",$message)."','$html','$datetime','$user')");
+
 }
 
 /*

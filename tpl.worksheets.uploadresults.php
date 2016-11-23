@@ -4,6 +4,56 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 	die("<font face=arial size=2>You must be logged in to view this page.</font>");
 }
 
+function insertVLResults($machineType="", $values="", $repeats="", $merged_values=""){
+	$values = trim($values, ",");
+	$repeats = trim($repeats, ",");
+	$merged_values = trim($merged_values, ",");
+
+	if($machineType=="roche"){
+		mysqlquery("insert into vl_results_roche
+			(worksheetID,PatientName,PatientID,OrderNumber,OrderDateTime,
+			 SampleID,SampleType,BatchID,Test,Result,Unit,Flags,AcceptedOp,
+			 AcceptedDateTime,Comment,GeneralLotNumber,GeneralLotExpirationDate,
+			 SamplePrepKitLotNumber,SamplePrepKitLotExpirationDate,PCRKitLotNumber,PCRKitExpirationDate,
+			 LPCLowLimit,LPCHighLimit,MPCLowLimit,MPCHighLimit,
+			 HPCLowLimit,HPCHighLimit,PreparationInstrumentID,PreparationStartDateTime,
+			 PreparationEndDateTime,PreparationRackPos,PreparationRackID,PreparationRackType,
+			 PreparationTubeID,PreparationTubeType,PreparationTubePos,PreparationBatchID,
+			 AmplificationInstrumentID,AmplificationStartDateTime,AmplificationEndDateTime,AmplificationTCID,
+			 AmplificationRackID,AmplificationRackType,AmplificationTubeID,AmplificationTubeType,
+			 AmplificationTubePos,AmplificationBatchID,DetectionInstrumentID,DetectionStartDateTime,
+			 DetectionEndDateTime,DetectionRackPos,DetectionRackID,DetectionRackType,
+			 DetectionTubeID,DetectionTubeType,DetectionTubePos,DetectionBatchID,
+			 IngredientCH1,IngredientCH2,IngredientCH3,IngredientCH4,
+			 CTMElbowCH1,CTMElbowCH2,CTMElbowCH3,CTMElbowCH4,CTMRFICH1,CTMRFICH2,CTMRFICH3,
+			 CTMRFICH4,CTMAFICH1,CTMAFICH2,CTMAFICH3,CTMAFICH4,CTMCalibCoeffa,CTMCalibCoeffb,
+			 CTMCalibCoeffc,CTMCalibCoeffd,CASampleValue,QSCopy,CATarget1,CATarget2,
+			 CATarget3,CATarget4,CATarget5,CATarget6,CAQS1,CAQS2,CAQS3,CAQS4,created,createdby)
+			 values  $values");
+	}elseif($machineType=="abbott"){
+		mysqlquery("insert into vl_results_abbott
+			(worksheetID, sampleLocation,sampleID,sampleType,assayName,
+			 assayVersion,result,interpretation,flags,targetCycleNumber,icCycleNumber,
+			 errorCodeDescription,assayCalibrationTime, reagentLotNumber,reagentLotExpirationDate,
+			 controlLotNumber,controlExpirationDate, controlRange,calibratorLotNumber,
+			 calibratorExpirationDate,calibratorLogConcentration, resultComment,targetMR,icMR,
+			 created,createdby) values $values");
+	}
+
+	if(!empty($repeats)){
+		mysqlquery("insert into vl_logs_samplerepeats 
+			(sampleID,oldWorksheetID,created,createdby) 
+			values $repeats");
+	}
+
+	if(!empty($merged_values)){
+		mysqlquery("insert ignore into vl_results_merged 
+			(machine,worksheetID,vlSampleID,resultAlphanumeric,
+			resultNumeric,suppressed,created,createdby) 
+			values $merged_values ");
+	}
+									
+}
 //validation
 $worksheetID=validate($worksheetID);
 $factor=validate($factor);
@@ -87,6 +137,9 @@ if($uploadResults) {
 				
 				//roche, csv file
 				if($type=="roche") {
+					$roche_insert_values = "";
+					$log_repeat_values = "";
+					$merged_values = "";
 					//load file 
 					$file = fopen($_FILES['userfile']['tmp_name'], 'r');
 					$count=0;
@@ -362,75 +415,57 @@ if($uploadResults) {
 							if($SampleID) {
 								//first time insertion
 								if(!getDetailedTableInfo2("vl_results_roche","SampleID='$SampleID' and worksheetID='$worksheetID' limit 1","id")) {
-									mysqlquery("insert into vl_results_roche 
-													(worksheetID,
-														PatientName,PatientID,OrderNumber,OrderDateTime,
-														SampleID,SampleType,BatchID,Test,
-														Result,Unit,Flags,AcceptedOp,
-														AcceptedDateTime,Comment,GeneralLotNumber,GeneralLotExpirationDate,
-														SamplePrepKitLotNumber,SamplePrepKitLotExpirationDate,PCRKitLotNumber,PCRKitExpirationDate,
-														LPCLowLimit,LPCHighLimit,MPCLowLimit,MPCHighLimit,
-														HPCLowLimit,HPCHighLimit,PreparationInstrumentID,PreparationStartDateTime,
-														PreparationEndDateTime,PreparationRackPos,PreparationRackID,PreparationRackType,
-														PreparationTubeID,PreparationTubeType,PreparationTubePos,PreparationBatchID,
-														AmplificationInstrumentID,AmplificationStartDateTime,AmplificationEndDateTime,AmplificationTCID,
-														AmplificationRackID,AmplificationRackType,AmplificationTubeID,AmplificationTubeType,
-														AmplificationTubePos,AmplificationBatchID,DetectionInstrumentID,DetectionStartDateTime,
-														DetectionEndDateTime,DetectionRackPos,DetectionRackID,DetectionRackType,
-														DetectionTubeID,DetectionTubeType,DetectionTubePos,DetectionBatchID,
-														IngredientCH1,IngredientCH2,IngredientCH3,IngredientCH4,
-														CTMElbowCH1,CTMElbowCH2,CTMElbowCH3,CTMElbowCH4,
-														CTMRFICH1,CTMRFICH2,CTMRFICH3,CTMRFICH4,
-														CTMAFICH1,CTMAFICH2,CTMAFICH3,CTMAFICH4,
-														CTMCalibCoeffa,CTMCalibCoeffb,CTMCalibCoeffc,CTMCalibCoeffd,
-														CASampleValue,QSCopy,CATarget1,CATarget2,
-														CATarget3,CATarget4,CATarget5,CATarget6,
-														CAQS1,CAQS2,CAQS3,CAQS4,
-														created,createdby)
-													values 
-													('$worksheetID',
-														'$PatientName','$PatientID','$OrderNumber','$OrderDateTime',
-														'$SampleID','$SampleType','$BatchID','$Test',
-														'$Result','$Unit','$Flags','$AcceptedOp',
-														'$AcceptedDateTime','$Comment','$GeneralLotNumber','$GeneralLotExpirationDate',
-														'$SamplePrepKitLotNumber','$SamplePrepKitLotExpirationDate','$PCRKitLotNumber','$PCRKitExpirationDate',
-														'$LPCLowLimit','$LPCHighLimit','$MPCLowLimit','$MPCHighLimit',
-														'$HPCLowLimit','$HPCHighLimit','$PreparationInstrumentID','$PreparationStartDateTime',
-														'$PreparationEndDateTime','$PreparationRackPos','$PreparationRackID','$PreparationRackType',
-														'$PreparationTubeID','$PreparationTubeType','$PreparationTubePos','$PreparationBatchID',
-														'$AmplificationInstrumentID','$AmplificationStartDateTime','$AmplificationEndDateTime','$AmplificationTCID',
-														'$AmplificationRackID','$AmplificationRackType','$AmplificationTubeID','$AmplificationTubeType',
-														'$AmplificationTubePos','$AmplificationBatchID','$DetectionInstrumentID','$DetectionStartDateTime',
-														'$DetectionEndDateTime','$DetectionRackPos','$DetectionRackID','$DetectionRackType',
-														'$DetectionTubeID','$DetectionTubeType','$DetectionTubePos','$DetectionBatchID',
-														'$IngredientCH1','$IngredientCH2','$IngredientCH3','$IngredientCH4',
-														'$CTMElbowCH1','$CTMElbowCH2','$CTMElbowCH3','$CTMElbowCH4',
-														'$CTMRFICH1','$CTMRFICH2','$CTMRFICH3','$CTMRFICH4',
-														'$CTMAFICH1','$CTMAFICH2','$CTMAFICH3','$CTMAFICH4',
-														'$CTMCalibCoeffa','$CTMCalibCoeffb','$CTMCalibCoeffc','$CTMCalibCoeffd',
-														'$CASampleValue','$QSCopy','$CATarget1','$CATarget2',
-														'$CATarget3','$CATarget4','$CATarget5','$CATarget6',
-														'$CAQS1','$CAQS2','$CAQS3','$CAQS4',
-														'$datetime','$trailSessionUser')");
+								$roche_insert_values.="('$worksheetID', '$PatientName','$PatientID','$OrderNumber',
+									  '$OrderDateTime', '$SampleID','$SampleType','$BatchID','$Test',
+									  '$Result','$Unit','$Flags','$AcceptedOp','$AcceptedDateTime',
+									  '$Comment','$GeneralLotNumber','$GeneralLotExpirationDate',
+									  '$SamplePrepKitLotNumber','$SamplePrepKitLotExpirationDate',
+									  '$PCRKitLotNumber','$PCRKitExpirationDate', '$LPCLowLimit',
+									  '$LPCHighLimit','$MPCLowLimit','$MPCHighLimit','$HPCLowLimit',
+									  '$HPCHighLimit','$PreparationInstrumentID','$PreparationStartDateTime',
+									  '$PreparationEndDateTime','$PreparationRackPos','$PreparationRackID','$PreparationRackType',
+									  '$PreparationTubeID','$PreparationTubeType','$PreparationTubePos','$PreparationBatchID',
+									  '$AmplificationInstrumentID','$AmplificationStartDateTime','$AmplificationEndDateTime','$AmplificationTCID',
+									  '$AmplificationRackID','$AmplificationRackType','$AmplificationTubeID','$AmplificationTubeType',
+									  '$AmplificationTubePos','$AmplificationBatchID','$DetectionInstrumentID','$DetectionStartDateTime',
+									  '$DetectionEndDateTime','$DetectionRackPos','$DetectionRackID','$DetectionRackType',
+									  '$DetectionTubeID','$DetectionTubeType','$DetectionTubePos','$DetectionBatchID',
+									  '$IngredientCH1','$IngredientCH2','$IngredientCH3','$IngredientCH4',
+									  '$CTMElbowCH1','$CTMElbowCH2','$CTMElbowCH3','$CTMElbowCH4',
+									  '$CTMRFICH1','$CTMRFICH2','$CTMRFICH3','$CTMRFICH4',
+									  '$CTMAFICH1','$CTMAFICH2','$CTMAFICH3','$CTMAFICH4',
+									  '$CTMCalibCoeffa','$CTMCalibCoeffb','$CTMCalibCoeffc','$CTMCalibCoeffd',
+									  '$CASampleValue','$QSCopy','$CATarget1','$CATarget2',
+									  '$CATarget3','$CATarget4','$CATarget5','$CATarget6',
+									  '$CAQS1','$CAQS2','$CAQS3','$CAQS4',
+									  '$datetime','$trailSessionUser'),";
 									//automatically log whether this sample should be repeated
 									$rocheSampleID=0;
 									$rocheSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$SampleID' limit 1","id");
-									logRepeat("roche",$rocheSampleID,$worksheetID,$Result,$Flags);
+									$log_repeat_values .= logRepeat("roche",$rocheSampleID,$worksheetID,$Result,$Flags);
 									
 									//log into vl_results_merged
 									//alphanumeric result
 									$resultAlphanumeric=0;
-									$resultAlphanumeric=getVLResult("roche",$worksheetID,$SampleID,$factor);
+									//$resultAlphanumeric=getVLResult("roche",$worksheetID,$SampleID,$factor);
+									$resultAlphanumeric = getVLNumericResult($Result,$machineType,$factor);
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
+									
+
 									//log into vl_results_merged
-									mysqlquery("insert ignore into vl_results_merged 
+									$merged_values .= "('roche','$worksheetID','$SampleID','$resultAlphanumeric',
+														'$resultNumeric','$spprssn_status','$datetime','$trailSessionUser'),"; 
+									/*mysqlquery("insert ignore into vl_results_merged 
 													(machine,worksheetID,vlSampleID,resultAlphanumeric,
-														resultNumeric,created,createdby) 
+														resultNumeric,suppressed,created,createdby) 
 													values 
 													('roche','$worksheetID','$SampleID','$resultAlphanumeric',
-														'$resultNumeric','$datetime','$trailSessionUser')");
+														'$resultNumeric','$spprssn_status','$datetime','$trailSessionUser')");*/
 									
 									//log
 									$added+=1;
@@ -624,7 +659,7 @@ if($uploadResults) {
 									//automatically log whether this sample should be repeated
 									$rocheSampleID=0;
 									$rocheSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$SampleID' limit 1","id");
-									logRepeat("roche",$rocheSampleID,$worksheetID,$Result,$Flags);
+									$log_repeat_values .= logRepeat("roche",$rocheSampleID,$worksheetID,$Result,$Flags);
 
 									//log into vl_results_merged
 									//alphanumeric result
@@ -633,6 +668,9 @@ if($uploadResults) {
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the result
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
 									//update
 									$resultsMergedSampleID=0;
 									$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","vlSampleID='$SampleID' and worksheetID='$worksheetID' and machine='roche' limit 1","id");
@@ -642,7 +680,8 @@ if($uploadResults) {
 									//implement the changes
 									mysqlquery("update vl_results_merged set 
 													resultAlphanumeric='$resultAlphanumeric', 
-													resultNumeric='$resultNumeric' 
+													resultNumeric='$resultNumeric',
+													suppressed='$spprssn_status'
 													where 
 													id='$resultsMergedSampleID'");
 
@@ -652,8 +691,15 @@ if($uploadResults) {
 							}
 						}
 					}
+					if(!empty($roche_insert_values)) insertVLResults("roche", $roche_insert_values, $log_repeat_values, $merged_values);
+					
+					
 					fclose($file);
 				} elseif($type=="abbott") {
+					$abbott_insert_values = "";
+					$log_repeat_values = "";
+					$merged_values = "";
+
 					$file = fopen($_FILES['userfile']['tmp_name'], 'r');
 					$count=0;
 					$beginLoad=0;
@@ -758,43 +804,43 @@ if($uploadResults) {
 							if($sampleID && $sampleID!="Control") {
 								//first time insertion
 								if(!getDetailedTableInfo2("vl_results_abbott","sampleID='$sampleID' and worksheetID='$worksheetID' limit 1","id")) {
-									mysqlquery("insert into vl_results_abbott 
-													(worksheetID,
-														sampleLocation,sampleID,sampleType,assayName,
-														assayVersion,result,interpretation,flags,
-														targetCycleNumber,icCycleNumber,errorCodeDescription,assayCalibrationTime,
-														reagentLotNumber,reagentLotExpirationDate,controlLotNumber,controlExpirationDate,
-														controlRange,calibratorLotNumber,calibratorExpirationDate,calibratorLogConcentration,
-														resultComment,targetMR,icMR,
-														created,createdby)
-													values 
-													('$worksheetID',
-														'$sampleLocation','$sampleID','$sampleType','$assayName',
-														'$assayVersion','$result','$interpretation','$flags',
-														'$targetCycleNumber','$icCycleNumber','$errorCodeDescription','$assayCalibrationTime',
-														'$reagentLotNumber','$reagentLotExpirationDate','$controlLotNumber','$controlExpirationDate',
-														'$controlRange','$calibratorLotNumber','$calibratorExpirationDate','$calibratorLogConcentration',
-														'$resultComment','$targetMR','$icMR',
-														'$datetime','$trailSessionUser')");
+									$abbott_insert_values.="
+										('$worksheetID','$sampleLocation','$sampleID','$sampleType',
+										 '$assayName','$assayVersion','$result','$interpretation',
+										 '$flags','$targetCycleNumber','$icCycleNumber','$errorCodeDescription',
+										 '$assayCalibrationTime','$reagentLotNumber','$reagentLotExpirationDate',
+										 '$controlLotNumber','$controlExpirationDate','$controlRange',
+										 '$calibratorLotNumber','$calibratorExpirationDate','$calibratorLogConcentration',
+										 '$resultComment','$targetMR','$icMR',
+										 '$datetime','$trailSessionUser'),";
+							
 									//automatically log whether this sample should be repeated
 									$abbottSampleID=0;
 									$abbottSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
-									logRepeat("abbott",$abbottSampleID,$worksheetID,$result,$flags);
+									$log_repeat_values .= logRepeat("abbott",$abbottSampleID,$worksheetID,$result,$flags);
 									
 									//log into vl_results_merged
 									//alphanumeric result
 									$resultAlphanumeric=0;
-									$resultAlphanumeric=getVLResult("abbott",$worksheetID,$sampleID,$factor);
+									//$resultAlphanumeric=getVLResult("abbott",$worksheetID,$sampleID,$factor);
+									$resultAlphanumeric = getVLNumericResult($result,$machineType,$factor);
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the result
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
 									//log into vl_results_merged
-									mysqlquery("insert ignore into vl_results_merged 
+
+									$merged_values .= "('abbott','$worksheetID','$sampleID','$resultAlphanumeric',
+														'$resultNumeric','$spprssn_status','$datetime','$trailSessionUser'),";
+
+									/*mysqlquery("insert ignore into vl_results_merged 
 													(machine,worksheetID,vlSampleID,resultAlphanumeric,
-														resultNumeric,created,createdby) 
+														resultNumeric,suppressed,created,createdby) 
 													values 
 													('abbott','$worksheetID','$sampleID','$resultAlphanumeric',
-														'$resultNumeric','$datetime','$trailSessionUser')");
+														'$resultNumeric','$spprssn_status','$datetime','$trailSessionUser')");*/
 									
 									//log
 									$added+=1;
@@ -858,7 +904,7 @@ if($uploadResults) {
 									//automatically log whether this sample should be repeated
 									$abbottSampleID=0;
 									$abbottSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
-									logRepeat("abbott",$abbottSampleID,$worksheetID,$result,$flags);
+									$log_repeat_values .= logRepeat("abbott",$abbottSampleID,$worksheetID,$result,$flags);
 
 									//log into vl_results_merged
 									//alphanumeric result
@@ -867,6 +913,10 @@ if($uploadResults) {
 									//numeric result
 									$resultNumeric=0;
 									$resultNumeric=getVLNumericResultOnly($resultAlphanumeric);
+
+									$is_res_valid=isResultValid($resultAlphanumeric); //checks for validity of the result
+									$spprssn_status=isSuppressed($is_res_valid,$resultNumeric); //get the suppression status
+
 									//update
 									$resultsMergedSampleID=0;
 									$resultsMergedSampleID=getDetailedTableInfo2("vl_results_merged","vlSampleID='$sampleID' and worksheetID='$worksheetID' and machine='abbott' limit 1","id");
@@ -876,7 +926,8 @@ if($uploadResults) {
 									//implement the changes
 									mysqlquery("update vl_results_merged set 
 													resultAlphanumeric='$resultAlphanumeric', 
-													resultNumeric='$resultNumeric' 
+													resultNumeric='$resultNumeric',
+													suppressed='$spprssn_status' 
 													where 
 													id='$resultsMergedSampleID'");
 
@@ -886,6 +937,9 @@ if($uploadResults) {
 							}
 						}
 					}
+
+					if(!empty($abbott_insert_values)) insertVLResults("abbott", $abbott_insert_values, $log_repeat_values, $merged_values);
+					
 					fclose($file);
 					
 					//log the $runStartTime and $runCompletionTime

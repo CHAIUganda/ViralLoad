@@ -329,4 +329,68 @@ function matchData($table,$comparefields,$returnfield,$searchterm,$options) {
 		}
 	}
 }
+
+
+function insertData($data,$table){
+	$columns_str=$values_str="";
+	foreach ($data as $k => $v) {
+		$columns_str.="`$k`,";
+		$val=str_replace("'", "''", $v);
+		$val=trim($val);
+		$values_str.="'$val',";	
+	}
+	$columns_str=rtrim($columns_str,",");
+	$values_str=rtrim($values_str,",");
+
+	$res=mysqlquery("INSERT INTO `$table` ($columns_str) VALUES ($values_str)");
+	$ret=$res?1:0;
+	return $ret;
+}
+
+function updateData($data,$table,$cond=""){
+	if($cond==1 || count($data)<=0) return 0;
+	$sql_str="";
+	$cols_str="";
+	foreach ($data as $k => $v) {
+		$val=str_replace("'", "''", $v);
+		$val=trim($val);
+		$sql_str.="`$k`='$val',";
+		$cols_str.="`$k`,";
+	}
+	$cols_str=rtrim($cols_str,",");
+	$sql_str=rtrim($sql_str,",");
+
+	logUpdate($table,$cols_str,$cond);
+
+	$res=mysqlquery("UPDATE `$table` SET $sql_str WHERE $cond");
+	$ret=$res?1:0;
+	return $ret;
+}
+
+function logUpdate($table="",$cols="",$cond=""){
+	global $trailSessionUser;
+	$res=mysqlquery("SELECT id,$cols FROM $table WHERE $cond");
+	while($row=mysqlfetchassoc($res)){
+		$log_data=array();
+		$log_data['table_name']=$table;
+		$log_data['table_id']=$row['id'];
+		$log_data['old_information']=json_encode($row);
+		$log_data['created']=date("Y-m-d H:i:s");
+		$log_data['createdby']=$trailSessionUser;
+		insertData($log_data,"vl_logs_edits");
+	}
+}
+
+function getData($cols="*",$table="",$others=""){
+	return mysqlquery("SELECT $cols FROM $table $others");
+}
+
+function compareUpdateInfo($old_data=array(),$new_data=array()){
+	$ret=array();
+	foreach ($new_data as $key => $value) {
+		# code...
+		if($value!=$old_data[$key]) $ret[$key]=$value;
+	}
+	return $ret;
+}
 ?>

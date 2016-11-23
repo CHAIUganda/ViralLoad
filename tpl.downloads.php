@@ -437,7 +437,12 @@ switch($options) {
 		$xls = new ExportXLS($filename);
 
 		$query=0;
-		$query=mysqlquery("select * from vl_facilities order by facility");
+		$query=mysqlquery("
+					select facility,district,hub,region from vl_facilities AS f 
+					left join vl_hubs AS h ON f.hubID=h.id
+					left join vl_districts AS d ON f.districtID=d.id
+					left join vl_regions AS r ON d.regionID=r.id
+					order by facility");
 
 		if(mysqlnumrows($query)) {
 			//header
@@ -445,12 +450,12 @@ switch($options) {
 			$header[]="Facility";
 			$header[]="District";
 			$header[]="Hub";
-			$header[]="Date Created";
+			$header[]="Region";
 			$xls->addHeader($header);
 			//iterations
 			while($q=mysqlfetcharray($query)) {
 				//variables
-				$facility=0;
+				/*$facility=0;
 				$facility=$q["facility"];
 				$district=0;
 				$district=getDetailedTableInfo2("vl_districts","id='$q[districtID]' limit 1","district");
@@ -458,9 +463,10 @@ switch($options) {
 				$hub=getDetailedTableInfo2("vl_hubs","id='$q[hubID]' limit 1","hub");
 				$dateCreated=0;
 				$dateCreated=getRawFormattedDateLessDay($q["created"]);
-				
+				*/
 				//add rows
 				$row=array();
+				extract($q);
 				//facility
 				$row[]=$facility;
 				//district
@@ -468,7 +474,7 @@ switch($options) {
 				//hub
 				$row[]=$hub;
 				//date created
-				$row[]=$dateCreated;
+				$row[]=$region;
 				//append
 				$xls->addRow($row);
 			}

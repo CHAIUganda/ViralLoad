@@ -49,6 +49,7 @@ if(!$GLOBALS['vlDC']) {
 				logTableChange("vl_districts","district",$id,getDetailedTableInfo2("vl_districts","id='$id'","district"),$district);
 				//update vl_districts
 				mysqlquery("update vl_districts set district='$district',regionID='$formRegionID' where id='$id'");
+
 				//flag
 				$modified=1;
             break;
@@ -89,8 +90,8 @@ if(!$GLOBALS['vlDC']) {
         }
         //-->
         </script>
-        
         <form name="districtsForm" method="post" action="?act=districts&getRegionID=<?=$regionID?>&nav=configuration" onsubmit="return checkForm(this)">
+
           <table width="90%" border="0" class="vl">
 		<? if($added) { ?>
             <tr>

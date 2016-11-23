@@ -26,17 +26,32 @@ $worksheetReferenceNumber=getDetailedTableInfo2("vl_samples_worksheetcredentials
 
 //create worksheet
 if($proceed) {
+	if(count($no_spots_samples)>0){
+		define("NO_SPOTS_RES","Invalid test result. There is insufficient sample to repeat the assay");
+		foreach($no_spots_samples AS $s_id){
+			$data=array("sampleID"=>$s_id,
+						"worksheetID"=>$worksheetID,
+						"result"=>NO_SPOTS_RES,
+						"created"=>$datetime,
+						"createdby"=>$trailSessionUser);
+			insertData($data,"vl_results_override");
+		}
+	}
+
 	if(count($worksheetSamples)) {
 		//first delete all samples from this worksheet
 		mysqlquery("delete from vl_samples_worksheet where worksheetID='$worksheetID'");
+		$insert_sql = "";
 		foreach($worksheetSamples as $ws) {
 			$ws=validate($ws);
-			mysqlquery("insert into vl_samples_worksheet 
-							(worksheetID,sampleID,created,createdby) 
-							values 
-							('$worksheetID','$ws','$datetime','$trailSessionUser')");
+			$insert_sql .= "('$worksheetID','$ws','$datetime','$trailSessionUser'),";
 		}
+		$insert_sql = trim($insert_sql, ",");
 		
+		mysqlquery("insert into vl_samples_worksheet 
+							(worksheetID,sampleID,created,createdby) 
+							values $insert_sql
+							");
 		//redirect
 		if($modify) {
 			go("/worksheets/manage/changed/");
@@ -91,14 +106,37 @@ if($includeCalibrators) {
 
 //eligible samples
 $query=0;
-$query=mysqlquery("select distinct sampleID from vl_samples_verify,vl_samples where vl_samples.id=vl_samples_verify.sampleID and vl_samples.sampleTypeID='$worksheetType' and vl_samples_verify.sampleID not in (select distinct sampleID from vl_samples_worksheet) and vl_samples_verify.outcome='Accepted' order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
+//$query=mysqlquery("select distinct sampleID from vl_samples_verify,vl_samples where vl_samples.id=vl_samples_verify.sampleID and vl_samples.sampleTypeID='$worksheetType' and vl_samples_verify.sampleID not in (select distinct sampleID from vl_samples_worksheet) and vl_samples_verify.outcome='Accepted' order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
+
+$cols = "s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID";
+
+$more_sql ="FROM vl_samples AS s
+			LEFT JOIN vl_patients AS p ON s.patientID=p.id
+			LEFT JOIN vl_samples_verify AS v ON s.id=v.sampleID 
+			LEFT JOIN vl_samples_worksheet AS sw ON s.id=sw.sampleID
+			WHERE v.outcome='Accepted' AND sw.id IS NULL AND s.sampleTypeID='$worksheetType'";
+
+$num_pending_testing = 0;
+
+$num_pending_result0 = mysqlquery("SELECT count( DISTINCT s.id) AS c $more_sql");
+if(mysqlnumrows($num_pending_result0)){
+	$n_row = mysqlfetcharray($num_pending_result0);
+	$num_pending_testing = $n_row['c'] ." samples pending testing";
+}
+
+$sql = "SELECT $cols $more_sql 		
+		GROUP BY s.id
+		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
+		LIMIT 200";
+
+$query = mysqlquery($sql);
 if(mysqlnumrows($query)) {
 	$i=count($contents);
 	while($q=mysqlfetcharray($query)) {
 		//controls
 		$i+=1;
 		//key variables
-		$sampleID=0;
+		/*$sampleID=0;
 		$sampleID=$q["sampleID"];
 		$patientID=0;
 		$patientID=getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","patientID");
@@ -111,7 +149,13 @@ if(mysqlnumrows($query)) {
 		$formNumber=0;
 		$formNumber=getDetailedTableInfo2("vl_samples","id='$sampleID' limit 1","formNumber");
 		$patientART=0;
-		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");
+		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");*/
+
+		$sampleID = $q['id'];
+		$sampleNumber = $q['vlSampleID'];
+		$locationID = $q['lrCategory'].$q['lrEnvelopeNumber'].'/'.$q['lrNumericID'];
+		$formNumber = $q['formNumber'];
+		$patientART = $q['artNumber'];
 		
 		$contents[]="<div align=\"center\" class=\"vls\">$i</div>
 						<div align=\"center\" class=\"vls\" style=\"padding:3px 0px 0px 0px\">Patient ART #: $patientART</div> 
@@ -119,19 +163,37 @@ if(mysqlnumrows($query)) {
 						".($locationID?"<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Location ID: $locationID</div> ":"")."
 						<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Form #: $formNumber</div> 
 						<div align=\"center\" style=\"padding:5px 0px\"><img src=\"/worksheets/image/".vlEncrypt($sampleNumber)."/\" /></div>
-						<div align=\"center\"><input type=\"checkbox\" name=\"worksheetSamples[]\" id=\"worksheetSamples[]\" value=\"$sampleID\" onclick=\"updateCounter(this)\" /></div>";
+						<div align=\"center\"><input type=\"checkbox\" class='samples' name=\"worksheetSamples[]\" id=\"worksheetSamples[]\" value=\"$sampleID\" onclick=\"updateCounter(this)\" /></div>";
 	}
 }
 
 //rejected samples that have never been accepted in subsequent runs
 $query=0;
-$query=mysqlquery("select vl_logs_samplerepeats.* from 
+/*$query=mysqlquery("select vl_logs_samplerepeats.* from 
 							vl_logs_samplerepeats,vl_samples where 
 								vl_logs_samplerepeats.sampleID=vl_samples.id and 
 									vl_samples.sampleTypeID='$worksheetType' and 
 										vl_logs_samplerepeats.withWorksheetID='' and 
 											vl_samples.vlSampleID not in (select distinct sampleID from vl_results_override) 
 												order by if(vl_samples.lrCategory='',1,0),vl_samples.lrCategory, if(vl_samples.lrEnvelopeNumber='',1,0),vl_samples.lrEnvelopeNumber, if(vl_samples.lrNumericID='',1,0),vl_samples.lrNumericID");
+*/
+
+$cols = "s.id, s.vlSampleID, p.artNumber, s.formNumber, s.lrCategory, s.lrEnvelopeNumber, s.lrNumericID";
+
+$more_sql ="FROM vl_logs_samplerepeats AS rpt
+			LEFT JOIN vl_samples AS s ON rpt.sampleID = s.id
+			LEFT JOIN vl_patients AS p ON s.patientID=p.id
+			LEFT JOIN vl_results_override AS ovr ON s.vlSampleID=ovr.sampleID
+			WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL";
+
+/*$num_pending_retesting = 0;
+$num_pending_result1 = mysqlquery("SELECT count(DISTINCT s.id) AS c $more_sql");
+if(mysqlnumrows($num_pending_result1)) $num_pending_retesting =  mysqlfetcharray($num_pending_result1)['c']." samples pending retesting";
+*/
+$sql = "SELECT $cols $more_sql		
+		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
+		";
+$query = mysqlquery($sql);
 
 if(mysqlnumrows($query)) {
 	$i=0;
@@ -139,7 +201,7 @@ if(mysqlnumrows($query)) {
 		//controls
 		$i+=1;
 		//key variables
-		$sampleID=0;
+		/*$sampleID=0;
 		$sampleID=getDetailedTableInfo2("vl_samples","id='$q[sampleID]' limit 1","vlSampleID");
 		$patientID=0;
 		$patientID=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","patientID");
@@ -153,6 +215,17 @@ if(mysqlnumrows($query)) {
 		$formNumber=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","formNumber");
 		$patientART=0;
 		$patientART=getDetailedTableInfo2("vl_patients","id='$patientID' limit 1","artNumber");
+
+		$smpl_id=getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");*/
+
+		$smpl_id = $q['id'];
+		$sampleNumber = $q['vlSampleID'];
+		$locationID = $q['lrCategory'].$q['lrEnvelopeNumber'].'/'.$q['lrNumericID'];
+		$formNumber = $q['formNumber'];
+		$patientART = $q['artNumber'];
+
+		$stLikeRadio="setLikeRadioOldSmpls(\"$smpl_id\",\"n\")";
+		$stLikeRadio2="setLikeRadioOldSmpls(\"$smpl_id\",\"r\")";
 		
 		$failedcontents[]="<div align=\"center\" class=\"vls\">$i</div>
 						<div align=\"center\" class=\"vls\" style=\"padding:3px 0px 0px 0px\">Patient ART #: $patientART</div> 
@@ -160,7 +233,10 @@ if(mysqlnumrows($query)) {
 						".($locationID?"<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Location ID: $locationID</div> ":"")."
 						<div align=\"center\" class=\"vls\" style=\"padding:1px 0px 0px 0px\">Form #: $formNumber</div> 
 						<div align=\"center\" style=\"padding:5px 0px\"><img src=\"/worksheets/image/".vlEncrypt($sampleNumber)."/\" /></div>
-						<div align=\"center\"><input type=\"checkbox\" name=\"worksheetSamples[]\" id=\"worksheetSamples[]\" value=\"".getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id")."\" onclick=\"updateCounter(this)\" /></div>";
+						<div align=\"center\" class='check-boxes'>
+							<label><input type=\"checkbox\" onchange='$stLikeRadio2' class='samples' name=\"worksheetSamples[]\" id=\"r$smpl_id\" value=\"".$smpl_id."\" onclick=\"updateCounter(this)\" /> <span>retest</span></label>
+							<label><input type='checkbox' onchange='$stLikeRadio' id='n$smpl_id' name='no_spots_samples[]' value='$sampleNumber'> <span>no spots</span></label>
+						</div>";
 	}
 }
 ?>
@@ -229,13 +305,18 @@ function updateCounter(obj) {
 function checkFirstBoxes(numberBoxes) {
 	var theForm = document.worksheets, z = 0;
 	//first uncheck everything
-	for(z=0; z<theForm.length;z++){
+	/*for(z=0; z<theForm.length;z++){
 		if(theForm[z].type == 'checkbox') {
 			theForm[z].checked = false;
 			//update
 			updateCounter(theForm[z]);
 		}
-	}
+	}*/
+
+	$('.samples').each(function() { //loop through each checkbox
+        this.checked = false; //deselect all checkboxes with class "samples"   
+        updateCounter(this);                    
+     }); 
 	//then check the selected boxes
 	for(z=0; z<numberBoxes;z++){
 		if(theForm[z].type == 'checkbox') {
@@ -244,6 +325,23 @@ function checkFirstBoxes(numberBoxes) {
 			updateCounter(theForm[z]);
 		}
 	}
+}
+
+function setLikeRadioOldSmpls(nr,type){
+	var itemn=document.getElementById("n"+nr);
+	var itemr=document.getElementById("r"+nr);
+	if(type=='r'){
+		if(itemr.checked){
+			itemn.checked=false;
+		}
+	}else{
+		if(itemn.checked){
+			if(itemr.checked){
+				itemr.checked=false;
+				updateCounter(itemr);
+			}
+		}
+	}	 
 }
 
 //-->
@@ -311,7 +409,7 @@ function checkFirstBoxes(numberBoxes) {
       <? } ?>
     </table>
 </div>
-<div style="padding:10px 0px 0px 0px"><strong>Quick Select Options</strong></div>
+<div style="padding:10px 0px 0px 0px"><strong>Quick Select Options <span class="pending-stat">(<?=$num_pending_testing ?>)</span></strong> </div>
 <? 
 if($machineType=="roche") { 
 	$numberCheckBoxes1=21;
@@ -363,7 +461,7 @@ if($machineType=="roche") {
     </table>
 </div>
 <? if(count($failedcontents)) { ?>
-<div style="padding:20px 0px 10px 0px; border-bottom: 1px dashed #cccccc"><strong>Failed Samples from Previous Runs</strong></div>
+<div style="padding:20px 0px 10px 0px; border-bottom: 1px dashed #cccccc"><strong>Failed Samples from Previous Runs </strong></div>
 <br />
 <div style="height: 350px; width: 100%; overflow: auto; padding:5px; border: 1px solid #d5e6cf">
     <table width="100%" border="0" class="vl">
@@ -414,9 +512,15 @@ if($machineType=="roche") {
 	<? if($modify) { ?>
 	<input type="submit" name="proceed" id="proceed" class="button" value="  Save Changes to Worksheet  " disabled="disabled" />
     <? } else { ?>
-    <input type="submit" name="proceed" id="proceed" class="button" value="  Save Samples and Proceed to Print Worksheet  " disabled="disabled" />
+    <input type="submit" name="proceed" id="proceed" class="button" value="  Save and Proceed to Print Worksheet  " disabled="disabled" />
     <? } ?>
     <input name="modify" type="hidden" id="modify" value="<?=$modify?>" />
     <input name="numberSamples" type="hidden" id="numberSamples" value="" />
 </div>
 </form>
+<style type="text/css">
+.pending-stat{
+	font-size: 14px;
+	color: #AA9933;
+}
+</style>

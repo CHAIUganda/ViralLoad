@@ -35,6 +35,9 @@ function showMessage(icon) {
 		case "generateforms":
 			var message = "Generate Clinical Requisition Forms";
 		break;
+    case "new_sample":
+      var message = "Capture new sample data";
+    break;
 	}
 	document.getElementById('messageID').innerHTML=message;
 }
@@ -47,10 +50,13 @@ function hideMessage() {
 <table width="70%" border="0" cellspacing="0" cellpadding="0" class="vl">
   <tr>
     <td style="border-bottom: 1px dashed #e7e7e7; padding:10px 20px 30px 20px">
-     <table width="10%" border="0" cellspacing="0" cellpadding="0">
+     <table border="0" cellspacing="0" cellpadding="0">
       <tr>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        <td align="center" onmouseover="showMessage('new_sample')" onmouseout="hideMessage()"><a href="/samples/capture/" class="vll_grey"><img src="/images/add_icon.png" border="0" /></a></td>
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
-        <td width="15%" align="center" onmouseover="showMessage('samples')" onmouseout="hideMessage()"><a href="/samples/" class="vll_grey"><img src="/images/icon.samples.gif" border="0" /></a></td>
+        <td width="10%" align="center" onmouseover="showMessage('samples')" onmouseout="hideMessage()"><a href="/samples/" class="vll_grey"><img src="/images/icon.samples.gif" border="0" /></a></td>
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='verifySamples' limit 1","id")) { ?>
         <td width="15%" align="center" onmouseover="showMessage('verifysamples')" onmouseout="hideMessage()"><a href="/verify/" class="vll_grey"><img src="/images/icon.samples.verify.gif" border="0" /></a></td>
@@ -64,11 +70,17 @@ function hideMessage() {
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
         <td width="15%" align="center" onmouseover="showMessage('results')" onmouseout="hideMessage()"><a href="/results/" class="vll_grey"><img src="/images/icon.results.gif" border="0" /></a></td>
         <? } ?>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
+        <td width="15%" align="center" onmouseover="showMessage('results')" onmouseout="hideMessage()"><a href="/results_new/" class="vll_grey"><img src="/images/icon.browserprint.png" border="0" /></a></td>
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reports' limit 1","id")) { ?>
         <td width="25%" align="center" onmouseover="showMessage('reports')" onmouseout="hideMessage()" style="padding:0px 10px"><a href="/reports/" class="vll_grey"><img src="/images/icon.reports.gif" border="0" /></a></td>
         <? } ?>
       </tr>
       <tr>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        <td align="center" class="vll_grey" onmouseover="showMessage('new_sample')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/samples/capture/" class="vll_grey">New&nbsp;Sample</a></td>
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
         <td align="center" class="vll_grey" onmouseover="showMessage('samples')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/samples/" class="vll_grey">Samples</a></td>
         <? } ?>
@@ -83,6 +95,9 @@ function hideMessage() {
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
         <td align="center" class="vll_grey" onmouseover="showMessage('results')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/results/" class="vll_grey">Results</a></td>
+        <? } ?>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
+        <td align="center" class="vll_grey" onmouseover="showMessage('results')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/results/" class="vll_grey">Results (Browser&nbsp;Printing)</a></td>
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reports' limit 1","id")) { ?>
         <td align="center" class="vll_grey" onmouseover="showMessage('reports')" onmouseout="hideMessage()" style="padding:0px 20px"><a href="/reports/" class="vll_grey">Reports</a></td>
@@ -107,11 +122,11 @@ function hideMessage() {
             <div><img src="/images/spacer.gif" width="10" height="10" /></div>
             <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples in Database (Total): <?=number_format((float)getDetailedTableInfo3("vl_samples","id>0","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
-            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Pending Samples (All): <?=number_format((float)getDetailedTableInfo3("vl_samples","id not in (select sampleID from vl_samples_verify)","count(id)","num"))?></div>
+            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples pending approval (All): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
-            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Pending Samples (DBS): <?=number_format((float)getDetailedTableInfo3("vl_samples","id not in (select sampleID from vl_samples_verify) and sampleTypeID='".getDetailedTableInfo2("vl_appendix_sampletype","appendix='DBS' limit 1","id")."'","count(id)","num"))?></div>
+            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples Pending approval (DBS): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0 and sampleTypeID=1","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
-            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Pending Samples (Plasma): <?=number_format((float)getDetailedTableInfo3("vl_samples","id not in (select sampleID from vl_samples_verify) and sampleTypeID='".getDetailedTableInfo2("vl_appendix_sampletype","appendix='Plasma' limit 1","id")."'","count(id)","num"))?></div>
+            <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Samples Pending approval (Plasma): <?=number_format((float)getDetailedTableInfo3("vl_samples","verified=0 and sampleTypeID=2","count(id)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>
             <div class="vls_grey" style="padding:5px; border: 1px solid #f0d7b4; background-color: #fffee6">Printed Worksheets: <?=number_format((float)getDetailedTableInfo3("vl_logs_worksheetsamplesprinted,vl_samples_worksheetcredentials","vl_logs_worksheetsamplesprinted.worksheetID=vl_samples_worksheetcredentials.id","count(distinct vl_logs_worksheetsamplesprinted.worksheetID)","num"))?></div>
             <div><img src="/images/spacer.gif" width="3" height="3" /></div>

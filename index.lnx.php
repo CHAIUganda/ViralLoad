@@ -8,7 +8,10 @@ include "conf.php";
 * ran as lnx http://www.vl.com/index.lnx.php
 * task 1: dispatch unsent mail - vl_daemon_email
 * task 2: remove records from vl_samples_worksheet where worksheetID not in (select id from vl_samples_worksheetcredentials);
+<<<<<<< HEAD
+=======
 */
+>>>>>>> dev
 
 //task 1: email
 if(isQuery("select id from vl_daemon_email where sent='0'")) {
@@ -24,6 +27,10 @@ if(isQuery("select id from vl_daemon_email where sent='0'")) {
 		}
 	}
 }
+<<<<<<< HEAD
+*/
+=======
+>>>>>>> dev
 
 //task 2: remove "hanging" records from vl_samples_worksheet
 $query=0;

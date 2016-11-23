@@ -427,12 +427,16 @@ System Team";
                   <td>Email</td>
                   <td><input type="text" name="email" id="email" class="search" size="25" value="<?=($id?getDetailedTableInfo2("vl_users","id='$id'","email"):"")?>"></td>
                 </tr>
+
                 <? //if($task!="add") { ?>
+
                 <tr>
                   <td>Password</td>
                   <td><input type="password" name="password" id="password" class="search" size="25" value=""></td>
                 </tr>
+
                 <? //} ?>
+
                 <tr>
                   <td>Phone</td>
                   <td><input type="text" name="phone" id="phone" class="search" size="25" value="<?=($id?getDetailedTableInfo2("vl_users","id='$id'","phone"):"+")?>"></td>

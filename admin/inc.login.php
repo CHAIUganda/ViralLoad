@@ -22,7 +22,7 @@ if($x) {
 						$_SESSION["VLADMIN"] = $un["email"];
 						go("?");
 					} else {
-						echo "<script>alert('Invalid Credentials');document.location.href='?';</script>";
+						//echo "<script>alert('Invalid Credentials');document.location.href='?';</script>";
 					}
 				}
 			}

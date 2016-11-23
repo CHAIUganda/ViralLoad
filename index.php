@@ -16,14 +16,22 @@ $searchFilter=getValidatedVariable("searchFilter");
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Viral Load</title>
+<link href="/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+
 <link href="/css/vl.css" rel="stylesheet" type="text/css">
+<link href="/css/vl2.css" rel="stylesheet" type="text/css">
 <link href="/css/jsdialog.css" rel="stylesheet" media="screen" type="text/css">
 <link href="/css/dhtmlxcombo.css" rel="stylesheet" type="text/css">
 <link href="/css/datepicker.jquery.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
+
+<link   href="/css/select2.min.css" rel="stylesheet" />
+
+
 <? $vlDC->printJavascript(); ?>
 <? if($_SESSION["VLEMAIL"]) { ?>
-	<script src="/js/tooltip.js"></script>
+	<script src="/js/vl.custom.js"></script>
+    <script src="/js/tooltip.js"></script>
     <script src="/js/checkUncheck.js"></script>
     <script src="/js/loadField.js"></script>
     <script src="/js/limit.js"></script>
@@ -42,7 +50,8 @@ $searchFilter=getValidatedVariable("searchFilter");
     <script src="/js/datepicker.jquery.js"></script>
 
     <script src="/js/jquery-2.1.3.min.js"></script>
-    <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/jquery-ui.js"></script>
+    <script src="/js/select2.min.js" type="text/javascript"></script>
     
     <script>
 	//image path
@@ -188,6 +197,9 @@ $searchFilter=getValidatedVariable("searchFilter");
       <tr>
         <td bgcolor="#cccccc" style="padding:10px 10px 10px 130px" class="vll_grey">
         <a href="/dashboard/" class="vll_grey">Home</a> 
+         <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        :: <a href="/samples/capture/" class="vll_grey">New Sample</a> 
+        <? } ?>
         <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
         :: <a href="/samples/" class="vll_grey">Samples</a> 
         <? } ?>
@@ -202,6 +214,9 @@ $searchFilter=getValidatedVariable("searchFilter");
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
         :: <a href="/results/" class="vll_grey">Results</a> 
+        <? } ?>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
+        :: <a href="/results_new/" class="vll_grey">Results (Browser Printing)</a> 
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reports' limit 1","id") || 
 				getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='reportsQC' limit 1","id")) { ?>
@@ -294,6 +309,9 @@ $searchFilter=getValidatedVariable("searchFilter");
 							case reports:
                                 include "tpl.reports.php";
                             break;
+                            case 'results_new':
+                                include "tpl.results_new.php";
+                                break;
 							case results:
                                 include "tpl.results.php";
                             break;
@@ -317,6 +335,10 @@ $searchFilter=getValidatedVariable("searchFilter");
                             break;
                             case reports:
                                 include "tpl.reports.php";
+                            break;
+
+                            case 'facilityID':
+                                echo "1000000000000000000000000";
                             break;
                             case logout:
                                 //kill session
