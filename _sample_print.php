@@ -76,6 +76,9 @@ $now_s = strtotime(date("Y-m-d"));
 $repeated = !empty($row_repeated)?1:2;
 
 $rejected = $row_verify_outcome=="Rejected"?1:2;
+
+$phones_arr = array_unique(explode(",", $row_phone));
+$phones = implode(", ", $phones_arr);
  ?>
 <page size="A4">
 	<div style="height:95%">
@@ -155,7 +158,7 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 					</tr>
 					<tr>
 						<td>Phone Number:</td>
-						<td class="print-val-"><?=$phone?></td>
+						<td class="print-val-"><?=$phones?></td>
 					</tr>
 				</table>
 				
