@@ -53,12 +53,12 @@ $suppressed=isSuppressed2($numerical_result, $sample_type, $test_date);
 switch ($suppressed) {
 	case 'YES': // patient suppressed, according to the guidlines at that time
 		$smiley="smiley.smile.gif";
-		$recommendation=getRecommendation($suppressed,$sampleVLTestDate,$sampleType);
+		$recommendation=getRecommendation($suppressed,$test_date,$sample_type);
 		break;
 
 	case 'NO': // patient suppressed, according to the guidlines at that time
 		$smiley="smiley.sad.gif";
-		$recommendation=getRecommendation($suppressed,$sampleVLTestDate,$sampleType);					
+		$recommendation=getRecommendation($suppressed,$test_date,$sample_type);					
 		break;
 	
 	default:
