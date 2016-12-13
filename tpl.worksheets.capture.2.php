@@ -184,7 +184,7 @@ $more_sql ="FROM vl_logs_samplerepeats AS rpt
 			LEFT JOIN vl_samples AS s ON rpt.sampleID = s.id
 			LEFT JOIN vl_patients AS p ON s.patientID=p.id
 			LEFT JOIN vl_results_override AS ovr ON s.vlSampleID=ovr.sampleID
-			WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL";
+			WHERE rpt.withWorksheetID = '' AND s.sampleTypeID='$worksheetType' AND ovr.id IS NULL AND rpt.created >='2016-11-01'";
 
 /*$num_pending_retesting = 0;
 $num_pending_result1 = mysqlquery("SELECT count(DISTINCT s.id) AS c $more_sql");
