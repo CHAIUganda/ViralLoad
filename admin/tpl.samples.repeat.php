@@ -39,8 +39,8 @@ if($searchQuery) {
 					foreach($sampleIDArray as $sID) {
 						$sID=trim($sID);
 						//ensure sampleID is valid
-						if(!getDetailedTableInfo2("vl_samples","vlSampleID='$sID'","id")) {
-							$error.="<br />Incorrect SampleID <strong>$sID</strong>.";
+						if(!getDetailedTableInfo2("vl_samples","formNumber='$sID'","id")) {
+							$error.="<br />Incorrect Form Number <strong>$sID</strong>.";
 						} else {
 							$sampleIDtoAdd[]=$sID;
 						}
@@ -51,7 +51,7 @@ if($searchQuery) {
 							$sToAdd=trim($sToAdd);
 							//key variables
 							$numericSampleID=0;
-							$numericSampleID=getDetailedTableInfo2("vl_samples","vlSampleID='$sToAdd'","id");
+							$numericSampleID=getDetailedTableInfo2("vl_samples","formNumber='$sToAdd'","id");
 							$sampleReferenceNumber=0;
 							$sampleReferenceNumber=$sToAdd;
 							
@@ -70,7 +70,7 @@ if($searchQuery) {
 								//flags
 								$added+=1;
 							} else {
-								$error.="<br />SampleID <strong>$sToAdd</strong> has already been scheduled for repeat.";
+								$error.="<br />Form Number <strong>$sToAdd</strong> has already been scheduled for repeat.";
 							}
 						}
 					}
@@ -156,10 +156,10 @@ if($searchQuery) {
               <td style="padding:10px 0px 10px 0px">
 						<table width="100%" border="0" class="vl">
                             <tr>
-                              <td width="20%">Sample&nbsp;ID&nbsp;<font class="vl_red">*</font></td>
+                              <td width="20%">Form Numbers<font class="vl_red">*</font></td>
                               <td width="80%">
-                              <textarea name="sampleID" id="sampleID" cols="40" rows="5" class="searchLarge"></textarea>
-                              <div class="vls_grey" style="padding:3px 0px 0px 0px">Separate multiple SampleIDs with a <strong>,</strong></div>
+                              <textarea name="sampleID" id="sampleID" cols="60" rows="6"></textarea>
+                              <div class="vls_grey" style="padding:3px 0px 0px 0px">Separate multiple form numbers with a <strong>,</strong></div>
                               </td>
                             </tr>
                           </table>
@@ -213,7 +213,7 @@ if($searchQuery) {
                             <tr>
                                 <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>">
                                     <div><strong><?=($artNumber?"ART Number":"")?><?=($artNumber && $otherID?"/":"")?><?=($otherID?"OtherID":"")?>:</strong> <?=($artNumber?$artNumber:"")?><?=($artNumber && $otherID?"/":"")?><?=($otherID?$otherID:"")?></div>
-                                    <div class="vls_grey" style="padding:3px 0px 0px 0px"><strong>SampleID:</strong> <?=$sampleID?></div>
+                                    <div class="vls_grey" style="padding:3px 0px 0px 0px"><strong>Form Number:</strong> <?=$sampleID?></div>
                                     <div class="vls_grey" style="padding:3px 0px 0px 0px"><strong>Scheduled on:</strong> <?=getFormattedDate($created)?> by <?=$createdby?></div>
                                 </td>
                                 <td class="<?=($count<$num?"vl_tdstandard":"vl_tdnoborder")?>" align="center"><a href="javascript:if(confirm('Are you sure?')) { document.location.href='?act=repeatSamples&nav=datamanagement&option=remove&id=<?=$q["id"]?>'; }">delete</a></td>
