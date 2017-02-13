@@ -70,11 +70,20 @@ $results = mysqlquery($sql);
 						(sampleID,worksheetID,created,createdby) 
 						values ('$row_id','$row_worksheetID','$datetime','$trailSessionUser');");
 		}
-
-			
-		
 		
 		?>
+
+		<page class="env-container" style="display:none;font-weight:bolder;" size="A4">
+			<div style="height:50%">
+				<h1 style="text-align:right"><?=$row_hub?></h1>
+				<h2><?=$row_facility?></h2>
+				<h2>District: <?=$row_district?></h2>
+				<h2><?=$row_contactPerson ?></h2>
+				<h2><?=$row_facility_phone ?></h2>
+				<h4>c/o:<h4>
+				<h4>Viral Load Results<h4>
+			</div>
+		</page>
 
 		<script type="text/javascript">
 		jQuery(function(){

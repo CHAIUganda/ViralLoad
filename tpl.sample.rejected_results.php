@@ -45,11 +45,19 @@ $results = mysqlquery($sql);
 		$factor = "";
 		$signature_path = "";
 		$log_sql = "";
+		$envs = [];
 		while($row = mysqlfetcharray($results)){
 			extract($row, EXTR_PREFIX_ALL, "row");
 			include "_sample_print.php";
 
 			$log_sql .= "('$row_id', '$datetime', '$trailSessionUser'),";
+			
+			$envs[$row_facilityID] = array(
+				"hub"=>$row_hub, 
+				"facility" => $row_facility,
+				"district" => $row_district,
+				"cp" => $row_contactPerson,
+				"phone" => $row_facility_phone );
 		}
 
 		$log_sql = trim($log_sql, ",");
@@ -57,6 +65,24 @@ $results = mysqlquery($sql);
 
 		if(!empty($log_sql)) mysqlquery("insert into vl_logs_printedrejectedresults (sampleID, created, createdby )  values $log_sql ");
 		
+		?>
+
+		<?php 
+		foreach ($envs AS $env) {
+		?>
+		<page class="env-container" style="display:none;font-weight:bolder;" size="A4">
+			<div style="height:50%">
+				<h1 style="text-align:right"><?=$env['hub']?></h1>
+				<h2><?=$env['facility']?></h2>
+				<h2>District: <?=$env['district']?></h2>
+				<h2><?=$env['cp'] ?></h2>
+				<h2><?=$env['phone'] ?></h2>
+				<h4>c/o:<h4>
+				<h4>Viral Load Results<h4>
+			</div>
+		</page>
+		<?php
+		}
 		?>
 
 		<script type="text/javascript">

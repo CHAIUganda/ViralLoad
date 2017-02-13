@@ -80,8 +80,7 @@ $rejected = $row_verify_outcome=="Rejected"?1:2;
 $phones_arr = array_unique(explode(",", $row_phone));
 $phones = implode(", ", $phones_arr);
  ?>
-<page size="A4">
-	<div class='result-container'>
+<page size="A4" class='result-container'>
 	<div style="height:95%">
 <!-- <div class="print-container"> -->
 	<div class="print-header">
@@ -278,16 +277,5 @@ $phones = implode(", ", $phones_arr);
 	</div>
 	</div>
 	<footer style='float:right'>1 of 1</footer>
-	</div>
-	<div class="env-container" style="display:none;font-weight:bolder;">
-		<h1 style="text-align:right"><?=$row_hub_name?></h1>
-		<h2><?=$row_facility?></h2>
-		<h2>District: <?=$row_district?></h2>
-		<h2><?=$row_contactPerson ?></h2>
-		<h2><?=$row_facility_phone ?></h2>
-		<h4>c/o:<h4>
-		<h4>Viral Load Results<h4>
-	</div>
 </page>
-
 <!-- </div> -->

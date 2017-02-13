@@ -61,10 +61,17 @@ $results = mysqlquery($sql);
 	
 		<?php 
 		$print_log_sql="";
+		$envs;
 		while($row=mysqlfetcharray($results)){
 			extract($row, EXTR_PREFIX_ALL, "row");
 			include "_sample_print.php";
 			$print_log_sql.="('$row_sampleID','$id','$datetime','$trailSessionUser'),";
+			$envs[$row_facilityID] = array(
+				"hub"=>$row_hub, 
+				"facility" => $row_facility,
+				"district" => $row_district,
+				"cp" => $row_contactPerson,
+				"phone" => $row_facility_phone );
 		}
 
 		$print_log_sql = trim($print_log_sql, ",");
@@ -72,6 +79,24 @@ $results = mysqlquery($sql);
 					(sampleID,worksheetID,created,createdby) 
 					values $print_log_sql;");
 		//mysqlquery("START TRANSACTION; $print_log_sql COMMIT;");
+		?>
+
+		<?php 
+		foreach ($envs AS $env) {
+		?>
+		<page class="env-container" style="display:none;font-weight:bolder;" size="A4">
+			<div style="height:50%">
+				<h1 style="text-align:right"><?=$env['hub']?></h1>
+				<h2><?=$env['facility']?></h2>
+				<h2>District: <?=$env['district']?></h2>
+				<h2><?=$env['cp'] ?></h2>
+				<h2><?=$env['phone'] ?></h2>
+				<h4>c/o:<h4>
+				<h4>Viral Load Results<h4>
+			</div>
+		</page>
+		<?php
+		}
 		?>
 
 		<script type="text/javascript">
