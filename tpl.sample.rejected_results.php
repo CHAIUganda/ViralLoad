@@ -5,7 +5,7 @@ $GLOBALS['vlDC']=true;
 include "conf.php";
 
 $sql = "SELECT  s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
-		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, h.hub AS hub_name, 		
+		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, f.contactPerson,f.phone AS facility_phone, d.district, h.hub AS hub_name, 		
 		v.outcome AS verify_outcome, reason.appendix AS rejection_reason
 		FROM vl_samples AS s
 		LEFT JOIN vl_facilities AS f ON s.facilityID=f.id
@@ -35,7 +35,10 @@ $results = mysqlquery($sql);
 		<script src="/js/jquery.qrcode.min.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<div id="print-btn-div" style='text-align:center; padding:20px;'><button id="print-btn" class='btn btn-primary' >PRINT</button></div>
+		<div id="print-btn-div" style='text-align:center; padding:20px;'>
+			<button id="print-btn" class='btn btn-primary' >PRINT</button>
+			<button id="print-env-btn" class='btn btn-primary' >PRINT ENVELOPES</button>
+		</div>
 	
 		<?php 
 		$machine_type = "";
@@ -71,6 +74,19 @@ $results = mysqlquery($sql);
 		$('#print-btn').click(function(){
 			$('#print-btn-div').hide();
 			window.print();
+		});
+
+		$('#print-env-btn').click(function(){
+			$('.result-container').hide();
+			$('#print-btn-div').hide();
+			$('.env-container').show();
+			//$('page').attr('size','A5');
+			window.print();			
+			$('.result-container').show();
+			$('#print-btn-div').show();
+			$('.env-container').hide();
+			//$('page').attr('size','A4');
+			
 		});
 
 		</script>

@@ -5,7 +5,7 @@ $GLOBALS['vlDC']=true;
 include "conf.php";
 
 $sql = "SELECT  s.*, p.artNumber,p.otherID, p.gender, p.dateOfBirth,
-		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility, d.district, h.hub AS hub_name, 
+		GROUP_CONCAT(ph.phone SEPARATOR ',') AS phone, f.facility,f.contactPerson,f.phone AS facility_phone, d.district, h.hub AS hub_name, 
 		GROUP_CONCAT(res_r.Result, '|||', res_r.created SEPARATOR '::') AS roche_result,
 		GROUP_CONCAT(res_a.result, '|||', res_a.created SEPARATOR '::') AS abbott_result,
 		GROUP_CONCAT(res_o.result, '|||', res_o.created SEPARATOR '::') AS override_result,
@@ -46,7 +46,10 @@ $results = mysqlquery($sql);
 		<script src="/js/jquery.qrcode.min.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<div id="print-btn-div" style='text-align:center; padding:20px;'><button id="print-btn" class='btn btn-primary' >PRINT</button></div>
+		<div id="print-btn-div" style='text-align:center; padding:20px;'>
+			<button id="print-btn" class='btn btn-primary' >PRINT</button>
+			<button id="print-env-btn" class='btn btn-primary' >PRINT ENVELOPE</button>
+		</div>
 	
 		<?php 
 		$row = mysqlfetcharray($results);
@@ -88,6 +91,19 @@ $results = mysqlquery($sql);
 		$('#print-btn').click(function(){
 			$('#print-btn-div').hide();
 			window.print();
+		});
+
+		$('#print-env-btn').click(function(){
+			$('.result-container').hide();
+			$('#print-btn-div').hide();
+			$('.env-container').show();
+			//$('page').attr('size','A5');
+			window.print();			
+			$('.result-container').show();
+			$('#print-btn-div').show();
+			$('.env-container').hide();
+			//$('page').attr('size','A4');
+			
 		});
 
 		</script>

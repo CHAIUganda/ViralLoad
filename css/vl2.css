@@ -162,6 +162,15 @@ page[size="A4"][layout="portrait"] {
   height: 21cm;  
 }
 
+page[size="A5"] {  
+  width: 14.8cm;
+  height: 21cm; 
+}
+page[size="A5"][layout="landscape"] {
+  width: 21cm;
+  height: 14.8cm;  
+}
+
 .printmm-container{
 	width: 20cm;
 }

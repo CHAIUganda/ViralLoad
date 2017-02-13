@@ -166,7 +166,7 @@ if(count($sampleResultCheckbox)) {
 				
 				default:
 					$smiley="<img src=\"$home_url/images/smiley.sad.gif\" />";
-					$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
+					$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.";
 					break;
 			}
 
@@ -182,7 +182,7 @@ if(count($sampleResultCheckbox)) {
 				} else {
 					if($vlResult=="Failed.") { 
 						$smiley="<img src=\"$home_url/images/smiley.sad.gif\" />";
-						$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
+						$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.";
 					} else {
 						$smiley="<img src=\"$system_default_path"."images/smiley.smile.gif\" />";
 						$recommendation="Below 5,000 copies/mL: Patient is suppressing their viral load. <br>Please continue adherence counseling. Do another viral load after 12 months.";
@@ -200,7 +200,7 @@ if(count($sampleResultCheckbox)) {
 				} else {
 					if($vlResult=="Failed.") {
 						$smiley="<img src=\"$home_url/images/smiley.sad.gif\" />";
-						$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.";
+						$recommendation="There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.";
 					} else {
 						$smiley="<img src=\"$system_default_path"."images/smiley.smile.gif\" />";
 						$recommendation="Below 1,000 copies/mL: Patient is suppressing their viral load. <br>Please continue adherence counseling. Do another viral load after 12 months.";

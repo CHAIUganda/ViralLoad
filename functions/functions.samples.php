@@ -155,12 +155,12 @@ function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
 					* 21/Jan/15: 
 					* (sewyisaac@yahoo.co.uk) 
 					* Regarding the report where we do not have results, this is the massage to I propose.
-					* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample. 
+					* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample. 
 					* 
 					* 23/Dec/2015
 					* Request from Joseph Kibirige (joseph.kibirige@yahoo.com, CPHL) and Prossy Mbabazi (pronam2000@yahoo.com, CPHL)
 					* when a sample has failed twice, automatically override the 2nd result with
-					* "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample."
+					* "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."
 					*/
 					logResultOverride($sampleID,$worksheetID,$default_resultFailureNewSampleMessage);
 					//return
@@ -191,12 +191,12 @@ function getVLResult($machineType,$worksheetID,$sampleID,$factor) {
 					* 21/Jan/15: 
 					* (sewyisaac@yahoo.co.uk) 
 					* Regarding the report where we do not have results, this is the massage to I propose.
-					* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample. 
+					* There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample. 
 					* 
 					* 23/Dec/2015
 					* Request from Joseph Kibirige (joseph.kibirige@yahoo.com, CPHL) and Prossy Mbabazi (pronam2000@yahoo.com, CPHL)
 					* when a sample has failed twice, automatically override the 2nd result with
-					* "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample."
+					* "There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample."
 					*/
 					logResultOverride($sampleID,$worksheetID,$default_resultFailureNewSampleMessage);
 					//return
@@ -554,7 +554,7 @@ function isResultValid($result){
 	$invalid_cases=array(
 		"Failed","Failed.","Invalid",
 		"Invalid test result. There is insufficient sample to repeat the assay.",
-		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a a new sample.",
+		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.",
 		"There is No Result Given. The Test Failed the Quality Control Criteria. We advise you send a new sample.");
 
 	if(in_array($result, $invalid_cases)) $ret="NO";
