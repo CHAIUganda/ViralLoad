@@ -97,12 +97,15 @@ $worksheetOwner=getDetailedTableInfo2("vl_samples_worksheetcredentials","id='$wo
 
 $labTechSignature=0;
 if(getDetailedTableInfo2("vl_users","email='$worksheetOwner'","signatureURL")) {
-	$labTechSignature="<img src=\"".getDetailedTableInfo2("vl_users","email='$worksheetOwner'","signatureURL")."\" width=\"120\" height=\"50\" />";
+	$lab_tech_sign = getDetailedTableInfo2("vl_users","email='$worksheetOwner'","signatureURL");
+	
+	$lab_tech_sign = end(explode("/", $lab_tech_sign));
+	$labTechSignature="<img src=\"/images/signatures/$lab_tech_sign\" width=\"120\" height=\"50\" />";
 }
 
 $labManagerSignature=0;
 if(getDetailedTableInfo2("vl_users","role='Lab Manager' order by created desc limit 1","signatureURL")) {
-	$labManagerSignature="<img src=\"".getDetailedTableInfo2("vl_users","role='Lab Manager' order by created desc limit 1","signatureURL")."\" width=\"120\" height=\"50\" />";
+	$labManagerSignature="<img src=\"/images/signatures/signature.14.gif\" width=\"120\" height=\"50\" />";
 }
 
 //remove "Copies / mL" and "," from $vlResult
