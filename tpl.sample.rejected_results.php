@@ -45,7 +45,7 @@ $results = mysqlquery($sql);
 		$factor = "";
 		$signature_path = "";
 		$log_sql = "";
-		$envs = [];
+		$envs = array();
 		while($row = mysqlfetcharray($results)){
 			extract($row, EXTR_PREFIX_ALL, "row");
 			include "_sample_print.php";
