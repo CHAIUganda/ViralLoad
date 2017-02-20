@@ -220,4 +220,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 
 RewriteRule ^samples/print_rejected/([0-9\-]+)/$ tpl.sample.rejected_results.php?date_rejected=$1
 
+RewriteRule ^envelopes/print/([0-9\-]+)/$ tpl.envelopes.print.php?date_printed=$1
+
 ErrorDocument 404 /index.404.htm

@@ -10,22 +10,28 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 <script src="/bootstrap/js/bootstrap.min.js"></script>
 
 <div class="row">
-	<div class="drop_down_container col-lg-4">
+	<div class="drop_down_container col-lg-3">
 		<label for="b">Search worksheet:</label> 
-		<?=MyHTML::text('worksheet','',array('class'=>'form-control input-sm input_md', 'id'=>'b', 'autocomplete'=>'off')) ?>
+		<?=MyHTML::text('worksheet','',array('class'=>'form-control input-sm', 'id'=>'b', 'autocomplete'=>'off')) ?>
 		<div class='live_drpdwn' id="worksheet_dropdown" style='display:none'></div>
 	</div>
 
-	<div class="drop_down_container col-lg-4">
+	<div class="drop_down_container col-lg-3">
 		<label for="s">Search sample:</label>
-		<?=MyHTML::text('sample','',array('class'=>'form-control input-sm input_md', 'id'=>'s', 'autocomplete'=>'off')) ?>
+		<?=MyHTML::text('sample','',array('class'=>'form-control input-sm', 'id'=>'s', 'autocomplete'=>'off')) ?>
 		<div class='live_drpdwn'id="sample_dropdown" style='display:none'></div>
 	</div>
 
-	<div class="form-inline col-lg-4" >
+	<div class="form-inline col-lg-3" >
 		<label>Rejected Samples</label><br>
 		<input type="text" id="date_rejected" class="form-control input-sm pick_date">
 		<button id="rjct_such" class="btn btn-primary btn-sm">Search</button>
+	</div>
+
+	<div class="form-inline col-lg-3" >
+		<label>Print Evelopes</label><br>
+		<input type="text" id="date_printed" class="form-control input-sm pick_date">
+		<button id="dprint" class="btn btn-primary btn-sm">Search</button>
 	</div>
 </div>
 
@@ -73,12 +79,18 @@ $(function(){
 	 		 maxDate: new Date(),
 	 		 dateFormat: "yy-mm-dd",
 	 		}); 
+
  	$(".pick_date" ).datepicker("setDate", new Date());
 
  	$("#rjct_such").click(function(){
  		var rjct_date = $("#date_rejected").val();
  		windPop('/samples/print_rejected/'+rjct_date+'/');
  	});
+
+ 	$("#dprint").click(function(){
+ 		windPop('/envelopes/print/'+$("#date_printed").val()+'/');
+ 	});
+
 
 });
 
