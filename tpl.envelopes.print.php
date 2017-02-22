@@ -36,24 +36,25 @@ $results = mysqlquery($sql);
 		<?php 
 		while ($env = mysqlfetcharray($results)) {
 		?>
-		<page size="A4" style="font-size:32px;">
+		<page size="A4" style="font-size:30px;">
 			<div style="margin-left:20px;"> 
-				<span>From: CPHL</span><br><br>
-				
+				<span>From: CPHL</span>
+
+				<div style="display:inline-block; margin-left:80px;">
+					<img src="/images/hub_bike2.png">
+					<span style="font-weight:bolder; font-size:40px;"><?=$env['hub']?></span>
+				</div>
+				<br><br>				
 				<div class="row">
 					<div class="col-xs-1"><span>To:</span></div>
-					<div class="col-xs-8">
-						<div style="display:inline-block; margin-left:100px;">
-							<img src="/images/hub_bike2.png">
-							<span style="font-weight:bolder; font-size:40px;"><?=$env['hub']?></span>
-						</div>
+					<div class="col-xs-8">				
 						
-						<br><br><span><?=$env['facility']?></span><br>
+						<br><span><?=$env['facility']?></span><br>
 						<span>District: <?=$env['district']?></span><br><br><br>
 						<span style="font-weight:bold;font-size:24px">Viral Load Results</span>
 					</div>
 					
-					<h3 style="margin-top:100px;margin-left:600px;margin-right:-100px;transform:rotate(90deg);"> <?=$env['hub']?> &nbsp; <?=$env['facility']?></h3>
+					<h3 style="margin-top:100px;margin-left:600px;margin-right:-100px;transform:rotate(90deg);"> <?=$env['hub']?> &nbsp;  &nbsp; <?=$env['facility']?></h3>
 					
 
 				</div>	
