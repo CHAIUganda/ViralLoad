@@ -25,34 +25,45 @@ $results = mysqlquery($sql);
 		<title>Viral Load</title>
 		<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link href="/css/vl2.css" rel="stylesheet" type="text/css">
+		
 
 		<script src="/js/jquery-2.1.3.min.js"></script>
 		<script src="/bootstrap/js/bootstrap.min.js"></script>
 		<script src="/js/jquery.qrcode.min.js" type="text/javascript"></script>
 	</head>
 	<body>
-		<div id="print-btn-div" style='text-align:center; padding:20px;'>
-			<button id="print-env-btn" class='btn btn-primary' >PRINT ENVELOPES</button>
-		</div>
-
+		
 		<?php 
 		while ($env = mysqlfetcharray($results)) {
 		?>
-		<page class="env-container" style="font-weight:bolder;" size="A4">
-			<div style="height:50%">
-				<h1 style="text-align:right"><?=$env['hub']?></h1>
-				<br>
-				<h2><?=$env['facility']?></h2>
-				<h2>District: <?=$env['district']?></h2>
-				<h2><?=$env['contactPerson'] ?></h2>
-				<h2><?=$env['phone'] ?></h2>
-				<h4>c/o:<h4>
-				<h4>Viral Load Results<h4>
+		<page size="A4">
+			<div style="margin-left:20px;"> 
+				<h2>From: CPHL</h2>
+				
+				<div class="row">
+					<div class="col-xs-1"><h2>To:</h2></div>
+					<div class="col-xs-7">
+						<div style="display:inline-block; margin-left:100px;">
+							<img src="/images/hub_bike.png">
+							<span style="font-weight:bolder; font-size:32px;vertical-align: bottom;"><?=$env['hub']?></span>
+						</div>
+						
+						<h2><?=$env['facility']?></h2>
+						<h2>District: <?=$env['district']?></h2><br><br><br>
+						<h3 style="font-weight:bold;">Viral Load Results</h3>
+					</div>
+					
+					<h4 style="margin-top:100px;margin-left:600px;margin-right:-100px;transform:rotate(90deg);"> <?=$env['hub']?> &nbsp; <?=$env['facility']?></h4>
+					
+
+				</div>	
 			</div>
 		</page>
 		<?php
 		}
 		?>
+
+		
 
 		<script type="text/javascript">
 		$('#print-env-btn').click(function(){
@@ -60,10 +71,7 @@ $results = mysqlquery($sql);
 			window.print();
 		});
 
-		</script>
-
-
-		
+		</script>		
 	</body>
 </html>
 	
