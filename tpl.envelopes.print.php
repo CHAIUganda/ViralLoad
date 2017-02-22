@@ -38,7 +38,7 @@ $results = mysqlquery($sql);
 		?>
 		<page size="A4">
 			<div style="margin-left:20px;"> 
-				<h2>From: CPHL</h2>
+				<h2>From: CPHL</h2><br><br>
 				
 				<div class="row">
 					<div class="col-xs-1"><h2>To:</h2></div>
