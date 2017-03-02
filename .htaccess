@@ -58,6 +58,8 @@ RewriteRule ^samples/modified/$ index.php?option=samples&modified=1
 RewriteRule ^samples/find.and.edit/$ index.php?option=samples&sub=findedit 
 RewriteRule ^samples/find.and.edit/search/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=findedit&encryptedSample=$1 
 
+RewriteRule ^samples/find.and.edit/intervene/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=findedit&encryptedSample=$1&from=qc 
+
 RewriteRule ^samples/find.and.edit/search/([a-zA-Z0-9\=]+)/([a-zA-Z0-9\=]+)/$ index.php?option=samples&sub=findedit&envelopeNumberFrom=$1&envelopeNumberTo=$2 
 
 RewriteRule ^samples/manage.patients/$ index.php?option=samples&sub=managepatients 
@@ -221,5 +223,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^samples/print_rejected/([0-9\-]+)/$ tpl.sample.rejected_results.php?date_rejected=$1
 
 RewriteRule ^envelopes/print/([0-9\-]+)/$ tpl.envelopes.print.php?date_printed=$1
+
+RewriteRule ^intervene/$  index.php?option=intervene
 
 ErrorDocument 404 /index.404.htm

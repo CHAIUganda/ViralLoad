@@ -414,6 +414,11 @@ if($saveChanges || $proceedWithWarningGender || $proceedWithWarningVLRepeatTesti
 			mysqlquery("delete from vl_samples_otherregimen where sampleID='$modify'");
 		}
 
+		if($from == 'qc'){
+			mysqlquery("UPDATE vl_facility_printing SET ready='YES' WHERE sample_id='$modify'");
+			go("/intervene/");
+		}
+
 		//redirect to home with updates on the tracking number
 		go("/samples/modified/");
 	}
@@ -1788,7 +1793,9 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
               <td style="padding:10px 0px 0px 0px">
                 <input type="hidden" name="modify" id="modify" value="<?=validate($modify)?>" />
                 <input type="hidden" name="sample" id="sample" value="<?=validate($sample)?>" />
-				<input type="submit" name="saveChanges" id="saveChanges" class="button" value="  Save Changes  " />
+                <input type="hidden" name="from" value="<?=$from ?>">
+                <?php $save_label = $from=='qc'?'Save changes and release for printing':'Save Changes'; ?>
+				<input type="submit" name="saveChanges" id="saveChanges" class="button" value=" <?=$save_label ?>  " />
               </td>
             </tr>
             <tr>

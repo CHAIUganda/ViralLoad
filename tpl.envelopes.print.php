@@ -54,7 +54,7 @@ $results = mysqlquery($sql);
 						<span style="font-weight:bold;font-size:24px">Viral Load Results</span>
 					</div>
 					
-					<h3 style="margin-top:100px;margin-left:600px;margin-right:-100px;transform:rotate(90deg);"> <?=$env['hub']?> &nbsp;  &nbsp; <?=$env['facility']?></h3>
+					<h3 style="	margin-top:100px;margin-left:600px;margin-right:-80px;transform:rotate(90deg);"> <?=$env['hub']?> &nbsp;  &nbsp; <?=$env['facility']?></h3>
 					
 
 				</div>	

@@ -212,6 +212,9 @@ $searchFilter=getValidatedVariable("searchFilter");
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='generateForms' limit 1","id")) { ?>
         :: <a href="/generateforms/" class="vll_grey">Generate&nbsp;Forms</a> 
         <? } ?>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        :: <a href="/intervene/" class="vll_grey">Intervention for Data QC</a> 
+        <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
         :: <a href="/results/" class="vll_grey">Results</a> 
         <? } ?>
@@ -339,6 +342,9 @@ $searchFilter=getValidatedVariable("searchFilter");
 
                             case 'facilityID':
                                 echo "1000000000000000000000000";
+                            break;
+                            case 'intervene':
+                                include "tpl.intervene.php";
                             break;
                             case logout:
                                 //kill session
