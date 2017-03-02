@@ -119,6 +119,7 @@ if($uploadResults) {
 				//log the factor
 				$factorID=0;
 				$factorID=getDetailedTableInfo2("vl_results_multiplicationfactor","worksheetID='$worksheetID' limit 1","id");
+				mysqlquery("UPDATE vl_samples_worksheetcredentials SET stage = 'has_results' WHERE id='$worksheetID'");
 				if(!$factorID) {
 					mysqlquery("insert into vl_results_multiplicationfactor 
 									(worksheetID,factor,created,createdby) 
@@ -706,6 +707,7 @@ if($uploadResults) {
 					$beginLoadLine=0;
 					$runStartTime=0;
 					$runCompletionTime=0;
+					mysqlquery("UPDATE vl_samples_worksheetcredentials SET stage = 'has_results' WHERE id='$worksheetID'");
 					while(($line = fgets($file))!==FALSE) {
 						if(substr(trim($line),0,14)=="RUN START TIME") {
 							$runStartTime=preg_replace("/RUN START TIME	/is","",$line);
