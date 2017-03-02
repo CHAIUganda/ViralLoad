@@ -40,11 +40,11 @@ function insertVLResults($machineType="", $values="", $repeats="", $merged_value
 			 created,createdby) values $values");
 	}
 
-	if(!empty($repeats)){
+	/*if(!empty($repeats)){
 		mysqlquery("insert into vl_logs_samplerepeats 
 			(sampleID,oldWorksheetID,created,createdby) 
 			values $repeats");
-	}
+	}*/
 
 	if(!empty($merged_values)){
 		mysqlquery("insert ignore into vl_results_merged 
