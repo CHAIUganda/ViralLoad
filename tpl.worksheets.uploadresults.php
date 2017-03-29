@@ -1021,6 +1021,7 @@ function validate(worksheets) {
                       <tr>
                         <td style="padding:0px 0px 5px 0px">Machine Type:</td>
                         <td style="padding:0px 0px 5px 0px"><?=($machineType=="abbott"?"Abbott":"Roche")?></td>
+
                       </tr>
                       <tr>
                         <td style="padding:0px 0px 5px 0px">Worksheet Type:</td>
@@ -1032,17 +1033,44 @@ function validate(worksheets) {
                         </tr>
                         <tr>
                           <td>Select&nbsp;Results&nbsp;File&nbsp;<font class="vl_red">*</font></td>
-                          <td><input name="userfile" type="file" class="search" size="28" /></td>
+                          <td><input id="file" name="userfile" type="file" class="search" size="28" /></td>
                         </tr>
                       </table>
                     </fieldset>
                 </td>
             </tr>
             <tr>
-              <td style="padding:10px 0px 0px 0px"><input type="submit" name="uploadResults" id="uploadResults" class="button" value="  Upload Results  " /></td>
+              <td style="padding:10px 0px 0px 0px"><input type="submit" name="uploadResults" id="uploadResults" class="button" value="  Upload Results  " style = "display:none" /></td>
             </tr>
             <tr>
 	            <td style="padding:20px 0px 0px 0px"><a href="/worksheets/">Return to Worksheets</a> :: <a href="/dashboard/">Return to Dashboard</a></td>
             </tr>
           </table>
 </form>
+<script type="text/javascript">
+
+$("#file").on("change", function(){
+	var formData = new FormData();
+	formData.append('file', this.files[0]);
+	formData.append('machine', "<?=$machineType?>");
+	$.ajax({
+	   url : '/check_results/',
+	   type : 'POST',
+	   data : formData,
+	   processData: false,  // tell jQuery not to process the data
+	   contentType: false,  // tell jQuery not to set contentType
+	   success : function(data) {
+	       if(data==1){
+	       	$("#uploadResults").show();
+	       }else{
+	       	$("#uploadResults").hide();
+	       	var $el = $('#file');
+		   $el.wrap('<form>').closest('form').get(0).reset();
+		   $el.unwrap();	       
+	       	alert('the worksheet has duplicate samples');
+	       }
+	   }
+	});
+});
+
+</script>

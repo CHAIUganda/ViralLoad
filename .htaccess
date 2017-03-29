@@ -226,4 +226,6 @@ RewriteRule ^envelopes/print/([0-9\-]+)/$ tpl.envelopes.print.php?date_printed=$
 
 RewriteRule ^intervene/$  index.php?option=intervene
 
+RewriteRule ^check_results/$  tpl.worksheets.check_results.php
+
 ErrorDocument 404 /index.404.htm
