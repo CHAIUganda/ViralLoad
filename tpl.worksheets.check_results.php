@@ -12,7 +12,7 @@ $fileError = $_FILES['file']['error'];
 if($fileError == UPLOAD_ERR_OK){
   $machine = $_POST['machine'];
   $file = fopen($_FILES['file']['tmp_name'], 'r') or die('cant read file');
-  $sample_ids = [];
+  $sample_ids = array();
    if($machine=='roche'){
    	while(($line = fgetcsv($file,0,","))!==FALSE) {
    		if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$line[4])) $sample_ids[] = $line[4];
