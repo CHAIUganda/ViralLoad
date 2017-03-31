@@ -15,14 +15,16 @@ if($fileError == UPLOAD_ERR_OK){
   $sample_ids = array();
    if($machine=='roche'){
    	while(($line = fgetcsv($file,0,","))!==FALSE) {
-   		if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$line[4])) $sample_ids[] = $line[4];
+      $sample_id = trim($line[4]);
+   		if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id)) $sample_ids[] = $sample_id;
       $count += 1;
    	}
    }else{
     $start = 78;
     while(($line = fgets($file))!==FALSE) {
        $data=preg_split("/[\t]+/", trim($line));
-       if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$data[1])) $sample_ids[] = $data[1];
+       $sample_id = trim($data[1]);
+       if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id )) $sample_ids[] = $sample_id;
     }
 
    }
@@ -65,10 +67,13 @@ if($fileError == UPLOAD_ERR_OK){
 
 
 function is_unique( $a = array() ){ 
-  if(count($a) == count(array_unique( $a ) )){
+  $unik = array_unique( $a );
+  if(count($a) == count( $unik)){
     return 1;
   }else{
-    return 0;
+    $r = array_diff_assoc($a, $unik);
+    $str = implode("<br>", $r);
+    return $str;
   }
 }
 ?>

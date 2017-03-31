@@ -1040,7 +1040,9 @@ function validate(worksheets) {
                 </td>
             </tr>
             <tr>
-              <td style="padding:10px 0px 0px 0px"><input type="submit" name="uploadResults" id="uploadResults" class="button" value="  Upload Results  " style = "display:none" /></td>
+              <td style="padding:10px 0px 0px 0px">
+              	<div id="check_message" style="font-size:16px;color:red"></div>
+              	<input type="submit" name="uploadResults" id="uploadResults" class="button" value="  Upload Results  " style = "display:none" /></td>
             </tr>
             <tr>
 	            <td style="padding:20px 0px 0px 0px"><a href="/worksheets/">Return to Worksheets</a> :: <a href="/dashboard/">Return to Dashboard</a></td>
@@ -1061,13 +1063,16 @@ $("#file").on("change", function(){
 	   contentType: false,  // tell jQuery not to set contentType
 	   success : function(data) {
 	       if(data==1){
+	       	$("#check_message").hide();
 	       	$("#uploadResults").show();
+
 	       }else{
 	       	$("#uploadResults").hide();
 	       	var $el = $('#file');
 		   $el.wrap('<form>').closest('form').get(0).reset();
-		   $el.unwrap();	       
-	       	alert('the worksheet has duplicate samples');
+		   $el.unwrap();	
+		   $("#check_message").html("Duplicates found:<br><b>"+data+"</b>");       
+	       	//alert('the worksheet has duplicate samples');
 	       }
 	   }
 	});
