@@ -7,7 +7,7 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 //validation
 if(!$modify) {
 	//$modify=getDetailedTableInfo2("vl_samples","formNumber='$sample' or vlSampleID='$sample' limit 1","id");
-	$modify=getDetailedTableInfo2("vl_samples","formNumber='$sample' or formNumber='".($sample/1)."' or vlSampleID='$sample' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID)='$sample' limit 1","id");
+	$modify=getDetailedTableInfo2("vl_samples","formNumber='$sample' or vlSampleID='$sample' or concat(lrCategory,lrEnvelopeNumber,'/',lrNumericID)='$sample' limit 1","id");
 }
 
 $pg=validate($pg);
@@ -980,7 +980,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                           <td>District</td>
                           <td>
                           	<div class="vls_grey" style="padding:5px 0px" id="districtTextID">
-                          		<?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?>
+                          		<?=$modify.($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?>
                           	</div>
                           	<input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />                         
                           </td>
