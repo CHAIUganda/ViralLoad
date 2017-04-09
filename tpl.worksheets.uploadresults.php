@@ -731,7 +731,7 @@ if($uploadResults) {
 						if($beginLoad && $count>$beginLoadLine) {
 							//split line into its constituents
 							$data=array();
-							$data=preg_split("/[\t]+/", trim($line));
+							$data=str_getcsv($line, "\t");
 							 
 							$sampleLocation=0;
 							$sampleLocation=$data[0];

@@ -22,7 +22,7 @@ if($fileError == UPLOAD_ERR_OK){
    }else{
     $start = 78;
     while(($line = fgets($file))!==FALSE) {
-       $data=preg_split("/[\t]+/", trim($line));
+       $data=str_getcsv($line, "\t");
        $sample_id = trim($data[1]);
        if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id )) $sample_ids[] = $sample_id;
     }
