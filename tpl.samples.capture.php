@@ -373,7 +373,7 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 
 		//log patient, if unique
 		$patientID=0;
-		if(!getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and artNumber='$artNumber' and otherID='$otherID' limit 1","id")) {
+		if(!getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and artNumber='$artNumber' limit 1","id")) {
 			mysqlquery("insert into vl_patients 
 							(uniqueID,artNumber,otherID,gender,".(!$noDateOfBirthSupplied?"dateOfBirth,":"")."created,createdby) 
 							values 
@@ -383,6 +383,7 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 			$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
 		} else {
 			$patientID=getDetailedTableInfo2("vl_patients","uniqueID='$uniqueID' and (artNumber='$artNumber' or otherID='$otherID') limit 1","id");
+			if(!empty($otherID)) mysqlquery("update vl_patients set otherID='$otherID' where id=$patientID ");
 			//log changes to the patient's gender
 			if($proceedWithWarningGender) {
 				//log updates

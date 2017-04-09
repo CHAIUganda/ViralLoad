@@ -980,7 +980,7 @@ function loadFacilityFromFormNumber(formNumberObject,formName,fieldID,facilityID
                           <td>District</td>
                           <td>
                           	<div class="vls_grey" style="padding:5px 0px" id="districtTextID">
-                          		<?=$modify.($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?>
+                          		<?=($districtID?getDetailedTableInfo2("vl_districts","id='$districtID' limit 1","district"):"Input Form Number or Select Facility, First")?>
                           	</div>
                           	<input type="hidden" name="districtID" id="districtID" value="<?=($districtID?$districtID:"")?>" />                         
                           </td>
