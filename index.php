@@ -212,7 +212,7 @@ $searchFilter=getValidatedVariable("searchFilter");
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='generateForms' limit 1","id")) { ?>
         :: <a href="/generateforms/" class="vll_grey">Generate&nbsp;Forms</a> 
         <? } ?>
-        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='samples' limit 1","id")) { ?>
+        <? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='intervene' limit 1","id")) { ?>
         :: <a href="/intervene/" class="vll_grey">Intervention for Data QC</a> 
         <? } ?>
       	<? if(getDetailedTableInfo2("vl_users_permissions","userID='".getUserID($trailSessionUser)."' and permission='results' limit 1","id")) { ?>
