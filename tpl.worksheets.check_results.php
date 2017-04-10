@@ -1,7 +1,7 @@
 <?php
 //security check
-//$GLOBALS['vlDC']=true;
-//include "conf.php";
+$GLOBALS['vlDC']=true;
+include "conf.php";
 
 //print_r($_FILES);
 $fileName = $_FILES['file']['name'];
@@ -22,7 +22,8 @@ if($fileError == UPLOAD_ERR_OK){
    }else{
     $start = 78;
     while(($line = fgets($file))!==FALSE) {
-       $data=str_getcsv($line, "\t");
+       $data=preg_split("/[\t]+/", trim($line));
+       //$data=str_getcsv($line, "\t");
        $sample_id = trim($data[1]);
        if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id )) $sample_ids[] = $sample_id;
     }
@@ -32,7 +33,7 @@ if($fileError == UPLOAD_ERR_OK){
    fclose($file);
 
    //print_r($sample_ids);
-   echo is_unique($sample_ids);
+   echo check_samples($sample_ids);
 }else{
    switch($fileError){
      case UPLOAD_ERR_INI_SIZE:   
@@ -66,6 +67,21 @@ if($fileError == UPLOAD_ERR_OK){
 }
 
 
+function check_samples($a = array()){
+  $unik = is_unique($a);
+  $owned = owned_samples($a);
+  $ret = "";
+  if($unik==1 && $owned == 1){
+    $ret = 1;
+  }elseif($unik==1 && $owned != 1){
+    $ret = $owned;
+  }elseif($unik!=1 && $owned == 1){
+    $ret = $unik;
+  }else{
+    $ret = $unik.$owned;
+  }  
+  return $ret;
+}
 function is_unique( $a = array() ){ 
   $unik = array_unique( $a );
   if(count($a) == count( $unik)){
@@ -73,7 +89,15 @@ function is_unique( $a = array() ){
   }else{
     $r = array_diff_assoc($a, $unik);
     $str = implode("<br>", $r);
-    return $str;
+    return "Duplicates found:<br>$str";
   }
+}
+
+function owned_samples($a = array()){
+  $owned_samples = $_POST['wk_samples'];
+  $diff = array_diff($a, $owned_samples);
+  $str = implode("<br>", $diff);
+  if(count($diff)>0) return "These samples do not belong to this worksheet:<br>$str";
+  else return 1;
 }
 ?>

@@ -70,6 +70,11 @@ $worksheetName=getDetailedTableInfo2("vl_samples_worksheetcredentials","id='$wor
 $worksheetReferenceNumber=0;
 $worksheetReferenceNumber=getDetailedTableInfo2("vl_samples_worksheetcredentials","id='$worksheetID' limit 1","worksheetReferenceNumber");
 
+
+$wk_samples = mysqlquery("SELECT s.vlSampleID FROM vl_samples_worksheet AS sw 
+						  INNER JOIN vl_samples AS s ON sw.sampleID=s.id 
+						  WHERE worksheetID='$worksheetID'");
+
 if($uploadResults) {
 	//validate data
 	$error="";
@@ -731,7 +736,8 @@ if($uploadResults) {
 						if($beginLoad && $count>$beginLoadLine) {
 							//split line into its constituents
 							$data=array();
-							$data=str_getcsv($line, "\t");
+							$data=preg_split("/[\t]+/", trim($line));
+							//$data=str_getcsv($line, "\t");
 							 
 							$sampleLocation=0;
 							$sampleLocation=$data[0];
@@ -1036,6 +1042,12 @@ function validate(worksheets) {
                           <td><input id="file" name="userfile" type="file" class="search" size="28" /></td>
                         </tr>
                       </table>
+                      <?php
+
+                      while($wk_sample = mysqlfetcharray($wk_samples)){
+                      	echo "<input type='hidden' class='wk_samples' name='wk_samples[]' value='".$wk_sample['vlSampleID']."'>";
+                      }
+                      ?>
                     </fieldset>
                 </td>
             </tr>
@@ -1052,7 +1064,8 @@ function validate(worksheets) {
 <script type="text/javascript">
 
 $("#file").on("change", function(){
-	var formData = new FormData();
+	var form = $('form')[1];
+	var formData = new FormData(form);
 	formData.append('file', this.files[0]);
 	formData.append('machine', "<?=$machineType?>");
 	$.ajax({
@@ -1065,13 +1078,12 @@ $("#file").on("change", function(){
 	       if(data==1){
 	       	$("#check_message").hide();
 	       	$("#uploadResults").show();
-
 	       }else{
 	       	$("#uploadResults").hide();
 	       	var $el = $('#file');
 		   $el.wrap('<form>').closest('form').get(0).reset();
 		   $el.unwrap();	
-		   $("#check_message").html("Duplicates found:<br><b>"+data+"</b>");       
+		   $("#check_message").html("<b>"+data+"</b>");       
 	       	//alert('the worksheet has duplicate samples');
 	       }
 	   }
