@@ -47,7 +47,10 @@ if($encryptedSample) {
             <tr>
                 <td class="vl_success">
                     <div><strong>Worksheet Created Successfully!</strong></div>
-                    <div class="vls_grey" style="padding:3px 0px"><a href="#vl" onclick="window.open('/worksheets/print.detail/<?=$worksheetID?>/', 'printWorksheet', 'width=1000, height=600, toolbar=no, location=no, directories=no, resizable=no, status=yes, scrollbars=yes')">Click Here to Print this Worksheet</a></div>
+                    <div class="vls_grey" style="padding:3px 0px"><a href="#vl" onclick="window.open('/worksheets/print.detail/<?=$worksheetID?>/', 'printWorksheet', 'width=1000, height=600, toolbar=no, location=no, directories=no, resizable=no, status=yes, scrollbars=yes')">Click Here to Print this Worksheet</a>
+                        <br>
+                        <?= "<a href=\"javascript:windPop('/worksheets/print_bar_codes/$worksheetID/')\">Print bar codes</a>"; ?>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -171,10 +174,11 @@ if($encryptedSample) {
                                 <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>" align="center"><?=$factor?></td>
                                 <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>" align="center"><?=$printed?></td>
                                 <td class="<?=($count<mysqlnumrows($xquery)?"vl_tdstandard":"vl_tdnoborder")?>">
+                                    <?php $print_barcodes = "<a href=\"javascript:windPop('/worksheets/print_bar_codes/$q[id]/')\">barcodes</a>"; ?>
                                 <? if(!getDetailedTableInfo3("vl_samples_worksheet","worksheetID='$q[id]'","count(id)","num")) { ?>
-                                <div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="javascript:if(confirm('Are you sure?')) { document.location.href='/worksheets/manage/remove/<?=$q["id"]?>/'; }">Remove</a>&nbsp;::&nbsp;<a href="/worksheets/manage/modify/<?=$q["id"]?>/">Modify&nbsp;Worksheet&nbsp;Credentials</a>::&nbsp;<a href="/worksheets/capture.2/<?=$q["id"]?>/1/">Modify&nbsp;Worksheet&nbsp;Samples</a></div>
+                                <div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="javascript:if(confirm('Are you sure?')) { document.location.href='/worksheets/manage/remove/<?=$q["id"]?>/'; }">Remove</a>&nbsp;::<?=$print_barcodes?>&nbsp;<a href="/worksheets/manage/modify/<?=$q["id"]?>/">&nbsp;::Modify&nbsp;Worksheet&nbsp;Credentials</a>::&nbsp;<a href="/worksheets/capture.2/<?=$q["id"]?>/1/">Modify&nbsp;Worksheet&nbsp;Samples</a></div>
 								<? } else { ?>
-								<div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="javascript:if(confirm('Are you sure?')) { document.location.href='/worksheets/manage/remove/<?=$q["id"]?>/'; }">Remove</a>&nbsp;::&nbsp;<a href="/worksheets/view.detail/<?=$q["id"]?>/">View&nbsp;Detail</a>&nbsp;::&nbsp;<?=$worksheet?>&nbsp;::&nbsp;<a href="/worksheets/upload.results/<?=$q["id"]?>/">Upload&nbsp;Results</a></div>
+								<div class="vls_grey" style="padding:3px 0px 0px 0px"><a href="javascript:if(confirm('Are you sure?')) { document.location.href='/worksheets/manage/remove/<?=$q["id"]?>/'; }">Remove</a>&nbsp;::<?=$print_barcodes?>&nbsp;<a href="/worksheets/view.detail/<?=$q["id"]?>/">&nbsp;::View&nbsp;Detail</a>&nbsp;::&nbsp;<?=$worksheet?>&nbsp;::&nbsp;<a href="/worksheets/upload.results/<?=$q["id"]?>/">Upload&nbsp;Results</a></div>
                                 <? } ?>
                                 </td>
                             </tr>
@@ -198,3 +202,8 @@ if($encryptedSample) {
               </td>
             </tr>
           </table>
+          <script type="text/javascript">
+          function windPop(link) {
+            window.open(link,"zzz","width=1100,height=1000,menubar=no,resizable=yes,scrollbars=yes");
+          } 
+          </script>

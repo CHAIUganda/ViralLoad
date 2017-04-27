@@ -228,4 +228,6 @@ RewriteRule ^intervene/$  index.php?option=intervene
 
 RewriteRule ^check_results/$  tpl.worksheets.check_results.php
 
+RewriteRule ^worksheets/print_bar_codes/([0-9\-]+)/$ tpl.worksheets.print_bar_codes.php?worksheetID=$1
+
 ErrorDocument 404 /index.404.htm
