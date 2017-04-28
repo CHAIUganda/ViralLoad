@@ -3,7 +3,7 @@
 //security check
 $GLOBALS['vlDC']=true;
 include "conf.php";
-$cals = ['A','B','C','D','E','F','G'];
+$cals = array('A','B','C','D','E','F','G');
 $calibs = getDetailedTableInfo('vl_samples_worksheetcredentials','id',$worksheetID,'includeCalibrators');
 
 $sql = "SELECT  s.vlSampleID
