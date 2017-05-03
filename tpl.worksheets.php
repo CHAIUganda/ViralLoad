@@ -47,6 +47,10 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 		case viewdetail:
 			include "tpl.worksheets.viewdetail.php";
 		break;
+		case 'cobasupload':
+			# code...
+			include "tpl.worksheets.cobasupload.php";
+			break;
 		default:
 			include "tpl.worksheets.default.php";
 		break;
