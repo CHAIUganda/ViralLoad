@@ -232,4 +232,6 @@ RewriteRule ^worksheets/print_bar_codes/([0-9\-]+)/$ tpl.worksheets.print_bar_co
 
 RewriteRule ^worksheets/cobasupload/$ index.php?option=worksheets&sub=cobasupload
 
+RewriteRule ^worksheets/racks/samples_create/$ index.php?option=worksheets&sub=racks_samples_create
+
 ErrorDocument 404 /index.404.htm

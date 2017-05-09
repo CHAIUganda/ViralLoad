@@ -48,9 +48,12 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 			include "tpl.worksheets.viewdetail.php";
 		break;
 		case 'cobasupload':
-			# code...
 			include "tpl.worksheets.cobasupload.php";
+		break;
+		case 'racks_samples_create':
+			include "tpl.worksheets.rackssamplescreate.php";
 			break;
+
 		default:
 			include "tpl.worksheets.default.php";
 		break;

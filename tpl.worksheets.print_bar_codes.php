@@ -27,9 +27,9 @@ $results = mysqlquery($sql);
 		<script type="text/javascript" src="/js/jquery-barcode/jquery-barcode.js"></script>
 	</head>
 	<body>		
-		<div class='barcode-wrapper'><div class='smple_barcodes' value='HIV_NEG'></div>HIV_NEG</div>
-		<div class='barcode-wrapper'><div class='smple_barcodes' value='HIV_LOPOS'></div>HIV_LOPOS</div>
-		<div class='barcode-wrapper'><div class='smple_barcodes' value='HIV_HIPOS'></div>HIV_HIPOS</div>		
+		<page size='barcode'><div class='barcode-wrapper'><div class='smple_barcodes' value='HIV_NEG'></div>HIV_NEG</div></page>
+		<page size='barcode'><div class='barcode-wrapper'><div class='smple_barcodes' value='HIV_LOPOS'></div>HIV_LOPOS</div></page>
+		<page size='barcode'><div class='barcode-wrapper'><div class='smple_barcodes' value='HIV_HIPOS'></div>HIV_HIPOS</div></page>		
 
 		<?php 
 		if($calibs==1){
@@ -39,7 +39,7 @@ $results = mysqlquery($sql);
 		}
 		while ($row = mysqlfetcharray($results)) {
 			extract($row);
-			echo "<div class='barcode-wrapper'><div class='smple_barcodes' value='$vlSampleID'></div>$vlSampleID</div>";
+			echo "<page size='barcode'><div class='barcode-wrapper'><div class='smple_barcodes' value='$vlSampleID'></div>$vlSampleID</div></page>";
 		}
 		
 		?>
@@ -48,17 +48,30 @@ $results = mysqlquery($sql);
 		$(".smple_barcodes").each(function (index){
             var val = $(this).attr("value");
             $(this).barcode(val, "code128",{showHRI: false,posX: 4});
-        });		
+        });	
+
+        //barHeight:20	
 		
-		$(function(){ window.print(); });
+		//$(function(){ window.print(); });
 
 		</script>
 
 		<style type="text/css">
+		page {
+		  display: block;
+		  margin: 0 auto;
+		  margin-bottom: 8mm;
+		  box-shadow: 0 0 2mm rgba(0,0,0,0.5);
+		  margin-top: 5mm;
+		}
+		page[size="barcode"] {  
+		  width: 43mm;
+		  height: 20mm; 
+		}
 		.barcode-wrapper{
 			text-align:center;
-			width:150px;
-			padding-bottom: 35px;
+			width:130px;
+			font-size: 10px;
 		}
 
 		</style>

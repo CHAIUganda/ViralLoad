@@ -38,6 +38,9 @@ function insertVLResults($machineType="", $values="", $repeats="", $merged_value
 			 controlLotNumber,controlExpirationDate, controlRange,calibratorLotNumber,
 			 calibratorExpirationDate,calibratorLogConcentration, resultComment,targetMR,icMR,
 			 created,createdby) values $values");
+	}elseif($machineType=="cobas8800"){
+		//echo $values;
+		mysqlquery("insert into vl_results_abbott (worksheetID, sampleID, result, interpretation,flags, created,createdby) values $values");
 	}
 
 	/*if(!empty($repeats)){
@@ -105,9 +108,12 @@ if($uploadResults) {
 			$extension=ext($fileOriginalName);
 			//check type
 			if($type=="abbott") { //text files only, for abbott
-				if($extension!="txt") {
-					$error.="<br>Incorrect file extension '.$extension'. Try saving the document as a 'txt' file";
+				if($extension=='csv'){
+					$type = 'cobas8800';
 				}
+				/*if($extension!="txt") {
+					$error.="<br>Incorrect file extension '.$extension'. Try saving the document as a 'txt' file";
+				}*/
 			} elseif($type=="roche") { //csv files only, for abbott
 				if($extension!="csv") {
 					$error.="<br>Incorrect file extension '.$extension'. Try saving the document as a 'csv' file";
@@ -712,7 +718,6 @@ if($uploadResults) {
 					$beginLoadLine=0;
 					$runStartTime=0;
 					$runCompletionTime=0;
-					mysqlquery("UPDATE vl_samples_worksheetcredentials SET stage = 'has_results' WHERE id='$worksheetID'");
 					while(($line = fgets($file))!==FALSE) {
 						if(substr(trim($line),0,14)=="RUN START TIME") {
 							$runStartTime=preg_replace("/RUN START TIME	/is","",$line);
@@ -959,9 +964,29 @@ if($uploadResults) {
 										('$worksheetID','".getRawFormattedDateLessDay($runStartTime)." ".getFormattedTime($runStartTime)."','".getRawFormattedDateLessDay($runCompletionTime)." ".getFormattedTime($runCompletionTime)."',
 											'$datetime','$trailSessionUser')");
 					}
+				} elseif($type=="cobas8800") {
+					$file = fopen($_FILES['userfile']['tmp_name'], 'r');
+					$abbott_insert_values = "";
+					$log_repeat_values = "";
+					$merged_values = "";
+					while(($line = fgetcsv($file,0,","))!==FALSE) {
+						$sampleID = $line[1];
+						$interpretation = $line[5];
+						$result = trim($line[6]);
+						$res_arr = interpretCobas8800($result);
+
+						$s_id = getDetailedTableInfo2("vl_samples","vlSampleID='$sampleID' limit 1","id");
+						if($s_id){
+							$abbott_insert_values .= "('$worksheetID', '$sampleID', '$result', '$interpretation', 'cobas8800', '$datetime','$trailSessionUser'),";
+							$merged_values .= "('abbott','$worksheetID','$sampleID','$res_arr[alpha_numerical_result]',
+														'$res_arr[numerical_result]','$res_arr[suppressed]','$datetime','$trailSessionUser'),";
+						}
+					}
+
+					if(!empty($abbott_insert_values)) insertVLResults("cobas8800", $abbott_insert_values, $log_repeat_values, $merged_values);
 				}
 			}
-		} else {
+		}else {
 			$error.="<br>File could not be uploaded. Consider contacting your Systems Administrator.";
 		}
 
