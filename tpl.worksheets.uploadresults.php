@@ -1100,6 +1100,7 @@ $("#file").on("change", function(){
 	   processData: false,  // tell jQuery not to process the data
 	   contentType: false,  // tell jQuery not to set contentType
 	   success : function(data) {
+	   	console.log(data);
 	       if(data==1){
 	       	$("#check_message").hide();
 	       	$("#uploadResults").show();
