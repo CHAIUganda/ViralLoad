@@ -225,6 +225,9 @@ function getVLNumericResult($result,$machineType,$factor) {
 			return $result;
 		} elseif(substr(trim($result),0,1)=="<") {
 			//clean the result remove "Copies / mL" and "," from $result
+
+			if(substr($result, 2) == 'Titer min') $result = 20;
+
 			$result=preg_replace("/Copies \/ mL/s","",$result);
 			$result=preg_replace("/,/s","",$result);
 			$result=preg_replace("/\</s","",$result);
@@ -238,6 +241,7 @@ function getVLNumericResult($result,$machineType,$factor) {
 			//return
 			return "&lt; ".number_format((float)$result,2)." Copies / mL";
 		} elseif(substr(trim($result),0,1)==">") {
+			if(substr($result, 2) == 'Titer min') $result = 20;
 			//clean the result remove "Copies / mL" and "," from $result
 			$result=preg_replace("/Copies \/ mL/s","",$result);
 			$result=preg_replace("/,/s","",$result);
@@ -255,6 +259,8 @@ function getVLNumericResult($result,$machineType,$factor) {
 			$result=preg_replace("/\</s","",$result);
 			$result=preg_replace("/\>/s","",$result);
 			$result=trim($result);
+
+			if(substr($result,-5) == 'cp/ml') $result = substr($result, 0, -6)+0;
 			//factor
 			$result*=$factor;
 		
@@ -276,6 +282,8 @@ function getVLNumericResultOnly($result) {
 	$result=preg_replace("/\&gt\;/s","",$result);
 	$result=preg_replace("/\&lt\;/s","",$result);
 	$result=trim($result);
+
+	if(substr($result,-5) == 'cp/ml') $result = substr($result, 0, -6)+0;
 
 	//return
 	if(is_numeric($result)) {
@@ -624,6 +632,11 @@ function getNumericalResult($result=""){
 	$numericVLResult = preg_replace("/\&lt;/s","",$numericVLResult);
 	$numericVLResult = preg_replace("/\&gt;/s","",$numericVLResult);
 	$numericVLResult = trim($numericVLResult);
+
+	if(substr($result,-5) == 'cp/ml'){
+		$result = substr($result, 0, -6)+0;
+	}
+
 	return $numericVLResult;
 }
 
