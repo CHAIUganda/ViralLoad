@@ -9,9 +9,6 @@ $fileType = $_FILES['file']['type'];
 $fileError = $_FILES['file']['error'];
 //$fileContent = file_get_contents($_FILES['file']['tmp_name']);
 
-$extension=ext($fileName);
-echo $extension;
-
 if($fileError == UPLOAD_ERR_OK){
   $machine = $_POST['machine'];
   $file = fopen($_FILES['file']['tmp_name'], 'r') or die('cant read file');
