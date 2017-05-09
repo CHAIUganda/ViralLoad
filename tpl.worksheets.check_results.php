@@ -9,6 +9,8 @@ $fileType = $_FILES['file']['type'];
 $fileError = $_FILES['file']['error'];
 //$fileContent = file_get_contents($_FILES['file']['tmp_name']);
 
+$extension=ext(addslashes($fileName));
+
 if($fileError == UPLOAD_ERR_OK){
   $machine = $_POST['machine'];
   $file = fopen($_FILES['file']['tmp_name'], 'r') or die('cant read file');
@@ -21,12 +23,21 @@ if($fileError == UPLOAD_ERR_OK){
    	}
    }else{
     $start = 78;
-    while(($line = fgets($file))!==FALSE) {
-       $data=preg_split("/[\t]+/", trim($line));
-       //$data=str_getcsv($line, "\t");
-       $sample_id = trim($data[1]);
-       if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id )) $sample_ids[] = $sample_id;
+    if($extension == 'csv'){
+      while(($line = fgetcsv($file,0,","))!==FALSE) {
+        $sample_id = trim($line[1]);
+        if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id)) $sample_ids[] = $sample_id;
+      }
+    }else{
+        while(($line = fgets($file))!==FALSE) {
+           $data=preg_split("/[\t]+/", trim($line));
+           //$data=str_getcsv($line, "\t");
+           $sample_id = trim($data[1]);
+           if(preg_match("/(^[0-9]{4,})\/([0-9]{4,})$/",$sample_id )) $sample_ids[] = $sample_id;
+        }
+
     }
+    
 
    }
 
@@ -97,7 +108,7 @@ function owned_samples($a = array()){
   $owned_samples = $_POST['wk_samples'];
   $diff = array_diff($a, $owned_samples);
   $str = implode("<br>", $diff);
-  if(count($diff)>0) return "These samples do not belong to this worksheet:<br>$str";
+  if(count($diff)>0) return "<br>These samples do not belong to this worksheet:<br>$str";
   else return 1;
 }
 ?>
