@@ -655,7 +655,7 @@ function interpretCobas8800($result){
 		$suppressed = 'YES';
 		$alpha_numerical_result = substr($result, 0,1)." 20 Copies / mL";
 	}else{
-		$numerical_result = number_format((float)$result, 2);
+		$numerical_result = number_format((float)$result);
 		$suppressed = $numerical_result>1000?'NO':'YES';
 		$alpha_numerical_result = "$numerical_result Copies / mL";
 	}
