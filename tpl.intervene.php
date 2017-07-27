@@ -22,7 +22,7 @@ $res = mysqlquery(
 		<th>Comments</th>
 		<th>Result</th>
 		<th>Suppressed</th>
-		<th />
+		<th>Created</th>
 	</thead>
 	<tbody>
 		
@@ -37,7 +37,7 @@ $res = mysqlquery(
 					<td>$comments</td>
 					<td>$result</td>
 					<td>$suppressed</td>
-					<td><a href='$lnk'>check</a></td>
+					<td>$createdby</td>
 				  </tr>";
 		}
 		?>
