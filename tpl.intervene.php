@@ -5,8 +5,9 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 }
 //sample_results/live_search/
 $res = mysqlquery(
-		"SELECT sample_id, comments, s.* FROM vl_facility_printing AS fp 
+		"SELECT fp.sample_id, comments, s.*, rr.result, rr.suppressed FROM vl_facility_printing AS fp 
 		LEFT JOIN vl_samples AS s ON fp.sample_id = s.id
+		LEFT JOIN vl_results_released AS rr ON fp.sample_id = rr.sample_id
 		WHERE ready = 'NO' LIMIT 2000");
 ?>
 
@@ -19,6 +20,8 @@ $res = mysqlquery(
 		<td>Location ID</td>
 		<th>Form Number</th>
 		<th>Comments</th>
+		<th>Result</th>
+		<th>Suppressed</th>
 		<th />
 	</thead>
 	<tbody>
@@ -32,6 +35,8 @@ $res = mysqlquery(
 					<td>$lrCategory$lrEnvelopeNumber/$lrNumericID </td>
 					<td><a href='$lnk'>$formNumber</a></td>
 					<td>$comments</td>
+					<td>$result</td>
+					<td>$suppressed</td>
 					<td><a href='$lnk'>check</a></td>
 				  </tr>";
 		}
