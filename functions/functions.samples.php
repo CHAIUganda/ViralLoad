@@ -227,6 +227,7 @@ function getVLNumericResult($result,$machineType,$factor) {
 			//clean the result remove "Copies / mL" and "," from $result
 
 			if(substr($result, 2) == 'Titer min') $result = 20;
+			if(substr($result, 2) == 'Titer max') $result = 10000000;
 
 			$result=preg_replace("/Copies \/ mL/s","",$result);
 			$result=preg_replace("/,/s","",$result);
@@ -242,6 +243,7 @@ function getVLNumericResult($result,$machineType,$factor) {
 			return "&lt; ".number_format((float)$result,2)." Copies / mL";
 		} elseif(substr(trim($result),0,1)==">") {
 			if(substr($result, 2) == 'Titer min') $result = 20;
+			if(substr($result, 2) == 'Titer max') $result = 10000000;
 			//clean the result remove "Copies / mL" and "," from $result
 			$result=preg_replace("/Copies \/ mL/s","",$result);
 			$result=preg_replace("/,/s","",$result);
@@ -654,6 +656,10 @@ function interpretCobas8800($result){
 		$numerical_result = 20;
 		$suppressed = 'YES';
 		$alpha_numerical_result = substr($result, 0,1)." 20 Copies / mL";
+	}elseif(substr($result, 2) == 'Titer max'){
+		$numerical_result = 10000000;
+		$suppressed = 'NO';
+		$alpha_numerical_result = substr($result, 0,1)." 10,000,000 Copies / mL";
 	}else{
 		$numerical_result = number_format((float)$result);
 		$n_result =  str_replace(",", "", $numerical_result)+0;
