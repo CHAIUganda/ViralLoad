@@ -126,8 +126,7 @@ if(mysqlnumrows($num_pending_result0)){
 
 $sql = "SELECT $cols $more_sql 		
 		GROUP BY s.id
-		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
-		LIMIT 1000";
+		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC";
 
 $query = mysqlquery($sql);
 if(mysqlnumrows($query)) {
