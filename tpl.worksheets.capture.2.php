@@ -192,7 +192,6 @@ if(mysqlnumrows($num_pending_result1)) $num_pending_retesting =  mysqlfetcharray
 */
 $sql = "SELECT $cols $more_sql		
 		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
-		LIMIT 1000
 		";
 $query = mysqlquery($sql);
 
