@@ -191,7 +191,7 @@ $num_pending_result1 = mysqlquery("SELECT count(DISTINCT s.id) AS c $more_sql");
 if(mysqlnumrows($num_pending_result1)) $num_pending_retesting =  mysqlfetcharray($num_pending_result1)['c']." samples pending retesting";
 */
 $sql = "SELECT $cols $more_sql		
-		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ncurses_assume_default_colors(fg, bg)
+		ORDER BY lrCategory,lrEnvelopeNumber,lrNumericID ASC
 		";
 $query = mysqlquery($sql);
 
