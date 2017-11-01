@@ -6,9 +6,9 @@ if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 //sample_results/live_search/
 $res = mysqlquery(
 		"SELECT fp.sample_id, comments, s.*, rr.result, rr.suppressed FROM vl_facility_printing AS fp 
-		LEFT JOIN vl_samples AS s ON fp.sample_id = s.id
-		LEFT JOIN vl_results_released AS rr ON fp.sample_id = rr.sample_id
-		WHERE ready = 'NO' LIMIT 2000");
+		INNER JOIN vl_samples AS s ON fp.sample_id = s.id
+		INNER JOIN vl_results_released AS rr ON rr.sample_id = s.id
+		WHERE ready = 'NO' LIMIT 1000");
 ?>
 
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
