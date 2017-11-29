@@ -16,7 +16,7 @@ if($saveDate) {
 	//validate data
 	$error=0;
 	$error=checkFormFields("Dispatched_Date::$dispatchedDateYear Dispatched_Date::$dispatchedDateMonth Dispatched_Date::$dispatchedDateDay Facility::$facilityID Starting_Serial_Number::$serialNumberStart Ending_Serial_Number::$serialNumberEnd");
-	
+	if($serialNumberEnd==1) $serialNumberEnd=0;
 	//input data
 	if(!$error) {
 		//formate date
@@ -120,6 +120,7 @@ function validate(envelopes) {
                           <td>Number&nbsp;of&nbsp;Forms&nbsp;<font class="vl_red">*</font></td>
                           <td>
 							<select name="serialNumberEnd" id="serialNumberEnd" class="search">
+                <option value="1">1</option>
                 <option value="49">49</option>
                 <option value="50">50</option>
 							<?
