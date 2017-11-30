@@ -268,17 +268,17 @@ if($saveSample || $proceedWithWarningGender || $proceedWithWarningVLRepeatTestin
 
 	/*
 	* split $lrEnvelopeNumber based on -, then validate based on the envelope number
-	* 0001 >= plasma <= 0500
-	* 0501 >= DBS 
+	* 0001 >= plasma <= 0800
+	* 0801 >= DBS 
 	*/
 	$lrEnvelopeNumberArray=array();
 	$lrEnvelopeNumberArray=explode("-",$lrEnvelopeNumber);
 	$envelopeNumber=0;
 	$envelopeNumber=$lrEnvelopeNumberArray[1]/1;
-	if($sampleTypeID==getDetailedTableInfo2("vl_appendix_sampletype","appendix like '%plasma%' limit 1","id") && $envelopeNumber>500) {
-		$error.="<br /><strong>Incorrect Envelope Number $lrEnvelopeNumber for a Plasma Type Sample.</strong><br />The valid range for plasma type samples is $lrEnvelopeNumberArray[0]-0001 to $lrEnvelopeNumberArray[0]-0500.<br />";
-	} elseif($sampleTypeID==getDetailedTableInfo2("vl_appendix_sampletype","appendix like '%DBS%' limit 1","id") && $envelopeNumber<=500) {
-		$error.="<br /><strong>Incorrect Envelope Number $lrEnvelopeNumber for a DBS Type Sample.</strong><br />The valid range for DBS type samples is $lrEnvelopeNumberArray[0]-0501 and above.<br />";
+	if($sampleTypeID==getDetailedTableInfo2("vl_appendix_sampletype","appendix like '%plasma%' limit 1","id") && $envelopeNumber>800) {
+		$error.="<br /><strong>Incorrect Envelope Number $lrEnvelopeNumber for a Plasma Type Sample.</strong><br />The valid range for plasma type samples is $lrEnvelopeNumberArray[0]-0001 to $lrEnvelopeNumberArray[0]-0800.<br />";
+	} elseif($sampleTypeID==getDetailedTableInfo2("vl_appendix_sampletype","appendix like '%DBS%' limit 1","id") && $envelopeNumber<=800) {
+		$error.="<br /><strong>Incorrect Envelope Number $lrEnvelopeNumber for a DBS Type Sample.</strong><br />The valid range for DBS type samples is $lrEnvelopeNumberArray[0]-0801 and above.<br />";
 	}
 
 	//possible contradicting gender
