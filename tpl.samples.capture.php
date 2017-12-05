@@ -1,4 +1,5 @@
 <?
+die("<font face=arial size=2>Please use version 2 of the Viral Load System <a href='http://10.200.254.74:8080/'>10.200.254.74:8080</a></font>");
 //security check
 if(!$GLOBALS['vlDC'] || !$_SESSION["VLEMAIL"]) {
 	die("<font face=arial size=2>You must be logged in to view this page.</font>");
